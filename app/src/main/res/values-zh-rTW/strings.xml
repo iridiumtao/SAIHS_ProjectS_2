@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SAIHS_ProjectS_2</string>
+    <string name="action_settings">設定</string>
+    <string name="action_help">幫助</string>
+    <string name="ON">開</string>
+    <string name="OFF">關</string>
+    <string name="text_socket_4">插座 4</string>
+    <string name="text_socket_3">插座 3</string>
+    <string name="text_socket_2">插座 2</string>
+    <string name="text_socket_1">插座 1</string>
+</resources>
