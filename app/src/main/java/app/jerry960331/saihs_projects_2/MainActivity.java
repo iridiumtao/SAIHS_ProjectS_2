@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Set;
 
@@ -24,6 +26,18 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter BTAdapter;
     private Set<BluetoothDevice> pairedDevices;
 
+    public static  int red = 0xfff44336;
+    public static  int green = 0xff4caf50;
+    public static  int blue = 0xff2195f3;
+    public static  int orange = 0xffffc107;
+
+
+    Snackbar snackbar;
+    View snackBarView;
+
+    TextView snackBarTxV;
+
+
 //alt+enter 字串抽離
 
     @Override
@@ -34,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         //內建fab
-        /*
+        /**
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +85,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    /*
+    source: https://www.jianshu.com/p/cd1e80e64311
+     */
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -99,16 +120,33 @@ public class MainActivity extends AppCompatActivity {
         btnLegacySocketSwText1 = btnLegacySocketSwitch1.getText().toString();
         if (getString(R.string.OFF).equals(btnLegacySocketSwText1))
         {
-            //try{
-            // }catch ()
-            // {
-            // }
+            /**
+             * try{
+            * }catch ()
+            * {
+            * }
+             * */
 
             btnLegacySocketSwitch1.setText(R.string.ON);
+            Snackbar.make(view,"Set socket 1 ON", Snackbar.LENGTH_LONG)
+                    .setAction("DISMISS", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(MainActivity.this,"你点击了action",Toast.LENGTH_SHORT).show();
+                }
+            }).show();
         }
         else if(getString(R.string.ON).equals(btnLegacySocketSwText1))
         {
             btnLegacySocketSwitch1.setText(R.string.OFF);
+
+            Snackbar.make(view, "Set socket 1 OFF", Snackbar.LENGTH_LONG)
+                    .setAction("DISMISS", new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v) {
+                        }
+                    })
+                    .show();
         }
     }
 
@@ -123,6 +161,17 @@ public class MainActivity extends AppCompatActivity {
             // }
 
             btnLegacySocketSwitch2.setText(R.string.ON);
+
+
+            snackbar = Snackbar.make(view, "Set socket 2 ON", Snackbar.LENGTH_SHORT)
+                               .setAction("DISMISS",null);
+
+            snackBarView = snackbar.getView();
+            snackBarView.setBackgroundColor(blue);
+            snackBarTxV = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+            /* snackBarTxV.setTextColor(red); */
+            snackbar.show();
+
         }
         else if(getString(R.string.ON).equals(btnLegacySocketSwText2))
         {
