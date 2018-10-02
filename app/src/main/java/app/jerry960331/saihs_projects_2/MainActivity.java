@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setTitle("Smart Socket");
+
         //內建fab
         /**
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -130,13 +132,29 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        switch (id)
+        {
+            case R.id.action_settings:
+                Intent intentSetting = new Intent(this, SettingsActivity.class);
+                startActivity(intentSetting);
+                break;
+            case R.id.action_bt:
+                Intent intentBT = new Intent(this, BTActivity.class);
+                startActivity(intentBT);
+                break;
+            case  R.id.action_help:
+
+
+        }
+
+        /**
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
-
             return true;
         }
+         */
 
         return super.onOptionsItemSelected(item);
     }

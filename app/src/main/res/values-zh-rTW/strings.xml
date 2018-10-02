@@ -9,4 +9,7 @@
     <string name="text_socket_3">插座 3</string>
     <string name="text_socket_2">插座 2</string>
     <string name="text_socket_1">插座 1</string>
+    <string name="read_buffer"><![CDATA[<Read Buffer>]]></string>
+    <string name="bluetooth_status"><![CDATA[<Bluetooth Status>]]></string>
+    <string name="status">狀態:</string>
 </resources>

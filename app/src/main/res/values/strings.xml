@@ -82,5 +82,8 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_bt">BTActivity</string>
+    <string name="read_buffer"><![CDATA[<Read Buffer>]]></string>
+    <string name="bluetooth_status"><![CDATA[<Bluetooth Status>]]></string>
+    <string name="status">Status:</string>
 
 </resources>
