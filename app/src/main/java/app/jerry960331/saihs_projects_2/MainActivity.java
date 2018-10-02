@@ -1,10 +1,17 @@
 package app.jerry960331.saihs_projects_2;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -15,27 +22,39 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Set;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
 
-    private Button btnLegacySocketSwitch1, btnLegacySocketSwitch2, btnLegacySocketSwitch3, btnLegacySocketSwitch4,
+    private Button
+            btnLegacySocketSwitch1,
+            btnLegacySocketSwitch2,
+            btnLegacySocketSwitch3,
+            btnLegacySocketSwitch4,
             btnBTSw;
 
-    String btnLegacySocketSwText1 ,  btnLegacySocketSwText2,  btnLegacySocketSwText3 , btnLegacySocketSwText4;
-    private BluetoothAdapter BTAdapter;
-    private Set<BluetoothDevice> pairedDevices;
+    private String
+            btnLegacySocketSwText1 ,
+            btnLegacySocketSwText2,
+            btnLegacySocketSwText3 ,
+            btnLegacySocketSwText4;
 
+
+
+
+
+    //color
+    //may be added to color.xml
     public static  int red = 0xfff44336;
     public static  int green = 0xff4caf50;
     public static  int blue = 0xff2195f3;
     public static  int orange = 0xffffc107;
 
-
-    Snackbar snackbar;
-    View snackBarView;
-
-    TextView snackBarTxV;
+    //snackbar customize
+    private Snackbar snackbar;
+    private View snackBarView;
+    private TextView snackBarTxV;
 
 
 //alt+enter 字串抽離
@@ -67,6 +86,12 @@ public class MainActivity extends AppCompatActivity {
         btnLegacySocketSwitch3.setText(R.string.OFF);
         btnLegacySocketSwitch4.setText(R.string.OFF);
 
+        //詢問藍芽位置權限
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)!=
+                PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, new String[]
+                    {Manifest.permission.ACCESS_COARSE_LOCATION},1);
 
 
 
@@ -81,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         btnLegacySocketSwitch3 = findViewById(R.id.btnLegacySocketSwitch3);
         btnLegacySocketSwitch4 = findViewById(R.id.btnLegacySocketSwitch4);
         btnBTSw = findViewById(R.id.btnBTSw);
-        BTAdapter = BluetoothAdapter.getDefaultAdapter();
 
     }
 
@@ -108,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+
             return true;
         }
 
@@ -216,4 +243,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    public void BTSw(View view){
+        Intent intent = new Intent(this, BTActivity.class);
+        startActivity(intent);
+    }
 }
