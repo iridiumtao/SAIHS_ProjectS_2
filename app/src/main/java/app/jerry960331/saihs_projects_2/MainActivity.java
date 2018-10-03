@@ -88,12 +88,7 @@ public class MainActivity extends AppCompatActivity {
         btnLegacySocketSwitch3.setText(R.string.OFF);
         btnLegacySocketSwitch4.setText(R.string.OFF);
 
-        //詢問藍芽位置權限
-        if(ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)!=
-                PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this, new String[]
-                    {Manifest.permission.ACCESS_COARSE_LOCATION},1);
+
 
 
 
@@ -101,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
+//ctrl+alt+M
     private void findViews() {
         btnLegacySocketSwitch1 = findViewById(R.id.btnLegacySocketSwitch1);
         btnLegacySocketSwitch2 = findViewById(R.id.btnLegacySocketSwitch2);
@@ -110,11 +105,6 @@ public class MainActivity extends AppCompatActivity {
         btnBTSw = findViewById(R.id.btnBTSw);
 
     }
-
-
-    /*
-    source: https://www.jianshu.com/p/cd1e80e64311
-     */
 
 
 
