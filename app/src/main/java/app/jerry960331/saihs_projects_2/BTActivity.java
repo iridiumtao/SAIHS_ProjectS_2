@@ -19,6 +19,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -54,6 +55,8 @@ public class BTActivity extends AppCompatActivity {
     //private CheckBox mLED1;
     private EditText mBTEditText;
     private Button mBTSendBtn;
+    private ListView mSentListView;
+    private String[] sentMsg = {"aaaa","bbb","ccccccccc","ddddd","eee"};
 
     private Handler mHandler;
     // Our main handler that will receive callback notifications
@@ -88,6 +91,14 @@ public class BTActivity extends AppCompatActivity {
         mBTAdapter = BluetoothAdapter.getDefaultAdapter();
 
         findViews();
+
+
+
+
+
+
+
+
 
         mBTArrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
         mBTAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -143,6 +154,10 @@ public class BTActivity extends AppCompatActivity {
                     if(mConnectedThread != null) //First check to make sure thread created
                         mConnectedThread.write(mBTEditText.getText().toString());
                     //傳送將輸入的資料出去
+                    for (int i=0; i < sentMsg.length; i++) {
+
+                    }
+
                 }
             });
 
@@ -174,19 +189,26 @@ public class BTActivity extends AppCompatActivity {
                     discover(v);
                 }
             });
+
         }
     }
 
     private void bluetoothOn(View view){
-        if (!mBTAdapter.isEnabled()) {//如果藍芽沒開啟
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);//跳出視窗
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            //開啟設定藍芽畫面
-            mBTStatTxV.setText("Bluetooth enabled");
-            Toast.makeText(getApplicationContext(),"Bluetooth turned on",Toast.LENGTH_SHORT).show();
+        try {
+            if (!mBTAdapter.isEnabled()) {//如果藍芽沒開啟
+                Intent enableBtIntent = new
+                        Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);//跳出視窗
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                //開啟設定藍芽畫面
+                mBTStatTxV.setText("Bluetooth enabled");
+                Toast.makeText(getApplicationContext(), "Bluetooth turned on", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Bluetooth is already on",
+                        Toast.LENGTH_SHORT).show();
+            }
         }
-        else{
-            Toast.makeText(getApplicationContext(),"Bluetooth is already on",
+        catch (Exception e){
+            Toast.makeText(getApplicationContext(), "Bluetooth Error. Please make sure this device has Bluetooth support.",
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -201,16 +223,16 @@ public class BTActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // The user picked a contact.
                 // The Intent's data Uri identifies which contact was selected.
-                mBTStatTxV.setText("Enabled");
+                mBTStatTxV.setText("Bluetooth Enabled");
             }
             else
-                mBTStatTxV.setText("Disabled");
+                mBTStatTxV.setText("Bluetooth Disabled");
         }
     }
 
     private void bluetoothOff(View view){
         mBTAdapter.disable(); // turn off bluetooth
-        mBTStatTxV.setText("Bluetooth disabled");
+        mBTStatTxV.setText("Bluetooth Disabled");
         Toast.makeText(getApplicationContext(),"Bluetooth turned Off",
                 Toast.LENGTH_SHORT).show();
     }
@@ -410,6 +432,7 @@ public class BTActivity extends AppCompatActivity {
         mBTEditText = findViewById(R.id.BTEditText);
         mBTSendBtn = findViewById(R.id.BTSendBtn);
         mDevicesListView = findViewById(R.id.devicesListView);
+        mSentListView = findViewById(R.id.sentListView);
     }
 
     @Override

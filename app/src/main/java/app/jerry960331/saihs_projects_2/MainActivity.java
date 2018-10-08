@@ -14,15 +14,18 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Set;
-import java.util.UUID;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
             btnLegacySocketSwitch2,
             btnLegacySocketSwitch3,
             btnLegacySocketSwitch4,
-            btnBTSw;
+            btnBTSw,
+            btnTest        ;
 
     private String
             btnLegacySocketSwText1 ,
@@ -40,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
             btnLegacySocketSwText3 ,
             btnLegacySocketSwText4;
 
+    private String testStringArray[];
+    private ListView testListView;
+    private EditText testEditText;
 
 
 
@@ -103,6 +110,10 @@ public class MainActivity extends AppCompatActivity {
         btnLegacySocketSwitch3 = findViewById(R.id.btnLegacySocketSwitch3);
         btnLegacySocketSwitch4 = findViewById(R.id.btnLegacySocketSwitch4);
         btnBTSw = findViewById(R.id.btnBTSw);
+
+        btnTest = findViewById(R.id.testBtn);
+        testEditText = findViewById(R.id.testEditText);
+        testListView = findViewById(R.id.testListView);
 
     }
 
@@ -255,5 +266,16 @@ public class MainActivity extends AppCompatActivity {
     public void BTSw(View view){
         Intent intent = new Intent(this, BTActivity.class);
         startActivity(intent);
+    }
+
+    public void test(View view){
+        int k= 0 ;
+        testStringArray = new String[k];
+        for(int i = 0; i <= testStringArray.length; i++){
+            testStringArray[i] = testEditText.getText().toString();`
+
+            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,testStringArray);
+            testListView.setAdapter(adapter);
+        }
     }
 }
