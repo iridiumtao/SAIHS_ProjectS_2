@@ -13,7 +13,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,14 +40,13 @@
                 android:layout_marginRight="45dp"
                 android:text="SEND" />
 
-            <ListView
-                android:id="@+id/sentListView"
+            <TextView
+                android:id="@+id/sentMsgTxV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="45dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="45dp"
-                android:layout_marginBottom="5dp" />
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:text="TextView" />
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -44,12 +44,6 @@ public class MainActivity extends AppCompatActivity {
             btnLegacySocketSwText3 ,
             btnLegacySocketSwText4;
 
-    private String testStringArray[];
-    private ListView testListView;
-    private EditText testEditText;
-
-
-
 
     //color
     //may be added to color.xml
@@ -95,13 +89,6 @@ public class MainActivity extends AppCompatActivity {
         btnLegacySocketSwitch3.setText(R.string.OFF);
         btnLegacySocketSwitch4.setText(R.string.OFF);
 
-
-
-
-
-
-
-
     }
 //ctrl+alt+M
     private void findViews() {
@@ -109,11 +96,7 @@ public class MainActivity extends AppCompatActivity {
         btnLegacySocketSwitch2 = findViewById(R.id.btnLegacySocketSwitch2);
         btnLegacySocketSwitch3 = findViewById(R.id.btnLegacySocketSwitch3);
         btnLegacySocketSwitch4 = findViewById(R.id.btnLegacySocketSwitch4);
-        btnBTSw = findViewById(R.id.btnBTSw);
 
-        btnTest = findViewById(R.id.testBtn);
-        testEditText = findViewById(R.id.testEditText);
-        testListView = findViewById(R.id.testListView);
 
     }
 
@@ -266,16 +249,5 @@ public class MainActivity extends AppCompatActivity {
     public void BTSw(View view){
         Intent intent = new Intent(this, BTActivity.class);
         startActivity(intent);
-    }
-
-    public void test(View view){
-        int k= 0 ;
-        testStringArray = new String[k];
-        for(int i = 0; i <= testStringArray.length; i++){
-            testStringArray[i] = testEditText.getText().toString();`
-
-            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,testStringArray);
-            testListView.setAdapter(adapter);
-        }
     }
 }

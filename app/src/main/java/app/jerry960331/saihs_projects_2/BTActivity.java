@@ -40,8 +40,6 @@ import java.util.UUID;
 
 public class BTActivity extends AppCompatActivity {
 
-
-    // GUI Components
     private TextView mBTStatTxV;
     private TextView mRXTxV;
     private Button mBTOnBtn;
@@ -52,22 +50,17 @@ public class BTActivity extends AppCompatActivity {
     private Set<BluetoothDevice> mPairedDevices;
     private ArrayAdapter<String> mBTArrayAdapter;
     private ListView mDevicesListView;
-    //private CheckBox mLED1;
     private EditText mBTEditText;
     private Button mBTSendBtn;
-    private ListView mSentListView;
-    private String[] sentMsg = {"aaaa","bbb","ccccccccc","ddddd","eee"};
-
+    private TextView mSentMsgTxV;
     private Handler mHandler;
     // Our main handler that will receive callback notifications
     private ConnectedThread mConnectedThread;
     // bluetooth background worker thread to send and receive data
     private BluetoothSocket mBTSocket = null;
     // bi-directional client-to-client data path
-
     private static final UUID BTMODULEUUID = UUID.fromString
             ("00001101-0000-1000-8000-00805F9B34FB"); // "random" unique identifier
-
     // #defines for identifying shared types between calling functions
     private final static int REQUEST_ENABLE_BT = 1;
     // used to identify adding bluetooth names
@@ -87,22 +80,10 @@ public class BTActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
         mBTAdapter = BluetoothAdapter.getDefaultAdapter();
-
         findViews();
-
-
-
-
-
-
-
-
-
         mBTArrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
         mBTAdapter = BluetoothAdapter.getDefaultAdapter();
-
         mDevicesListView.setAdapter(mBTArrayAdapter);
         mDevicesListView.setOnItemClickListener(mDeviceClickListener);
 
@@ -154,9 +135,7 @@ public class BTActivity extends AppCompatActivity {
                     if(mConnectedThread != null) //First check to make sure thread created
                         mConnectedThread.write(mBTEditText.getText().toString());
                     //傳送將輸入的資料出去
-                    for (int i=0; i < sentMsg.length; i++) {
-
-                    }
+                    mSentMsgTxV.setText(mSentMsgTxV.getText() + "\n" + mBTEditText.getText());
 
                 }
             });
@@ -231,13 +210,20 @@ public class BTActivity extends AppCompatActivity {
     }
 
     private void bluetoothOff(View view){
-        mBTAdapter.disable(); // turn off bluetooth
-        mBTStatTxV.setText("Bluetooth Disabled");
-        Toast.makeText(getApplicationContext(),"Bluetooth turned Off",
-                Toast.LENGTH_SHORT).show();
+        try {
+            mBTAdapter.disable(); // turn off bluetooth
+            mBTStatTxV.setText("Bluetooth Disabled");
+            Toast.makeText(getApplicationContext(), "Bluetooth turned Off",
+                    Toast.LENGTH_SHORT).show();
+        }
+        catch(Exception e){
+            Toast.makeText(getApplicationContext(), "Bluetooth Error. Please make sure this device has Bluetooth support.",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void discover(View view){
+        try{
         // Check if the device is already discovering
         if(mBTAdapter.isDiscovering()){ //如果已經找到裝置
             mBTAdapter.cancelDiscovery(); //取消尋找
@@ -257,6 +243,11 @@ public class BTActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         }
+        }catch (Exception e)
+        {
+            Toast.makeText(getApplicationContext(), "Bluetooth Error. Please make sure this device has Bluetooth support.",
+                Toast.LENGTH_SHORT).show();
+        }
     }
 
     final BroadcastReceiver blReceiver = new BroadcastReceiver() {
@@ -274,18 +265,21 @@ public class BTActivity extends AppCompatActivity {
     };
 
     private void listPairedDevices(View view){
-        mPairedDevices = mBTAdapter.getBondedDevices();
-        if(mBTAdapter.isEnabled()) {
-            // put it's one to the adapter
-            for (BluetoothDevice device : mPairedDevices)
-                mBTArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+        try {
+            mPairedDevices = mBTAdapter.getBondedDevices();
+            if (mBTAdapter.isEnabled()) {
+                // put it's one to the adapter
+                for (BluetoothDevice device : mPairedDevices)
+                    mBTArrayAdapter.add(device.getName() + "\n" + device.getAddress());
 
-            Toast.makeText(getApplicationContext(), "Show Paired Devices",
-                    Toast.LENGTH_SHORT).show();
-        }
-        else
-            Toast.makeText(getApplicationContext(), "Bluetooth not on",
-                    Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Show Paired Devices",
+                        Toast.LENGTH_SHORT).show();
+            } else
+                Toast.makeText(getApplicationContext(), "Bluetooth not on",
+                        Toast.LENGTH_SHORT).show();
+        }catch (Exception e)
+        {Toast.makeText(getApplicationContext(), "Bluetooth Error. Please make sure this device has Bluetooth support.",
+                Toast.LENGTH_SHORT).show();}
     }
 
     private AdapterView.OnItemClickListener mDeviceClickListener = new
@@ -432,7 +426,7 @@ public class BTActivity extends AppCompatActivity {
         mBTEditText = findViewById(R.id.BTEditText);
         mBTSendBtn = findViewById(R.id.BTSendBtn);
         mDevicesListView = findViewById(R.id.devicesListView);
-        mSentListView = findViewById(R.id.sentListView);
+        mSentMsgTxV = findViewById(R.id.sentMsgTxV);
     }
 
     @Override
