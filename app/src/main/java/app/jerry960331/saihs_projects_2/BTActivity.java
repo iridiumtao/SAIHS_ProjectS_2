@@ -180,14 +180,14 @@ public class BTActivity extends AppCompatActivity {
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                 //開啟設定藍芽畫面
                 mBTStatTxV.setText("Bluetooth enabled");
-                Toast.makeText(getApplicationContext(), "Bluetooth turned on", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.Bluetooth_tuned_on, Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getApplicationContext(), "Bluetooth is already on",
+                Toast.makeText(getApplicationContext(), R.string.Bluetooth_is_already_on,
                         Toast.LENGTH_SHORT).show();
             }
         }
         catch (Exception e){
-            Toast.makeText(getApplicationContext(), "Bluetooth Error. Please make sure this device has Bluetooth support.",
+            Toast.makeText(getApplicationContext(), R.string.BTCrash,
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -217,7 +217,7 @@ public class BTActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
         catch(Exception e){
-            Toast.makeText(getApplicationContext(), "Bluetooth Error. Please make sure this device has Bluetooth support.",
+            Toast.makeText(getApplicationContext(), R.string.BTCrash,
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -245,7 +245,7 @@ public class BTActivity extends AppCompatActivity {
         }
         }catch (Exception e)
         {
-            Toast.makeText(getApplicationContext(), "Bluetooth Error. Please make sure this device has Bluetooth support.",
+            Toast.makeText(getApplicationContext(), R.string.BTCrash,
                 Toast.LENGTH_SHORT).show();
         }
     }
@@ -278,7 +278,7 @@ public class BTActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Bluetooth not on",
                         Toast.LENGTH_SHORT).show();
         }catch (Exception e)
-        {Toast.makeText(getApplicationContext(), "Bluetooth Error. Please make sure this device has Bluetooth support.",
+        {Toast.makeText(getApplicationContext(), R.string.BTCrash,
                 Toast.LENGTH_SHORT).show();}
     }
 
