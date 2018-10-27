@@ -4,7 +4,7 @@
     <string name="action_help">Help</string>
     <string name="ON">ON</string>
     <string name="OFF">OFF</string>
-    <string name="text_socket_1">Socket1</string>
+    <string name="text_socket_1">Socket 1</string>
     <string name="text_socket_4">Socket 4</string>
     <string name="text_socket_3">Socket 3</string>
     <string name="text_socket_2">Socket 2</string>
@@ -88,5 +88,18 @@
     <string name="BTCrash">Bluetooth Error. Please make sure this device has Bluetooth support.</string>
     <string name="Bluetooth_is_already_on">Bluetooth is already on</string>
     <string name="Bluetooth_tuned_on">Bluetooth tuned on</string>
+
+    <string name="Blank_test">A
+        \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+        \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+        \n\n\n\n\n\n
+        \n
+        \n
+        \n
+
+
+
+
+        B</string>
 
 </resources>
