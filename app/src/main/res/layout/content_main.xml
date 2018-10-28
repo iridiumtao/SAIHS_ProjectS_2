@@ -11,26 +11,6 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_alignBaseline="@+id/btnLegacySocketSwitch3"
-            android:layout_alignStart="@+id/textView5"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/text_socket_2"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.56" />
-
-        <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,55 +18,39 @@
 
         <Button
             android:id="@+id/btnLegacySocketSwitch2"
-            android:layout_width="71dp"
-            android:layout_height="40dp"
+            android:layout_width="81dp"
+            android:layout_height="33dp"
             android:layout_alignBaseline="@+id/textView3"
             android:layout_alignStart="@+id/btnLegacySocketSwitch4"
+            android:background="@drawable/button_rounded"
             android:onClick="SocketSW2"
             android:text="Button2"
-            android:textSize="10sp"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.391"
+            app:layout_constraintHorizontal_bias="0.403"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.351" />
+            app:layout_constraintVertical_bias="0.583" />
 
         <Button
             android:id="@+id/btnLegacySocketSwitch3"
-            android:layout_width="73dp"
-            android:layout_height="wrap_content"
+            android:layout_width="81dp"
+            android:layout_height="33dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:background="@drawable/button_rounded"
             android:onClick="SocketSW3"
             android:text="Button3"
-            android:textSize="10sp"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.739"
+            app:layout_constraintHorizontal_bias="0.403"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.249" />
-
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_alignBaseline="@+id/btnLegacySocketSwitch4"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/text_socket_1"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.513" />
+            app:layout_constraintVertical_bias="0.654" />
 
         <ImageView
             android:id="@+id/imageView2"
@@ -102,235 +66,240 @@
 
         <Button
             android:id="@+id/btnLegacySocketSwitch1"
-            android:layout_width="72dp"
-            android:layout_height="wrap_content"
+            android:layout_width="81dp"
+            android:layout_height="33dp"
             android:layout_alignStart="@+id/btnLegacySocketSwitch3"
             android:layout_centerVertical="true"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+
             android:layout_marginBottom="8dp"
-
-
+            android:background="@drawable/button_rounded"
             android:onClick="SocketSW1"
-            android:text="Button1"
-            android:textSize="10sp"
+            android:text="Socket 1 ON"
+            android:textAllCaps="false"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.39"
+            app:layout_constraintHorizontal_bias="0.423"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.249" />
+            app:layout_constraintVertical_bias="0.514" />
 
         <Button
             android:id="@+id/btnLegacySocketSwitch4"
-            android:layout_width="71dp"
-            android:layout_height="wrap_content"
+            android:layout_width="81dp"
+            android:layout_height="33dp"
             android:layout_alignBaseline="@+id/textView2"
             android:layout_alignParentStart="true"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
+            android:background="@drawable/button_rounded"
             android:onClick="SocketSW4"
             android:text="Button4"
-            android:textSize="10sp"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.772"
+            app:layout_constraintHorizontal_bias="0.405"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.335" />
+            app:layout_constraintVertical_bias="0.724" />
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_alignStart="@+id/textView3"
-            android:layout_alignParentBottom="true"
-            android:text="@string/text_socket_4"
-            android:textSize="16sp"
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.604"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.659" />
+            app:layout_constraintVertical_bias="0.513"
+            app:srcCompat="@drawable/dot_black_48dp" />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.72"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.514"
+            app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
+
+        <ImageView
+            android:id="@+id/imageView12"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.839"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.513"
+            app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
+
+        <ImageView
+            android:id="@+id/imageView13"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.839"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.718"
+            app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
+
+        <ImageView
+            android:id="@+id/imageView14"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.839"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.651"
+            app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
+
+        <ImageView
+            android:id="@+id/imageView15"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.839"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.584"
+            app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
+
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.72"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.718"
+            app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
+
+        <ImageView
+            android:id="@+id/imageView9"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.72"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.651"
+            app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
+
+        <ImageView
+            android:id="@+id/imageView10"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.72"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.584"
+            app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.604"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.651"
+            app:srcCompat="@drawable/dot_black_48dp" />
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.604"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.718"
+            app:srcCompat="@drawable/dot_black_48dp" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.604"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.584"
+            app:srcCompat="@drawable/dot_black_48dp" />
 
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:layout_alignStart="@+id/textView3"
-            android:layout_alignBottom="@+id/btnLegacySocketSwitch1"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/text_socket_3"
-            android:textSize="16sp"
+            android:text="______________________________"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.701"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.614" />
+            app:layout_constraintVertical_bias="0.534" />
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:text="______________________________"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.653"
+            app:layout_constraintHorizontal_bias="0.701"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.514"
-            app:srcCompat="@drawable/dot_black_48dp" />
+            app:layout_constraintVertical_bias="0.735" />
 
-        <ImageView
-            android:id="@+id/imageView7"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="______________________________"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.744"
+            app:layout_constraintHorizontal_bias="0.701"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.514"
-            app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
+            app:layout_constraintVertical_bias="0.65999997" />
 
-        <ImageView
-            android:id="@+id/imageView11"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="______________________________"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.837"
+            app:layout_constraintHorizontal_bias="0.701"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.514"
-            app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
-
-        <ImageView
-            android:id="@+id/imageView12"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.837"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.514"
-            app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
-
-        <ImageView
-            android:id="@+id/imageView13"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.837"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.661"
-            app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
-
-        <ImageView
-            android:id="@+id/imageView14"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.837"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.612"
-            app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
-
-        <ImageView
-            android:id="@+id/imageView15"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.837"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.561"
-            app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
-
-        <ImageView
-            android:id="@+id/imageView8"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.744"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.661"
-            app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
-
-        <ImageView
-            android:id="@+id/imageView9"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.744"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.611"
-            app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
-
-        <ImageView
-            android:id="@+id/imageView10"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.744"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.561"
-            app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
-
-        <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.653"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.611"
-            app:srcCompat="@drawable/dot_black_48dp" />
-
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.653"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.661"
-            app:srcCompat="@drawable/dot_black_48dp" />
-
-        <ImageView
-            android:id="@+id/imageView6"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.653"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.561"
-            app:srcCompat="@drawable/dot_black_48dp" />
+            app:layout_constraintVertical_bias="0.6" />
 
     </android.support.constraint.ConstraintLayout>
 

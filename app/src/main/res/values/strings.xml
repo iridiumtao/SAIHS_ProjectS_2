@@ -8,6 +8,7 @@
     <string name="text_socket_4">Socket 4</string>
     <string name="text_socket_3">Socket 3</string>
     <string name="text_socket_2">Socket 2</string>
+    <string name="socket">Socket</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->

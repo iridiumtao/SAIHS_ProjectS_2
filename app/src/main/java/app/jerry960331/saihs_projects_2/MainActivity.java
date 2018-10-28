@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // TODO: 2018/10/28 更改按鈕文字 content_main.xml中多餘的layout語法
 
     //onClick
     public void SocketSW1(View view){
