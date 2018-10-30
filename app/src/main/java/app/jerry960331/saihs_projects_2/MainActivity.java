@@ -4,14 +4,18 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.net.sip.SipSession;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,29 +24,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 
 public class MainActivity extends AppCompatActivity {
+    private ImageButton
+            btnSkStat1, btnSkStat2, btnSkStat3, btnSkStat4,
+            btnSkAlarm1, btnSkAlarm2, btnSkAlarm3, btnSkAlarm4,
+            btnSkChart1, btnSkChart2, btnSkChart3, btnSkChart4;
 
-
-    private Button
-            btnLegacySocketSwitch1,
-            btnLegacySocketSwitch2,
-            btnLegacySocketSwitch3,
-            btnLegacySocketSwitch4,
-            btnBTSw,
-            btnTest        ;
-
-    private String
-            btnLegacySocketSwText1 ,
-            btnLegacySocketSwText2,
-            btnLegacySocketSwText3 ,
-            btnLegacySocketSwText4;
+    private Switch
+            swSk1,
+            swSk2,
+            swSk3,
+            swSk4;
 
 
     //color
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     //snackbar customize
     private Snackbar snackbar;
     private View snackBarView;
-    private TextView snackBarTxV;
+    private TextView txVStat,snackBarTxV;
 
 
 //alt+enter 字串抽離
@@ -64,43 +66,158 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setTitle("Smart Socket");
-
-        //內建fab
-        /**
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
-
+        setTitle(R.string.title);
 
         findViews();
 
-        btnLegacySocketSwitch1.setText(R.string.OFF);
-        btnLegacySocketSwitch2.setText(R.string.OFF);
-        btnLegacySocketSwitch3.setText(R.string.OFF);
-        btnLegacySocketSwitch4.setText(R.string.OFF);
+        swSk1.setOnClickListener(SwListener);
+        swSk2.setOnClickListener(SwListener);
+        swSk3.setOnClickListener(SwListener);
+        swSk4.setOnClickListener(SwListener);
+
+        txVStat.bringToFront();
 
     }
 //ctrl+alt+M
     private void findViews() {
-        btnLegacySocketSwitch1 = findViewById(R.id.btnLegacySocketSwitch1);
-        btnLegacySocketSwitch2 = findViewById(R.id.btnLegacySocketSwitch2);
-        btnLegacySocketSwitch3 = findViewById(R.id.btnLegacySocketSwitch3);
-        btnLegacySocketSwitch4 = findViewById(R.id.btnLegacySocketSwitch4);
+        swSk1 = findViewById(R.id.swSk1);
+        swSk2 = findViewById(R.id.swSk2);
+        swSk3 = findViewById(R.id.swSk3);
+        swSk4 = findViewById(R.id.swSk4);
 
+        btnSkStat1 = findViewById(R.id.btnSkStat1);
+        btnSkStat2 = findViewById(R.id.btnSkStat2);
+        btnSkStat3 = findViewById(R.id.btnSkStat3);
+        btnSkStat4 = findViewById(R.id.btnSkStat4);
+
+        btnSkAlarm1 = findViewById(R.id.btnSkAlarm1);
+        btnSkAlarm2 = findViewById(R.id.btnSkAlarm2);
+        btnSkAlarm3 = findViewById(R.id.btnSkAlarm3);
+        btnSkAlarm4 = findViewById(R.id.btnSkAlarm4);
+
+        btnSkChart1 = findViewById(R.id.btnSkChart1);
+        btnSkChart2 = findViewById(R.id.btnSkChart2);
+        btnSkChart3 = findViewById(R.id.btnSkChart3);
+        btnSkChart4 = findViewById(R.id.btnSkChart4);
+
+        txVStat = findViewById(R.id.txVStat);
 
     }
 
+    private Switch.OnClickListener SwListener = new Switch.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            final Switch t = (Switch)v;
+            String switchText = t.getText().toString();
+            final int switchId = t.getId();
+            String switchOnOff;
+            if (t.isChecked()) {
+                switchOnOff = getResources().getString(R.string.open);
+            }
+            else {
+                switchOnOff = getResources().getString(R.string.close);
+            }
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(R.string.confirm)
+                    .setMessage(switchOnOff + " " + switchText + "?")
+                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String SnackbarText;
+                            int i = 0;
+                            String IO = "";
+                            switch (switchId){
+                                case R.id.swSk1:
+                                    if(t.isChecked()) {
+                                        btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
+                                        i = 1;
+                                        IO = getResources().getString(R.string.turnOn);
+                                    }
+                                    else{
+                                        btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
+                                        i = 1;
+                                        IO = getResources().getString(R.string.turnOff);
+                                    }
+                                    break;
+                                case R.id.swSk2:
+                                    if(t.isChecked()) {
+                                        btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
+                                        i = 2;
+                                        IO = getResources().getString(R.string.turnOn);
+                                    }
+                                    else{
+                                        btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
+                                        i = 2;
+                                        IO = getResources().getString(R.string.turnOff);
+                                    }
+                                    break;
+                                case R.id.swSk3:
+                                    if(t.isChecked()) {
+                                        btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
+                                        IO = getResources().getString(R.string.turnOn);
+                                        i = 3;
+                                    }
+                                    else{
+                                        btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
+                                        i = 3;
+                                        IO = getResources().getString(R.string.turnOff);
 
+                                    }
+                                    break;
+                                case  R.id.swSk4:
+                                    if(t.isChecked()) {
+                                        btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
+                                        i = 4;
+                                        IO = getResources().getString(R.string.turnOn);
+                                    }
+                                    else{
+                                        btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
+                                        i = 4;
+                                        IO = getResources().getString(R.string.turnOff);
+
+                                    }
+                                    break;
+                            }
+                            SnackbarText = getResources().getString(R.string.socket) + " " + i + " " + IO;
+                            snackbar = Snackbar.make(findViewById(android.R.id.content), SnackbarText, Snackbar.LENGTH_SHORT)
+                                    .setAction("DISMISS",null);
+
+                            snackBarView = snackbar.getView();
+                            snackBarView.setBackgroundColor(blue);
+                            snackBarTxV = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+
+                            snackbar.show();
+                        }
+                    })
+                    .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(t.isChecked()) {
+                                t.setChecked(false);
+                            }
+                            else{
+                                t.setChecked(true);
+                            }
+                        }
+                    })
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            if(t.isChecked()) {
+                                t.setChecked(false);
+                            }
+                            else{
+                                t.setChecked(true);
+                            }
+                        }
+                    })
+                    .show();
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -119,12 +236,32 @@ public class MainActivity extends AppCompatActivity {
         switch (id)
         {
             case R.id.action_settings:
-                Intent intentSetting = new Intent(this, SettingsActivity.class);
-                startActivity(intentSetting);
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.confirm)
+                        .setMessage(R.string.intent_exit)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intentSetting = new Intent(MainActivity.this, SettingsActivity.class);
+                                startActivity(intentSetting);
+                            }
+                        })
+                        .setNegativeButton(getResources().getString(R.string.cancel),null)
+                        .show();
                 break;
             case R.id.action_bt:
-                Intent intentBT = new Intent(this, BTActivity.class);
-                startActivity(intentBT);
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.confirm)
+                        .setMessage(R.string.intent_exit)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intentBT = new Intent(MainActivity.this, BTActivity.class);
+                                startActivity(intentBT);
+                            }
+                        })
+                        .setNegativeButton(getResources().getString(R.string.cancel),null)
+                        .show();
                 break;
             case  R.id.action_help:
 
@@ -141,114 +278,5 @@ public class MainActivity extends AppCompatActivity {
          */
 
         return super.onOptionsItemSelected(item);
-    }
-
-    // TODO: 2018/10/28 更改按鈕文字 content_main.xml中多餘的layout語法
-
-    //onClick
-    public void SocketSW1(View view){
-        btnLegacySocketSwText1 = btnLegacySocketSwitch1.getText().toString();
-        if (getString(R.string.OFF).equals(btnLegacySocketSwText1))
-        {
-            /**
-             * try{
-            * }catch ()
-            * {
-            * }
-             * */
-
-            btnLegacySocketSwitch1.setText(R.string.ON);
-            Snackbar.make(view,"Set socket 1 ON", Snackbar.LENGTH_LONG)
-                    .setAction("DISMISS", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Toast.makeText(MainActivity.this,"你点击了action",Toast.LENGTH_SHORT).show();
-                }
-            }).show();
-        }
-        else if(getString(R.string.ON).equals(btnLegacySocketSwText1))
-        {
-            btnLegacySocketSwitch1.setText(R.string.OFF);
-
-            Snackbar.make(view, "Set socket 1 OFF", Snackbar.LENGTH_LONG)
-                    .setAction("DISMISS", new View.OnClickListener(){
-                        @Override
-                        public void onClick(View v) {
-                        }
-                    })
-                    .show();
-        }
-    }
-
-
-    public void SocketSW2(View view){
-        btnLegacySocketSwText2 = btnLegacySocketSwitch2.getText().toString();
-        if (getString(R.string.OFF).equals(btnLegacySocketSwText2))
-        {
-            //try{
-            // }catch ()
-            // {
-            // }
-
-            btnLegacySocketSwitch2.setText(R.string.ON);
-
-
-            snackbar = Snackbar.make(view, "Set socket 2 ON", Snackbar.LENGTH_SHORT)
-                               .setAction("DISMISS",null);
-
-            snackBarView = snackbar.getView();
-            snackBarView.setBackgroundColor(blue);
-            snackBarTxV = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
-            /* snackBarTxV.setTextColor(red); */
-            snackbar.show();
-
-        }
-        else if(getString(R.string.ON).equals(btnLegacySocketSwText2))
-        {
-            btnLegacySocketSwitch2.setText(R.string.OFF);
-        }
-
-    }
-
-    public void SocketSW3(View view){
-        btnLegacySocketSwText3 = btnLegacySocketSwitch3.getText().toString();
-        if (getString(R.string.OFF).equals(btnLegacySocketSwText3))
-        {
-            //try{
-            // }catch ()
-            // {
-            // }
-
-            btnLegacySocketSwitch3.setText(R.string.ON);
-        }
-        else if(getString(R.string.ON).equals(btnLegacySocketSwText3))
-        {
-            btnLegacySocketSwitch3.setText(R.string.OFF);
-        }
-
-    }
-
-    public void SocketSW4(View view){
-        btnLegacySocketSwText4 = btnLegacySocketSwitch4.getText().toString();
-        if (getString(R.string.OFF).equals(btnLegacySocketSwText4))
-        {
-            //try{
-            // }catch ()
-            // {
-            // }
-
-            btnLegacySocketSwitch4.setText(R.string.ON);
-        }
-        else if(getString(R.string.ON).equals(btnLegacySocketSwText4))
-        {
-            btnLegacySocketSwitch4.setText(R.string.OFF);
-        }
-
-    }
-
-
-    public void BTSw(View view){
-        Intent intent = new Intent(this, BTActivity.class);
-        startActivity(intent);
     }
 }

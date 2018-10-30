@@ -4,12 +4,24 @@
     <string name="action_help">Help</string>
     <string name="ON">ON</string>
     <string name="OFF">OFF</string>
-    <string name="text_socket_1">Socket 1</string>
-    <string name="text_socket_4">Socket 4</string>
-    <string name="text_socket_3">Socket 3</string>
-    <string name="text_socket_2">Socket 2</string>
+    <string name="socket_1">Socket 1 </string>
+    <string name="socket_4">Socket 4 </string>
+    <string name="socket_3">Socket 3 </string>
+    <string name="socket_2">Socket 2 </string>
     <string name="socket">Socket</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="btnSkStatDescription">Status of the socket. Click to show more information.</string>
+    <string name="btnSkAlarmDescription">Alarm of the socket. Click to show more information.</string>
+    <string name="btnSkChartDescription">Current chart of the socket. click to show more information.</string>
+    <string name="title">智慧居家系統</string>
+    <string name="turnOn">has been turned on.</string>
+    <string name="turnOff">has been turned off.</string>
+    <string name="intent_exit">Leave this page will stop the connection with Smart Socket.</string>
+    <string name="confirm">Confirm</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+
 
     <!-- Strings related to Settings -->
 
@@ -82,6 +94,11 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+
+
+
+    <!-- BT Dev -->
     <string name="title_activity_bt">BTActivity</string>
     <string name="read_buffer"><![CDATA[<Read Buffer>]]></string>
     <string name="bluetooth_status"><![CDATA[<Bluetooth Status>]]></string>
@@ -90,7 +107,14 @@
     <string name="Bluetooth_is_already_on">Bluetooth is already on</string>
     <string name="Bluetooth_tuned_on">Bluetooth tuned on</string>
 
-    <string name="Blank_test">A
+
+
+
+
+
+
+
+    <string name="Blank_test">
         \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
         \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
         \n\n\n\n\n\n
@@ -101,6 +125,8 @@
 
 
 
-        B</string>
+        </string>
+    <string name="cancel">Cancel</string>
+
 
 </resources>
