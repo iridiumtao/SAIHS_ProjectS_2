@@ -211,6 +211,7 @@
             android:layout_height="32dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/btnSkChartDescription"
+            android:onClick="sk2"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

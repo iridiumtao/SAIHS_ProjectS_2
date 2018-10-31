@@ -1,37 +1,21 @@
 package app.jerry960331.saihs_projects_2;
 
-import android.Manifest;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.sip.SipSession;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 
 public class MainActivity extends AppCompatActivity {
@@ -49,15 +33,15 @@ public class MainActivity extends AppCompatActivity {
 
     //color
     //may be added to color.xml
-    public static  int red = 0xfff44336;
-    public static  int green = 0xff4caf50;
-    public static  int blue = 0xff2195f3;
-    public static  int orange = 0xffffc107;
+    public static int red = 0xfff44336;
+    public static int green = 0xff4caf50;
+    public static int blue = 0xff2195f3;
+    public static int orange = 0xffffc107;
 
     //snackbar customize
     private Snackbar snackbar;
     private View snackBarView;
-    private TextView txVStat,snackBarTxV;
+    private TextView txVStat, snackBarTxV;
 
 
 //alt+enter 字串抽離
@@ -82,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
         txVStat.bringToFront();
 
     }
-//ctrl+alt+M
+
+    //ctrl+alt+M
     private void findViews() {
         swSk1 = findViewById(R.id.swSk1);
         swSk2 = findViewById(R.id.swSk2);
@@ -108,17 +93,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private Switch.OnClickListener SwListener = new Switch.OnClickListener(){
+    private Switch.OnClickListener SwListener = new Switch.OnClickListener() {
         @Override
-        public void onClick(View v){
-            final Switch t = (Switch)v;
+        public void onClick(View v) {
+            final Switch t = (Switch) v;
             String switchText = t.getText().toString();
             final int switchId = t.getId();
             String switchOnOff;
             if (t.isChecked()) {
                 switchOnOff = getResources().getString(R.string.open);
-            }
-            else {
+            } else {
                 switchOnOff = getResources().getString(R.string.close);
             }
             new AlertDialog.Builder(MainActivity.this)
@@ -130,51 +114,48 @@ public class MainActivity extends AppCompatActivity {
                             String SnackbarText;
                             int i = 0;
                             String IO = "";
-                            switch (switchId){
+                            switch (switchId) {
                                 case R.id.swSk1:
-                                    if(t.isChecked()) {
+                                    if (t.isChecked()) {
                                         btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
                                         i = 1;
                                         IO = getResources().getString(R.string.turnOn);
-                                    }
-                                    else{
+
+                                    } else {
                                         btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
                                         i = 1;
                                         IO = getResources().getString(R.string.turnOff);
                                     }
                                     break;
                                 case R.id.swSk2:
-                                    if(t.isChecked()) {
+                                    if (t.isChecked()) {
                                         btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
                                         i = 2;
                                         IO = getResources().getString(R.string.turnOn);
-                                    }
-                                    else{
+                                    } else {
                                         btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
                                         i = 2;
                                         IO = getResources().getString(R.string.turnOff);
                                     }
                                     break;
                                 case R.id.swSk3:
-                                    if(t.isChecked()) {
+                                    if (t.isChecked()) {
                                         btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
                                         IO = getResources().getString(R.string.turnOn);
                                         i = 3;
-                                    }
-                                    else{
+                                    } else {
                                         btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
                                         i = 3;
                                         IO = getResources().getString(R.string.turnOff);
 
                                     }
                                     break;
-                                case  R.id.swSk4:
-                                    if(t.isChecked()) {
+                                case R.id.swSk4:
+                                    if (t.isChecked()) {
                                         btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
                                         i = 4;
                                         IO = getResources().getString(R.string.turnOn);
-                                    }
-                                    else{
+                                    } else {
                                         btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
                                         i = 4;
                                         IO = getResources().getString(R.string.turnOff);
@@ -184,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             SnackbarText = getResources().getString(R.string.socket) + " " + i + " " + IO;
                             snackbar = Snackbar.make(findViewById(android.R.id.content), SnackbarText, Snackbar.LENGTH_SHORT)
-                                    .setAction("DISMISS",null);
+                                    .setAction("DISMISS", null);
 
                             snackBarView = snackbar.getView();
                             snackBarView.setBackgroundColor(blue);
@@ -196,10 +177,9 @@ public class MainActivity extends AppCompatActivity {
                     .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if(t.isChecked()) {
+                            if (t.isChecked()) {
                                 t.setChecked(false);
-                            }
-                            else{
+                            } else {
                                 t.setChecked(true);
                             }
                         }
@@ -207,10 +187,9 @@ public class MainActivity extends AppCompatActivity {
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            if(t.isChecked()) {
+                            if (t.isChecked()) {
                                 t.setChecked(false);
-                            }
-                            else{
+                            } else {
                                 t.setChecked(true);
                             }
                         }
@@ -233,8 +212,7 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch (id)
-        {
+        switch (id) {
             case R.id.action_settings:
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.confirm)
@@ -246,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(intentSetting);
                             }
                         })
-                        .setNegativeButton(getResources().getString(R.string.cancel),null)
+                        .setNegativeButton(getResources().getString(R.string.cancel), null)
                         .show();
                 break;
             case R.id.action_bt:
@@ -260,23 +238,50 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(intentBT);
                             }
                         })
-                        .setNegativeButton(getResources().getString(R.string.cancel),null)
+                        .setNegativeButton(getResources().getString(R.string.cancel), null)
                         .show();
                 break;
-            case  R.id.action_help:
-
-
+            case R.id.action_notification:
+                makeOreoNotification();
+                break;
         }
-
-        /**
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
-        }
-         */
-
         return super.onOptionsItemSelected(item);
     }
+
+
+    private void makeOreoNotification() {
+        String channelId = "test1";
+        String channelName = "testName1";
+        final int NOTIFICATION_ID = 8;
+
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        NotificationChannel channel = new NotificationChannel(
+                channelId,
+                channelName, NotificationManager.IMPORTANCE_HIGH);
+
+        manager.createNotificationChannel(channel);
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setContentTitle("title")
+                        .setContentText("text")
+                        .setWhen(System.currentTimeMillis())
+                        .setChannelId(channelId);
+
+        manager.notify(1, builder.build());
+
+    }
+
+
+    /**
+     //noinspection SimplifiableIfStatement
+     if (id == R.id.action_settings) {
+     Intent intent = new Intent(this, SettingsActivity.class);
+     startActivity(intent);
+     return true;
+     }
+     */
+
+
 }
