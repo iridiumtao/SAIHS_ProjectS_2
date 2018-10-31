@@ -22,10 +22,13 @@
                 android:id="@+id/txVStat"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="\n\n\n
-                門鎖安全：正常 \n
-                煙霧感測：正常 \n
-                插座狀況：正常
+                android:text="\n
+           家中即時空氣狀況\n
+           ｜溫度：20°C\n
+           ｜濕度：80%\n
+           ｜空氣品質：良好\n
+           ｜未偵測到有害氣體
+
 "
                 android:textAlignment="viewStart"
                 android:textAppearance="@android:style/TextAppearance.Material"
