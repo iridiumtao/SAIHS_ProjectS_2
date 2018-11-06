@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ProjectS</string>
+    <string name="app_name">智慧居家系統</string>
     <string name="action_settings">設定</string>
     <string name="action_help">幫助</string>
     <string name="ON">開</string>
