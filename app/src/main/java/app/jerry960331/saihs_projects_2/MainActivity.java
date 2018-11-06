@@ -2,9 +2,14 @@ package app.jerry960331.saihs_projects_2;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -20,6 +25,9 @@ import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.util.UUID;
+
 
 public class MainActivity extends AppCompatActivity {
     private ImageButton
@@ -31,11 +39,20 @@ public class MainActivity extends AppCompatActivity {
             swSk1,
             swSk2,
             swSk3,
-            swSk4;
+            swSk4,
+            swBT,
+            swWiFi;
 
-    String BT_com;
-    String Wi_com;
+    private ProgressDialog progress;
 
+    String BT_comm;
+    String WiFi_comm;
+    String BTAddress = null;
+
+    static final UUID BTUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private boolean isBtConnected = false;
+    BluetoothAdapter btAdapter = null;
+    BluetoothSocket btSocket = null;
 
     //color
     //may be added to color.xml
@@ -69,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
         swSk3.setOnClickListener(SwListener);
         swSk4.setOnClickListener(SwListener);
 
+        swBT.setOnClickListener(SwListener);
+        swWiFi.setOnClickListener(SwListener);
+
         txVStat.bringToFront();
 
     }
@@ -79,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
         swSk2 = findViewById(R.id.swSk2);
         swSk3 = findViewById(R.id.swSk3);
         swSk4 = findViewById(R.id.swSk4);
+
+        swBT = findViewById(R.id.swBT);
+        swWiFi = findViewById(R.id.swWiFi);
 
         btnSkStat1 = findViewById(R.id.btnSkStat1);
         btnSkStat2 = findViewById(R.id.btnSkStat2);
@@ -103,11 +126,11 @@ public class MainActivity extends AppCompatActivity {
     private Switch.OnClickListener SwListener = new Switch.OnClickListener() {
         @Override
         public void onClick(View v) {
-            final Switch t = (Switch) v;
-            String switchText = t.getText().toString();
-            final int switchId = t.getId();
+            final Switch s = (Switch) v;
+            String switchText = s.getText().toString();
+            final int switchId = s.getId();
             String switchOnOff;
-            if (t.isChecked()) {
+            if (s.isChecked()) {
                 switchOnOff = getResources().getString(R.string.open);
             } else {
                 switchOnOff = getResources().getString(R.string.close);
@@ -123,99 +146,171 @@ public class MainActivity extends AppCompatActivity {
                             String IO = "";
                             switch (switchId) {
                                 case R.id.swSk1:
-                                    if (t.isChecked()) {
+                                    if (s.isChecked()) {
                                         btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
                                         i = 1;
                                         IO = getResources().getString(R.string.turnOn);
-                                        BT_com = "11B";
-                                        Wi_com = "11W";
+                                        BT_comm = "11B";
+                                        WiFi_comm = "11W";
 
                                     } else {
                                         btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
                                         i = 1;
                                         IO = getResources().getString(R.string.turnOff);
-                                        BT_com = "10B";
-                                        Wi_com = "10W";
+                                        BT_comm = "10B";
+                                        WiFi_comm = "10W";
                                     }
                                     break;
                                 case R.id.swSk2:
-                                    if (t.isChecked()) {
+                                    if (s.isChecked()) {
                                         btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
                                         i = 2;
                                         IO = getResources().getString(R.string.turnOn);
-                                        BT_com = "21B";
-                                        Wi_com = "21W";
+                                        BT_comm = "21B";
+                                        WiFi_comm = "21W";
                                     } else {
                                         btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
                                         i = 2;
                                         IO = getResources().getString(R.string.turnOff);
-                                        BT_com = "20B";
-                                        Wi_com = "20W";
+                                        BT_comm = "20B";
+                                        WiFi_comm = "20W";
                                     }
                                     break;
                                 case R.id.swSk3:
-                                    if (t.isChecked()) {
+                                    if (s.isChecked()) {
                                         btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
                                         IO = getResources().getString(R.string.turnOn);
                                         i = 3;
-                                        BT_com = "31B";
-                                        Wi_com = "31W";
+                                        BT_comm = "31B";
+                                        WiFi_comm = "31W";
                                     } else {
                                         btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
                                         i = 3;
                                         IO = getResources().getString(R.string.turnOff);
-                                        BT_com = "30B";
-                                        Wi_com = "30W";
+                                        BT_comm = "30B";
+                                        WiFi_comm = "30W";
 
                                     }
                                     break;
                                 case R.id.swSk4:
-                                    if (t.isChecked()) {
+                                    if (s.isChecked()) {
                                         btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
                                         i = 4;
                                         IO = getResources().getString(R.string.turnOn);
+                                        BT_comm = "41B";
+                                        WiFi_comm = "41W";
                                     } else {
                                         btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
                                         i = 4;
                                         IO = getResources().getString(R.string.turnOff);
+                                        BT_comm = "40B";
+                                        WiFi_comm = "40W";
+                                    }
+                                    break;
+                                case R.id.swBT:
+                                    if(s.isChecked()){
+                                        new ConnectBT().execute();
+                                    }else {
 
                                     }
                                     break;
                             }
-                            SnackbarText = getResources().getString(R.string.socket) + " " + i + " " + IO;
-                            snackbar = Snackbar.make(findViewById(android.R.id.content), SnackbarText, Snackbar.LENGTH_SHORT)
-                                    .setAction("DISMISS", null);
+                            CustomizedSnackBar(getResources().getString(R.string.socket) + " " + i + " " + IO);
 
-                            snackBarView = snackbar.getView();
-                            snackBarView.setBackgroundColor(blue);
-                            snackBarTxV = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
-
-                            snackbar.show();
                         }
                     })
                     .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (t.isChecked()) {
-                                t.setChecked(false);
+                            if (s.isChecked()) {
+                                s.setChecked(false);
                             } else {
-                                t.setChecked(true);
+                                s.setChecked(true);
                             }
                         }
                     })
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            if (t.isChecked()) {
-                                t.setChecked(false);
+                            if (s.isChecked()) {
+                                s.setChecked(false);
                             } else {
-                                t.setChecked(true);
+                                s.setChecked(true);
                             }
                         }
                     })
                     .show();
         }
     };
+
+    // TODO: 11/6/2018 藍芽點擊開關後 Intent到裝置選擇頁面或自動連線(或許用一個Dialog來處理) 選擇裝置後傳回本頁面。
+    //https://github.com/Mayoogh/Arduino-Bluetooth-Basic/blob/master/LED-master/app/src/main/java/com/led_on_off/led/DeviceList.java
+    //https://github.com/Mayoogh/Arduino-Bluetooth-Basic/blob/master/LED-master/app/src/main/java/com/led_on_off/led/ledControl.java
+
+    private class ConnectBT extends AsyncTask<Void ,Void ,Void>
+    {
+        private boolean connectSuccess = true;
+
+        @Override
+        protected void onPreExecute()
+        {
+            progress = ProgressDialog.show(MainActivity.this, "Connecting...", "Please wait.");  //show a progress dialog
+        }
+        @Override
+        protected Void doInBackground(Void... devices) //while the progress dialog is shown, the connection is done in background
+        {
+            try
+            {
+                if (btSocket == null || !isBtConnected)
+                {
+                    btAdapter = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
+                    BluetoothDevice dispositivo =btAdapter.getRemoteDevice(BTAddress);//connects to the device's address and checks if it's available
+                    btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(BTUUID);//create a RFCOMM (SPP) connection
+                    BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+                    btSocket.connect();//start connection
+                }
+            }
+            catch (IOException e)
+            {
+                connectSuccess = false;//if the try failed, you can check the exception here
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went fine
+        {
+            super.onPostExecute(result);
+
+            if (!connectSuccess)
+            {
+                CustomizedSnackBar("Connection Failed. Is it a SPP Bluetooth? Try again.");
+                finish();
+            }
+            else
+            {
+                CustomizedSnackBar("Connected.");
+                isBtConnected = true;
+            }
+            progress.dismiss();
+        }
+    }
+
+
+
+    public void CustomizedSnackBar(String SnackBarText){
+            snackbar = Snackbar.make(findViewById(android.R.id.content), SnackBarText, Snackbar.LENGTH_SHORT)
+                    .setAction("DISMISS", null);
+
+            snackBarView = snackbar.getView();
+            snackBarView.setBackgroundColor(blue);
+            snackBarTxV = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+
+            snackbar.show();
+    }
+
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -335,3 +430,5 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
+
+
