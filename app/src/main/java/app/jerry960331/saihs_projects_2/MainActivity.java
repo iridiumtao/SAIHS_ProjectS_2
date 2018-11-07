@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
 
     //btnConnect OnClick
     public void Connect (View v){
-        if(connectionMethod == "Bluetooth") {
+        if(connectionMethod == "Bluetooth") {// TODO: 2018/11/8 藍芽連線這段好像有狀況 
             try {
                 if (!btAdapter.isEnabled()) {//如果藍芽沒開啟
                     Intent enableBtIntent = new
@@ -348,7 +348,8 @@ public class MainActivity extends AppCompatActivity {
             }.start();
             //OuterHandler();// TODO: 2018/11/8 看謙提說要怎麼弄
         }else if(connectionMethod == "Wi-Fi"){
-
+            Toast.makeText(getBaseContext(), "Unavailable",
+                    Toast.LENGTH_SHORT).show();
         }
 
     }

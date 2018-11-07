@@ -306,6 +306,7 @@
             android:id="@+id/swConnectionMethod"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
+            android:checked="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
