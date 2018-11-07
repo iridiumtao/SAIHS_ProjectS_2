@@ -8,9 +8,10 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
@@ -20,12 +21,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 
@@ -40,22 +47,38 @@ public class MainActivity extends AppCompatActivity {
             swSk2,
             swSk3,
             swSk4,
-            swBT,
-            swWiFi;
+            swConnectionMethod;
+
+    private Button btnConnect;
+
+    String connectionMethod = "Bluetooth";
 
     private ProgressDialog progress;
 
+    String notificationTitle = "安全警示",
+           notificationText = "插座電流狀況異常！請立即前往查看";
+
+    //Bluetooth
     String BT_comm;
     String WiFi_comm;
     String BTAddress = null;
 
-    static final UUID BTUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    private boolean isBtConnected = false;
+    static final UUID btUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private boolean isBTConnected = false;
     BluetoothAdapter btAdapter = null;
     BluetoothSocket btSocket = null;
+    private final static int REQUEST_ENABLE_BT = 1;
+    private final static int MESSAGE_READ = 2;
+    private final static int CONNECTING_STATUS = 3;
+    OutputStream btOutputStream;
+    InputStream btInputStream;
+    static ConnectedThread btConnectedThread;
+    Handler btHandler;
+    static StringBuilder btDataString = new StringBuilder();
+
+    boolean isWiFiConnected = false;
 
     //color
-    //may be added to color.xml
     public static int red = 0xfff44336;
     public static int green = 0xff4caf50;
     public static int blue = 0xff2195f3;
@@ -86,8 +109,7 @@ public class MainActivity extends AppCompatActivity {
         swSk3.setOnClickListener(SwListener);
         swSk4.setOnClickListener(SwListener);
 
-        swBT.setOnClickListener(SwListener);
-        swWiFi.setOnClickListener(SwListener);
+        swConnectionMethod.setOnCheckedChangeListener(SwConnectionMethodListener);
 
         txVStat.bringToFront();
 
@@ -99,9 +121,9 @@ public class MainActivity extends AppCompatActivity {
         swSk2 = findViewById(R.id.swSk2);
         swSk3 = findViewById(R.id.swSk3);
         swSk4 = findViewById(R.id.swSk4);
+        swConnectionMethod = findViewById(R.id.swConnectionMethod);
 
-        swBT = findViewById(R.id.swBT);
-        swWiFi = findViewById(R.id.swWiFi);
+        btnConnect = findViewById(R.id.btnConnect);
 
         btnSkStat1 = findViewById(R.id.btnSkStat1);
         btnSkStat2 = findViewById(R.id.btnSkStat2);
@@ -207,13 +229,6 @@ public class MainActivity extends AppCompatActivity {
                                         WiFi_comm = "40W";
                                     }
                                     break;
-                                case R.id.swBT:
-                                    if(s.isChecked()){
-                                        new ConnectBT().execute();
-                                    }else {
-
-                                    }
-                                    break;
                             }
                             CustomizedSnackBar(getResources().getString(R.string.socket) + " " + i + " " + IO);
 
@@ -243,57 +258,198 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    // TODO: 11/6/2018 藍芽點擊開關後 Intent到裝置選擇頁面或自動連線(或許用一個Dialog來處理) 選擇裝置後傳回本頁面。
-    //https://github.com/Mayoogh/Arduino-Bluetooth-Basic/blob/master/LED-master/app/src/main/java/com/led_on_off/led/DeviceList.java
-    //https://github.com/Mayoogh/Arduino-Bluetooth-Basic/blob/master/LED-master/app/src/main/java/com/led_on_off/led/ledControl.java
-
-    private class ConnectBT extends AsyncTask<Void ,Void ,Void>
-    {
-        private boolean connectSuccess = true;
-
+    private Switch.OnCheckedChangeListener SwConnectionMethodListener = new Switch.OnCheckedChangeListener(){
         @Override
-        protected void onPreExecute()
-        {
-            progress = ProgressDialog.show(MainActivity.this, "Connecting...", "Please wait.");  //show a progress dialog
-        }
-        @Override
-        protected Void doInBackground(Void... devices) //while the progress dialog is shown, the connection is done in background
-        {
-            try
-            {
-                if (btSocket == null || !isBtConnected)
-                {
-                    btAdapter = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
-                    BluetoothDevice dispositivo =btAdapter.getRemoteDevice(BTAddress);//connects to the device's address and checks if it's available
-                    btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(BTUUID);//create a RFCOMM (SPP) connection
-                    BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                    btSocket.connect();//start connection
+        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked){
+            if(compoundButton.isChecked()) {
+                //BT
+                if(!isWiFiConnected || !isBTConnected) {
+                    connectionMethod = "Bluetooth";
+                    Toast.makeText(getApplicationContext(), "Change Connection Method to Bluetooth.",
+                            Toast.LENGTH_SHORT).show();
+                }else if(isWiFiConnected = true){
+// TODO: 2018/11/8 dialog詢問是否要切換、斷一斷、連一連
                 }
             }
-            catch (IOException e)
-            {
-                connectSuccess = false;//if the try failed, you can check the exception here
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went fine
-        {
-            super.onPostExecute(result);
+            else{
+                //Wi-Fi
+                if(!isWiFiConnected || !isBTConnected) {
+                    connectionMethod = "Wi-Fi";
+                    Toast.makeText(getApplicationContext(), "Change Connection Method to Wi-Fi.",
+                            Toast.LENGTH_SHORT).show();
+                }else if(isBTConnected = false){
 
-            if (!connectSuccess)
-            {
-                CustomizedSnackBar("Connection Failed. Is it a SPP Bluetooth? Try again.");
-                finish();
+                }
             }
-            else
-            {
-                CustomizedSnackBar("Connected.");
-                isBtConnected = true;
+        }
+    };
+
+    //btnConnect OnClick
+    public void Connect (View v){
+        if(connectionMethod == "Bluetooth") {
+            try {
+                if (!btAdapter.isEnabled()) {//如果藍芽沒開啟
+                    Intent enableBtIntent = new
+                            Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);//跳出視窗
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    //開啟設定藍芽畫面
+                    Toast.makeText(getApplicationContext(), R.string.Bluetooth_tuned_on, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.Bluetooth_is_already_on,
+                            Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), R.string.BTCrash,
+                        Toast.LENGTH_SHORT).show();
+                return;
             }
-            progress.dismiss();
+
+            final String address = "98:D3:34:91:18:35"; //HC05的address
+            final String name = "SmartHomeKit";
+
+            new Thread() {
+                public void run() {
+                    boolean fail = false;
+                    //取得裝置MAC找到連接的藍芽裝置
+                    BluetoothDevice device = btAdapter.getRemoteDevice(address);
+
+                    try {
+                        btSocket = createBluetoothSocket(device);
+                    } catch (IOException e) {
+                        fail = true;
+                        Toast.makeText(getBaseContext(), "Socket creation failed",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    // Establish the Bluetooth socket connection.
+                    try {
+                        btSocket.connect(); //建立藍芽連線
+                    } catch (IOException e) {
+                        try {
+                            fail = true;
+                            btSocket.close(); //關閉socket
+                            //開啟執行緒 顯示訊息
+                            btHandler.obtainMessage(CONNECTING_STATUS, -1, -1)
+                                    .sendToTarget();
+                        } catch (IOException e2) {
+                            //insert code to deal with this
+                            Toast.makeText(getBaseContext(), "Socket creation failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    if (!fail) {
+                        //開啟執行緒用於傳輸及接收資料
+                        btConnectedThread = new ConnectedThread(btSocket);
+                        btConnectedThread.start();
+                        //開啟新執行緒顯示連接裝置名稱
+                        btHandler.obtainMessage(CONNECTING_STATUS, 1, -1, name)
+                                .sendToTarget();
+                    }
+                }
+            }.start();
+            //OuterHandler();// TODO: 2018/11/8 看謙提說要怎麼弄
+        }else if(connectionMethod == "Wi-Fi"){
+
+        }
+
+    }
+    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws
+            IOException {
+        return device.createRfcommSocketToServiceRecord(btUUID);
+        //creates secure outgoing connection with BT device using UUID
+    }
+
+    private class ConnectedThread extends Thread {
+        private final BluetoothSocket mmSocket;
+        private final InputStream mmInStream;
+        private final OutputStream mmOutStream;
+
+        public ConnectedThread(BluetoothSocket socket) {
+            mmSocket = socket;
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            // Get the input and output streams, using temp objects because
+            // member streams are final
+            try {
+                tmpIn = socket.getInputStream();
+                tmpOut = socket.getOutputStream();
+            } catch (IOException e) {
+            }
+
+            mmInStream = tmpIn;
+            mmOutStream = tmpOut;
+        }
+
+        public void run() {
+            byte[] buffer = new byte[1024];  // buffer store for the stream
+            int bytes; // bytes returned from read()
+            // Keep listening to the InputStream until an exception occurs
+            while (true) {
+                try {
+                    // Read from the InputStream
+                    bytes = mmInStream.available();
+                    if (bytes != 0) {
+                        SystemClock.sleep(100);
+                        bytes = mmInStream.available();
+                        bytes = mmInStream.read(buffer, 0, bytes);
+                        btHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                    break;
+                }
+            }
+        }
+
+        /* Call this from the main activity to send data to the remote device */
+        public void write(String input) {
+            byte[] bytes = input.getBytes();
+            try {
+                mmOutStream.write(bytes);
+            } catch (IOException e) {
+            }
         }
     }
+
+
+
+    private static class OuterHandler extends Handler {
+        private final WeakReference<MainActivity> mActivity;
+
+        public OuterHandler(MainActivity activity) {
+            mActivity = new WeakReference<MainActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            MainActivity activity = mActivity.get();
+            if (activity != null) {
+                // do something...
+                if(msg.what == MESSAGE_READ){
+                    try{
+                        String readMessage = new String((byte[]) msg.obj, "UTF-8");
+                        btDataString.append(readMessage);
+                    }catch (UnsupportedEncodingException uee){
+                        uee.printStackTrace();
+                    }
+                    int endOfLineIndex = btDataString.indexOf("~");
+                    if (endOfLineIndex > 0) {
+                        //tvSB.setText(String.value)
+                        if (btDataString.charAt(0) == '#') {
+                            String a = btDataString.substring(1, 3);
+                        }
+                        btDataString.delete(0, btDataString.length());
+                    }
+                }
+                if (btConnectedThread != null){
+                    String sendData = "";
+                    btConnectedThread.write(sendData);
+                }
+            }
+        }
+    }
+
 
 
 
@@ -307,9 +463,6 @@ public class MainActivity extends AppCompatActivity {
 
             snackbar.show();
     }
-
-
-
 
 
     @Override
@@ -373,8 +526,8 @@ public class MainActivity extends AppCompatActivity {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.icon_notification_home2)
-                        .setContentTitle("安全警示")
-                        .setContentText("插座電流狀況異常！請立即前往查看")
+                        .setContentTitle(notificationTitle)
+                        .setContentText(notificationText)
                         .setColor(getResources().getColor(R.color.colorPrimary))
                         .setPriority(2)
                         .setWhen(System.currentTimeMillis())
@@ -408,10 +561,9 @@ public class MainActivity extends AppCompatActivity {
         //產生通知
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(android.R.drawable.ic_menu_today)
-                        .setContentTitle("This is title")
-                        .setContentText("Testing")
-                        .setContentInfo("This is info")
+                        .setSmallIcon(R.drawable.icon_notification_home2)
+                        .setContentTitle(notificationTitle)
+                        .setContentText(notificationTitle)
                         .setWhen(System.currentTimeMillis());
         //送出通知
         manager.notify(1, builder.build());
