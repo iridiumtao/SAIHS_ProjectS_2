@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         swConnectionMethod.setOnClickListener(SwConnectionMethodListener);
 
         txVStat.bringToFront();
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
 
     }
 
@@ -336,9 +337,6 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                     //開啟設定藍芽畫面
                     Toast.makeText(getApplicationContext(), R.string.Bluetooth_tuned_on, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.Bluetooth_is_already_on,
-                            Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), R.string.BTCrash,
@@ -388,7 +386,34 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }.start();
-            OuterHandler handle = new OuterHandler(this);
+            //OuterHandler handle = new OuterHandler(this);
+
+            btHandler = new Handler(){
+                public void handleMessage(android.os.Message msg){
+
+                        if(msg.what == MESSAGE_READ){
+                            try{
+                                String readMessage = new String((byte[]) msg.obj, "UTF-8");
+                                btDataString.append(readMessage);
+                            }catch (UnsupportedEncodingException uee){
+                                uee.printStackTrace();
+                            }
+                            int endOfLineIndex = btDataString.indexOf("~");
+                            if (endOfLineIndex > 0) {
+                                //tvSB.setText(String.value)
+                                if (btDataString.charAt(0) == '#') {
+                                    String a = btDataString.substring(1, 3);
+                                }
+                                btDataString.delete(0, btDataString.length());
+                            }
+                        }
+                        if (btConnectedThread != null){
+                            String sendData = "";
+                            btConnectedThread.write(sendData);
+                        }
+                    }
+
+            };
 
         }else if(connectionMethod == "Wi-Fi"){
             Toast.makeText(getBaseContext(), "Unavailable",
@@ -396,6 +421,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws
             IOException {
         return device.createRfcommSocketToServiceRecord(btUUID);
@@ -493,6 +519,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void Disconnect() {
+
+
+        if (btSocket != null) {
+            try {
+                btSocket.close();
+            } catch (Exception e) {
+            }
+            btSocket = null;
+        }
+
+    }
+
 
     //seems to be not working
     public void CustomizedAlertDialog(String alertDialogTitle, String alertDialogMessage, String alertDialogPositive, String alertDialogNegative){

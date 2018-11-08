@@ -133,6 +133,9 @@
     <string name="stop_bt_connect_to_wifi">Change this will stop connecting by Bluetooth and try to connect by Wi-Fi.</string>
     <string name="stop_wifi_connect_to_bt">Change this will stop connecting by Wi-Fi and try to connect by Bluetooth.</string>
     <string name="cancelled">Cancelled</string>
+    <string name="connect">Connect</string>
+    <string name="not_connected">Not Connected</string>
+    <string name="bluetooth">Bluetooth</string>
 
 
 </resources>

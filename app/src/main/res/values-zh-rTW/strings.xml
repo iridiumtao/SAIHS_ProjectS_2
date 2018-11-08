@@ -29,4 +29,11 @@
     <string name="close">關閉</string>
     <string name="Change_Connection_Method_BT">變更連線方式為藍芽</string>
     <string name="Change_Connection_Method_WiFI">變更連線方式為Wi-Fi</string>
+    <string name="cancelled">動作已取消</string>
+    <string name="stop_bt_connect_to_wifi">更改此處將會「關閉藍牙連線」並透過Wi-Fi連線</string>
+    <string name="stop_wifi_connect_to_bt">更改此處將會「關閉Wi-Fi連線」並透過藍牙連線</string>
+    <string name="socket_picture">插座圖示</string>
+    <string name="connect">連線</string>
+    <string name="not_connected">未連線</string>
+    <string name="bluetooth">藍牙</string>
 </resources>
