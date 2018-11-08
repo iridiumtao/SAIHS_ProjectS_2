@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     static StringBuilder btDataString = new StringBuilder();
 
     boolean isWiFiConnected = false;
+    boolean confirmSwitch;
 
     //color
     public static int red = 0xfff44336;
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         swSk3.setOnClickListener(SwListener);
         swSk4.setOnClickListener(SwListener);
 
-        swConnectionMethod.setOnCheckedChangeListener(SwConnectionMethodListener);
+        swConnectionMethod.setOnClickListener(SwConnectionMethodListener);
 
         txVStat.bringToFront();
 
@@ -157,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 switchOnOff = getResources().getString(R.string.close);
             }
+
             new AlertDialog.Builder(MainActivity.this)
                     .setTitle(R.string.confirm)
                     .setMessage(switchOnOff + " " + switchText + "?")
@@ -258,28 +260,68 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private Switch.OnCheckedChangeListener SwConnectionMethodListener = new Switch.OnCheckedChangeListener(){
+    private Switch.OnClickListener SwConnectionMethodListener = new Switch.OnClickListener() {
         @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked){
-            if(compoundButton.isChecked()) {
-                //BT
-                if(!isWiFiConnected || !isBTConnected) {
+        public void onClick(View v) {
+            final Switch s = (Switch) v;
+            if(!isWiFiConnected && !isBTConnected){  //若兩者未連線
+                if(s.isChecked()){ //BT被選
                     connectionMethod = "Bluetooth";
-                    Toast.makeText(getApplicationContext(), "Change Connection Method to Bluetooth.",
+                    Toast.makeText(getApplicationContext(), R.string.Change_Connection_Method_BT,
                             Toast.LENGTH_SHORT).show();
-                }else if(isWiFiConnected = true){
-// TODO: 2018/11/8 dialog詢問是否要切換、斷一斷、連一連
-                }
-            }
-            else{
-                //Wi-Fi
-                if(!isWiFiConnected || !isBTConnected) {
+                }else { //WIFI被選
                     connectionMethod = "Wi-Fi";
-                    Toast.makeText(getApplicationContext(), "Change Connection Method to Wi-Fi.",
+                    Toast.makeText(getApplicationContext(), R.string.Change_Connection_Method_WiFI,
                             Toast.LENGTH_SHORT).show();
-                }else if(isBTConnected = false){
-
                 }
+            }else if(isBTConnected){ //若BT已連線
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.confirm)
+                        .setMessage(R.string.stop_bt_connect_to_wifi)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO: 11/8/2018 關閉BT連線，並連接至WIFI
+                            }})
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                s.setChecked(true);
+                                Toast.makeText(getApplicationContext(), R.string.cancelled, Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                s.setChecked(true);
+                                Toast.makeText(getApplicationContext(), R.string.cancelled, Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .show();
+            }else if(isWiFiConnected){ //若WIFI已連線
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.confirm)
+                        .setMessage(R.string.stop_wifi_connect_to_bt)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO: 11/8/2018 關閉WIFI連線，並連接至BT
+                            }})
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                s.setChecked(false);
+                                Toast.makeText(getApplicationContext(), R.string.cancelled, Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                s.setChecked(false);
+                                Toast.makeText(getApplicationContext(), R.string.cancelled, Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .show();
             }
         }
     };
@@ -346,10 +388,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }.start();
-            //OuterHandler();// TODO: 2018/11/8 看謙提說要怎麼弄
+            OuterHandler handle = new OuterHandler(this);
+
         }else if(connectionMethod == "Wi-Fi"){
             Toast.makeText(getBaseContext(), "Unavailable",
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_LONG).show();
         }
 
     }
@@ -451,8 +494,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
+    //seems to be not working
+    public void CustomizedAlertDialog(String alertDialogTitle, String alertDialogMessage, String alertDialogPositive, String alertDialogNegative){
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle(alertDialogTitle)
+                .setMessage(alertDialogMessage)
+                .setPositiveButton(alertDialogPositive, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        confirmSwitch = true;
+                    }})
+                .setNegativeButton(alertDialogNegative, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        confirmSwitch = false;
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        confirmSwitch = false;
+                    }
+                })
+                .show();
+    }
 
     public void CustomizedSnackBar(String SnackBarText){
             snackbar = Snackbar.make(findViewById(android.R.id.content), SnackBarText, Snackbar.LENGTH_SHORT)

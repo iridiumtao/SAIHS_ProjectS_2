@@ -27,4 +27,6 @@
     <string name="btnSkChartDescription">電流表格。點擊以顯示更多資訊。</string>
     <string name="open">開啟</string>
     <string name="close">關閉</string>
+    <string name="Change_Connection_Method_BT">變更連線方式為藍芽</string>
+    <string name="Change_Connection_Method_WiFI">變更連線方式為Wi-Fi</string>
 </resources>

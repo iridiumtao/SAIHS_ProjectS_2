@@ -127,6 +127,12 @@
 
         </string>
     <string name="cancel">Cancel</string>
+    <string name="Change_Connection_Method_BT">Change Connection Method to Bluetooth.</string>
+    <string name="Change_Connection_Method_WiFI">Change Connection Method to Wi-Fi.</string>
+    <string name="socket_picture">Socket Picture</string>
+    <string name="stop_bt_connect_to_wifi">Change this will stop connecting by Bluetooth and try to connect by Wi-Fi.</string>
+    <string name="stop_wifi_connect_to_bt">Change this will stop connecting by Wi-Fi and try to connect by Bluetooth.</string>
+    <string name="cancelled">Cancelled</string>
 
 
 </resources>
