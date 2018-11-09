@@ -196,7 +196,7 @@
             android:id="@+id/btnSkChart1"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginEnd="28dp"
+            android:layout_marginEnd="80dp"
             android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/btnSkChartDescription"
@@ -211,7 +211,7 @@
             android:id="@+id/btnSkChart2"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginEnd="28dp"
+            android:layout_marginEnd="80dp"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="@+id/btnSkAlarm2"
@@ -224,7 +224,7 @@
             android:id="@+id/btnSkChart3"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginEnd="28dp"
+            android:layout_marginEnd="80dp"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="@+id/btnSkAlarm3"
@@ -237,7 +237,7 @@
             android:id="@+id/btnSkChart4"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginEnd="28dp"
+            android:layout_marginEnd="80dp"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="@+id/btnSkAlarm4"
@@ -388,6 +388,66 @@
             app:layout_constraintTop_toTopOf="@+id/textView"
             app:layout_constraintVertical_bias="0.666"
             app:srcCompat="@drawable/ic_warning" />
+
+        <Button
+            android:id="@+id/btnSkAuto1"
+            android:layout_width="50dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_auto"
+            android:text="Auto"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/btnSkChart1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnSkChart1"
+            app:layout_constraintTop_toTopOf="@+id/btnSkChart1" />
+
+        <Button
+            android:id="@+id/btnSkAuto2"
+            android:layout_width="50dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_auto"
+            android:text="Auto"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/btnSkChart2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnSkChart2"
+            app:layout_constraintTop_toTopOf="@+id/btnSkChart2" />
+
+        <Button
+            android:id="@+id/btnSkAuto3"
+            android:layout_width="50dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_auto"
+            android:text="Auto"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/btnSkChart3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnSkChart3"
+            app:layout_constraintTop_toTopOf="@+id/btnSkChart3" />
+
+        <Button
+            android:id="@+id/btnSkAuto4"
+            android:layout_width="50dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_auto"
+            android:text="Auto"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/btnSkChart4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnSkChart4"
+            app:layout_constraintTop_toTopOf="@+id/btnSkChart4" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -49,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
             swSk4,
             swConnectionMethod;
 
-    private Button btnConnect;
+    private Button
+            btnConnect,
+            btnSkAuto1, btnSkAuto2, btnSkAuto3 , btnSkAuto4;
 
     String connectionMethod = "Bluetooth";
 
@@ -78,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
 
     boolean isWiFiConnected = false;
     boolean confirmSwitch;
+
+    boolean AutoOn1 = false;
+    boolean AutoOn2= false;
+    boolean AutoOn3 = false;
+    boolean AutoOn4 = false;
+
+
 
     //color
     public static int red = 0xfff44336;
@@ -109,6 +119,11 @@ public class MainActivity extends AppCompatActivity {
         swSk2.setOnClickListener(SwListener);
         swSk3.setOnClickListener(SwListener);
         swSk4.setOnClickListener(SwListener);
+
+        btnSkAuto1.setOnClickListener(AutoListener);
+        btnSkAuto2.setOnClickListener(AutoListener);
+        btnSkAuto3.setOnClickListener(AutoListener);
+        btnSkAuto4.setOnClickListener(AutoListener);
 
         swConnectionMethod.setOnClickListener(SwConnectionMethodListener);
 
@@ -142,10 +157,70 @@ public class MainActivity extends AppCompatActivity {
         btnSkChart3 = findViewById(R.id.btnSkChart3);
         btnSkChart4 = findViewById(R.id.btnSkChart4);
 
+        btnSkAuto1 = findViewById(R.id.btnSkAuto1);
+        btnSkAuto2 = findViewById(R.id.btnSkAuto2);
+        btnSkAuto3 = findViewById(R.id.btnSkAuto3);
+        btnSkAuto4 = findViewById(R.id.btnSkAuto4);
+
         txVStat = findViewById(R.id.txVStat);
 
     }
 
+    private Button.OnClickListener AutoListener = new Button.OnClickListener(){
+        @Override
+        public  void onClick(View v){
+            final Button b = (Button) v;
+            final int ButtonId = b.getId();
+            switch (ButtonId){
+                case R.id.btnSkAuto1:
+                    if (!AutoOn1){
+                        b.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
+                        b.setTextColor(getResources().getColor(R.color.white));
+                        AutoOn1 = true;
+                    }else{
+                        b.setBackground(getResources().getDrawable(R.drawable.button_auto));
+                        b.setTextColor(getResources().getColor(R.color.colorPrimary));
+                        AutoOn1 = false;
+                        break;
+                    }
+                case R.id.btnSkAuto2:
+                    Drawable drawable = getResources().getDrawable(R.drawable.button_auto);
+                    Drawable drawable2 = b.getBackground();
+                    if (drawable == drawable2){
+                        b.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
+                        b.setTextColor(getResources().getColor(R.color.white));
+                        //AutoOn2 = true;
+                    }else{
+                        b.setBackground(getResources().getDrawable(R.drawable.button_auto));
+                        b.setTextColor(getResources().getColor(R.color.colorPrimary));
+                        //AutoOn2 = false;
+                        break;
+                    }
+                case R.id.btnSkAuto3:
+                    if (!AutoOn3){
+                        b.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
+                        b.setTextColor(getResources().getColor(R.color.white));
+                        AutoOn3 = true;
+                    }else{
+                        b.setBackground(getResources().getDrawable(R.drawable.button_auto));
+                        b.setTextColor(getResources().getColor(R.color.colorPrimary));
+                        AutoOn3 = false;
+                        break;
+                    }
+                case R.id.btnSkAuto4:
+                    if (!AutoOn4){
+                        b.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
+                        b.setTextColor(getResources().getColor(R.color.white));
+                        AutoOn4 = true;
+                    }else{
+                        b.setBackground(getResources().getDrawable(R.drawable.button_auto));
+                        b.setTextColor(getResources().getColor(R.color.colorPrimary));
+                        AutoOn4 = false;
+                        break;
+                    }
+            }
+        }
+    };
 
     private Switch.OnClickListener SwListener = new Switch.OnClickListener() {
         @Override
