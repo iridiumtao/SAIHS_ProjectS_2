@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".MainActivity">
 
     <android.support.constraint.ConstraintLayout
@@ -396,6 +396,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/button_auto"
+            android:onClick="auto1"
             android:text="Auto"
             android:textColor="@color/colorPrimary"
             android:textSize="12sp"
@@ -411,6 +412,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/button_auto"
+            android:onClick="auto2"
             android:text="Auto"
             android:textColor="@color/colorPrimary"
             android:textSize="12sp"
@@ -426,6 +428,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/button_auto"
+            android:onClick="auto3"
             android:text="Auto"
             android:textColor="@color/colorPrimary"
             android:textSize="12sp"
@@ -441,6 +444,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/button_auto"
+            android:onClick="auto4"
             android:text="Auto"
             android:textColor="@color/colorPrimary"
             android:textSize="12sp"

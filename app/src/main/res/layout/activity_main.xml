@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
+
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <TextView
@@ -34,8 +35,7 @@
                 android:textAppearance="@android:style/TextAppearance.Material"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:visibility="visible"
-                />
+                android:visibility="invisible" />
 
             <ImageView
                 android:id="@+id/main.backdrop"

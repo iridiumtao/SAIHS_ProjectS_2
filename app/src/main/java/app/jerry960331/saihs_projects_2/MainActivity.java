@@ -8,8 +8,10 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -57,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
     String connectionMethod = "Bluetooth";
 
     private ProgressDialog progress;
+
+
+
 
     String notificationTitle = "安全警示",
            notificationText = "插座電流狀況異常！請立即前往查看";
@@ -120,11 +125,12 @@ public class MainActivity extends AppCompatActivity {
         swSk3.setOnClickListener(SwListener);
         swSk4.setOnClickListener(SwListener);
 
+        /*
         btnSkAuto1.setOnClickListener(AutoListener);
         btnSkAuto2.setOnClickListener(AutoListener);
         btnSkAuto3.setOnClickListener(AutoListener);
         btnSkAuto4.setOnClickListener(AutoListener);
-
+*/
         swConnectionMethod.setOnClickListener(SwConnectionMethodListener);
 
         txVStat.bringToFront();
@@ -166,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+/*
     private Button.OnClickListener AutoListener = new Button.OnClickListener(){
         @Override
         public  void onClick(View v){
@@ -220,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
                     }
             }
         }
-    };
+    };*/
 
     private Switch.OnClickListener SwListener = new Switch.OnClickListener() {
         @Override
@@ -503,6 +511,8 @@ public class MainActivity extends AppCompatActivity {
         //creates secure outgoing connection with BT device using UUID
     }
 
+
+
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
@@ -608,6 +618,89 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //auto按鈕的onClickListener
+    //因為switch-case有問題 所以用最原始的方法
+    public void auto1(View view) {
+        if (!AutoOn1){
+            AutoOn1 = true;
+            btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
+            btnSkAuto1.setTextColor(getResources().getColor(R.color.white));
+        }else{
+            AutoOn1 = false;
+            btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto));
+            btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
+        }
+    }
+    public void auto2(View view) {
+        if (!AutoOn2){
+            AutoOn2 = true;
+            btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
+            btnSkAuto2.setTextColor(getResources().getColor(R.color.white));
+        }else{
+            AutoOn2 = false;
+            btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto));
+            btnSkAuto2.setTextColor(getResources().getColor(R.color.colorPrimary));
+        }
+    }
+    public void auto3(View view) {
+        if (!AutoOn3){
+            AutoOn3 = true;
+            btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
+            btnSkAuto3.setTextColor(getResources().getColor(R.color.white));
+        }else{
+            AutoOn3 = false;
+            btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto));
+            btnSkAuto3.setTextColor(getResources().getColor(R.color.colorPrimary));
+        }
+    }
+    public void auto4(View view) {
+        if (!AutoOn4){
+            AutoOn4 = true;
+            btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
+            btnSkAuto4.setTextColor(getResources().getColor(R.color.white));
+            new TimeCountDown(15*60000,1000).start();
+        }else{
+            AutoOn4 = false;
+            btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto));
+            btnSkAuto4.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+        }
+    }
+
+    //倒數計時器
+    class TimeCountDown extends CountDownTimer {
+
+        public TimeCountDown(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+            // TODO Auto-generated constructor stub
+
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            // TODO Auto-generated method stub
+            long i = millisUntilFinished;
+            String b;
+            while (i > 60000)
+            {
+                i = i - 60000;
+            }
+            if (i < 10000){ b = "0"; }else {b = "";}
+
+            btnSkAuto4.setText(millisUntilFinished/60000 + ":" + b +i/1000);
+
+        }
+
+        @Override
+        public void onFinish() {
+            // TODO Auto-generated method stub
+            CustomizedSnackBar("時間到");
+            btnSkAuto4.setText("AUTO");
+
+        }
+
+
+    }
 
     //seems to be not working
     public void CustomizedAlertDialog(String alertDialogTitle, String alertDialogMessage, String alertDialogPositive, String alertDialogNegative){
