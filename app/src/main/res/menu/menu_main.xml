@@ -17,5 +17,13 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_notification"
-        android:title="notification test" />
+        android:title="Notification Test" />
+
+    <item
+        android:id="@+id/action_auto"
+        android:title="Auto Mode Test"/>
+    <item
+        android:id="@+id/action_dev"
+        android:checkable="true"
+        android:title="Developer Mode" />
 </menu>

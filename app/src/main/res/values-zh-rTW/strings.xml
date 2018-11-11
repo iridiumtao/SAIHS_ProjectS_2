@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">智慧居家系統</string>
+    <string name="app_name">綠能雲端插座</string>
     <string name="action_settings">設定</string>
     <string name="action_help">幫助</string>
     <string name="ON">開</string>
@@ -16,7 +16,6 @@
     <string name="socket_3">插座 3</string>
     <string name="socket_2">插座 2</string>
     <string name="socket">插座</string>
-    <string name="title">智慧居家系統</string>
     <string name="turnOn">已開啟</string>
     <string name="turnOff">已關閉</string>
     <string name="intent_exit">離開目前畫面將會中斷與插座之連線。</string>
@@ -36,4 +35,5 @@
     <string name="connect">連線</string>
     <string name="not_connected">未連線</string>
     <string name="bluetooth">藍牙</string>
+    <string name="title">綠能雲端插座</string>
 </resources>

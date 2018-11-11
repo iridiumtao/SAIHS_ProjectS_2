@@ -1,11 +1,13 @@
 package app.jerry960331.saihs_projects_2;
 
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,12 +23,15 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +42,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -60,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog progress;
 
-
-
+    private TextView txConnectStat;
+    private ImageView imageConnectStat;
 
     String notificationTitle = "安全警示",
            notificationText = "插座電流狀況異常！請立即前往查看";
@@ -72,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
     String BTAddress = null;
 
     static final UUID btUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    private boolean isBTConnected = false;
     BluetoothAdapter btAdapter = null;
     BluetoothSocket btSocket = null;
     private final static int REQUEST_ENABLE_BT = 1;
@@ -84,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     Handler btHandler;
     static StringBuilder btDataString = new StringBuilder();
 
+    boolean isBTConnected = false;
     boolean isWiFiConnected = false;
     boolean confirmSwitch;
 
@@ -92,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     boolean AutoOn3 = false;
     boolean AutoOn4 = false;
 
-
+    boolean devMode = false;
 
     //color
     public static int red = 0xfff44336;
@@ -112,30 +118,56 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         setTitle(R.string.title);
 
-        findViews();
 
+        findViews();
+        setOnClickListeners();
+        txVStat.bringToFront();
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        swSk1.setEnabled(false);
+        swSk2.setEnabled(false);
+        swSk3.setEnabled(false);
+        swSk4.setEnabled(false);
+        btnSkStat1.setEnabled(false);
+        btnSkStat2.setEnabled(false);
+        btnSkStat3.setEnabled(false);
+        btnSkStat4.setEnabled(false);
+        btnSkAlarm1.setEnabled(false);
+        btnSkAlarm2.setEnabled(false);
+        btnSkAlarm3.setEnabled(false);
+        btnSkAlarm4.setEnabled(false);
+        btnSkChart1.setEnabled(false);
+        btnSkChart2.setEnabled(false);
+        btnSkChart3.setEnabled(false);
+        btnSkChart4.setEnabled(false);
+        btnSkAuto1.setEnabled(false);
+        btnSkAuto2.setEnabled(false);
+        btnSkAuto3.setEnabled(false);
+        btnSkAuto4.setEnabled(false);
+
+    }
+
+    private void setOnClickListeners() {
         swSk1.setOnClickListener(SwListener);
         swSk2.setOnClickListener(SwListener);
         swSk3.setOnClickListener(SwListener);
         swSk4.setOnClickListener(SwListener);
 
-        /*
-        btnSkAuto1.setOnClickListener(AutoListener);
-        btnSkAuto2.setOnClickListener(AutoListener);
-        btnSkAuto3.setOnClickListener(AutoListener);
-        btnSkAuto4.setOnClickListener(AutoListener);
-*/
+        btnSkStat1.setOnClickListener(SkStatListener1);
+        btnSkStat2.setOnClickListener(SkStatListener2);
+        btnSkStat3.setOnClickListener(SkStatListener3);
+        btnSkStat4.setOnClickListener(SkStatListener4);
+
+        btnSkAlarm1.setOnClickListener(SkAlarmListener1);
+        btnSkAlarm2.setOnClickListener(SkAlarmListener2);
+        btnSkAlarm3.setOnClickListener(SkAlarmListener3);
+        btnSkAlarm4.setOnClickListener(SkAlarmListener4);
+
         swConnectionMethod.setOnClickListener(SwConnectionMethodListener);
-
-        txVStat.bringToFront();
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-
     }
 
     //ctrl+alt+M
@@ -147,6 +179,8 @@ public class MainActivity extends AppCompatActivity {
         swConnectionMethod = findViewById(R.id.swConnectionMethod);
 
         btnConnect = findViewById(R.id.btnConnect);
+        txConnectStat = findViewById(R.id.txConnectStat);
+        imageConnectStat = findViewById(R.id.imageConnectStat);
 
         btnSkStat1 = findViewById(R.id.btnSkStat1);
         btnSkStat2 = findViewById(R.id.btnSkStat2);
@@ -169,67 +203,9 @@ public class MainActivity extends AppCompatActivity {
         btnSkAuto4 = findViewById(R.id.btnSkAuto4);
 
         txVStat = findViewById(R.id.txVStat);
-
     }
 
-
-/*
-    private Button.OnClickListener AutoListener = new Button.OnClickListener(){
-        @Override
-        public  void onClick(View v){
-            final Button b = (Button) v;
-            final int ButtonId = b.getId();
-            switch (ButtonId){
-                case R.id.btnSkAuto1:
-                    if (!AutoOn1){
-                        b.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
-                        b.setTextColor(getResources().getColor(R.color.white));
-                        AutoOn1 = true;
-                    }else{
-                        b.setBackground(getResources().getDrawable(R.drawable.button_auto));
-                        b.setTextColor(getResources().getColor(R.color.colorPrimary));
-                        AutoOn1 = false;
-                        break;
-                    }
-                case R.id.btnSkAuto2:
-                    Drawable drawable = getResources().getDrawable(R.drawable.button_auto);
-                    Drawable drawable2 = b.getBackground();
-                    if (drawable == drawable2){
-                        b.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
-                        b.setTextColor(getResources().getColor(R.color.white));
-                        //AutoOn2 = true;
-                    }else{
-                        b.setBackground(getResources().getDrawable(R.drawable.button_auto));
-                        b.setTextColor(getResources().getColor(R.color.colorPrimary));
-                        //AutoOn2 = false;
-                        break;
-                    }
-                case R.id.btnSkAuto3:
-                    if (!AutoOn3){
-                        b.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
-                        b.setTextColor(getResources().getColor(R.color.white));
-                        AutoOn3 = true;
-                    }else{
-                        b.setBackground(getResources().getDrawable(R.drawable.button_auto));
-                        b.setTextColor(getResources().getColor(R.color.colorPrimary));
-                        AutoOn3 = false;
-                        break;
-                    }
-                case R.id.btnSkAuto4:
-                    if (!AutoOn4){
-                        b.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
-                        b.setTextColor(getResources().getColor(R.color.white));
-                        AutoOn4 = true;
-                    }else{
-                        b.setBackground(getResources().getDrawable(R.drawable.button_auto));
-                        b.setTextColor(getResources().getColor(R.color.colorPrimary));
-                        AutoOn4 = false;
-                        break;
-                    }
-            }
-        }
-    };*/
-
+    //插座開關
     private Switch.OnClickListener SwListener = new Switch.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -249,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            String SnackbarText;
                             int i = 0;
                             String IO = "";
                             switch (switchId) {
@@ -260,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
                                         IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "11B";
                                         WiFi_comm = "11W";
-
                                     } else {
                                         btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
                                         i = 1;
@@ -297,7 +271,6 @@ public class MainActivity extends AppCompatActivity {
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "30B";
                                         WiFi_comm = "30W";
-
                                     }
                                     break;
                                 case R.id.swSk4:
@@ -317,7 +290,6 @@ public class MainActivity extends AppCompatActivity {
                                     break;
                             }
                             CustomizedSnackBar(getResources().getString(R.string.socket) + " " + i + " " + IO);
-
                         }
                     })
                     .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -344,6 +316,148 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //目前狀態onClick
+    private Button.OnClickListener SkStatListener1 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+            if(!swSk1.isChecked()){
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 1;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentNow = 0;
+                CustomDialog.currentAve = 0;
+                CustomDialog.show();
+            }else {//臨時測試用 todo 把這些東西弄成接收值
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 1;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentNow = 100;
+                CustomDialog.currentAve = 100;
+                CustomDialog.show();
+            }
+        }
+    };
+    private Button.OnClickListener SkStatListener2 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+            if(!swSk2.isChecked()){
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 1;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentNow = 0;
+                CustomDialog.currentAve = 0;
+                CustomDialog.show();
+            }else {//臨時測試用 todo 把這些東西弄成接收值
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 1;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentNow = 100;
+                CustomDialog.currentAve = 100;
+                CustomDialog.show();
+            }
+        }
+    };
+    private Button.OnClickListener SkStatListener3 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+            if(!swSk3.isChecked()){
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 1;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentNow = 0;
+                CustomDialog.currentAve = 0;
+                CustomDialog.show();
+            }else {//臨時測試用 todo 把這些東西弄成接收值
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 1;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentNow = 100;
+                CustomDialog.currentAve = 100;
+                CustomDialog.show();
+            }
+        }
+    };
+    private Button.OnClickListener SkStatListener4 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+            if(!swSk4.isChecked()){
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 1;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentNow = 0;
+                CustomDialog.currentAve = 0;
+                CustomDialog.show();
+            }else {//臨時測試用 todo 把這些東西弄成接收值
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 1;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentNow = 100;
+                CustomDialog.currentAve = 100;
+                CustomDialog.show();
+            }
+
+        }
+    };
+
+    //鬧鐘onClick
+    private Button.OnClickListener SkAlarmListener1 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+
+                LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+                View alarm_dialog_title = layoutInflater.inflate(R.layout.alarm_dialog_title, null);
+                new AlertDialog.Builder(MainActivity.this)
+                        .setCustomTitle(alarm_dialog_title)
+                        .setView(R.layout.alarm_dialog)
+                        .show();
+
+        }
+    };
+    private Button.OnClickListener SkAlarmListener2 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+
+            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+            View alarm_dialog_title = layoutInflater.inflate(R.layout.alarm_dialog_title, null);
+            new AlertDialog.Builder(MainActivity.this)
+                    .setCustomTitle(alarm_dialog_title)
+                    .setView(R.layout.alarm_dialog)
+                    .show();
+
+        }
+    };
+    private Button.OnClickListener SkAlarmListener3 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+
+            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+            View alarm_dialog_title = layoutInflater.inflate(R.layout.alarm_dialog_title, null);
+            new AlertDialog.Builder(MainActivity.this)
+                    .setCustomTitle(alarm_dialog_title)
+                    .setView(R.layout.alarm_dialog)
+                    .show();
+
+        }
+    };
+    private Button.OnClickListener SkAlarmListener4 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+
+            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+            View alarm_dialog_title = layoutInflater.inflate(R.layout.alarm_dialog_title, null);
+            new AlertDialog.Builder(MainActivity.this)
+                    .setCustomTitle(alarm_dialog_title)
+                    .setView(R.layout.alarm_dialog)
+                    .show();
+
+        }
+    };
+
+    //選擇WiFi、藍牙的連線方式
     private Switch.OnClickListener SwConnectionMethodListener = new Switch.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -366,6 +480,10 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO: 11/8/2018 關閉BT連線，並連接至WIFI
+                                //TODO ======================================
+                                Toast.makeText(getApplicationContext(), "ERROR. There is no Wi-Fi connection.", Toast.LENGTH_SHORT).show();
+                                s.setChecked(true);
+                                //TODO ======================================
                             }})
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
@@ -382,7 +500,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         })
                         .show();
-            }else if(isWiFiConnected){ //若WIFI已連線
+
+            }else if(isWiFiConnected){ //若WIFI已連線 //這段是假的
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle(R.string.confirm)
                         .setMessage(R.string.stop_wifi_connect_to_bt)
@@ -410,9 +529,36 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    //btnConnect OnClick
+    //連線按鈕 OnClick
     public void Connect (View v){
-        if(connectionMethod == "Bluetooth") {// TODO: 2018/11/8 藍芽連線這段好像有狀況 
+        swSk1.setEnabled(true);
+        swSk2.setEnabled(true);
+        swSk3.setEnabled(true);
+        swSk4.setEnabled(true);
+        btnSkStat1.setEnabled(true);
+        btnSkStat2.setEnabled(true);
+        btnSkStat3.setEnabled(true);
+        btnSkStat4.setEnabled(true);
+        btnSkAlarm1.setEnabled(true);
+        btnSkAlarm2.setEnabled(true);
+        btnSkAlarm3.setEnabled(true);
+        btnSkAlarm4.setEnabled(true);
+        btnSkChart1.setEnabled(true);
+        btnSkChart2.setEnabled(true);
+        btnSkChart3.setEnabled(true);
+        btnSkChart4.setEnabled(true);
+        btnSkAuto1.setEnabled(true);
+        btnSkAuto2.setEnabled(true);
+        btnSkAuto3.setEnabled(true);
+        btnSkAuto4.setEnabled(true);
+
+        btnConnect.setVisibility(View.INVISIBLE);
+        txConnectStat.setVisibility(View.INVISIBLE);
+        imageConnectStat.setVisibility(View.INVISIBLE);
+
+        isBTConnected = true;
+
+        if(connectionMethod == "Bluetooth") {
             try {
                 if (!btAdapter.isEnabled()) {//如果藍芽沒開啟
                     Intent enableBtIntent = new
@@ -502,7 +648,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(), "Unavailable",
                     Toast.LENGTH_LONG).show();
         }
-
     }
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws
@@ -510,8 +655,6 @@ public class MainActivity extends AppCompatActivity {
         return device.createRfcommSocketToServiceRecord(btUUID);
         //creates secure outgoing connection with BT device using UUID
     }
-
-
 
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
@@ -551,7 +694,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-
                     break;
                 }
             }
@@ -566,7 +708,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 
 
     private static class OuterHandler extends Handler {
@@ -607,7 +748,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void Disconnect() {
 
-
         if (btSocket != null) {
             try {
                 btSocket.close();
@@ -625,10 +765,12 @@ public class MainActivity extends AppCompatActivity {
             AutoOn1 = true;
             btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
             btnSkAuto1.setTextColor(getResources().getColor(R.color.white));
+            swSk1.setEnabled(false);
         }else{
             AutoOn1 = false;
             btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
+            swSk1.setEnabled(true);
         }
     }
     public void auto2(View view) {
@@ -636,10 +778,12 @@ public class MainActivity extends AppCompatActivity {
             AutoOn2 = true;
             btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
             btnSkAuto2.setTextColor(getResources().getColor(R.color.white));
+            swSk2.setEnabled(false);
         }else{
             AutoOn2 = false;
             btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto2.setTextColor(getResources().getColor(R.color.colorPrimary));
+            swSk2.setEnabled(true);
         }
     }
     public void auto3(View view) {
@@ -647,10 +791,12 @@ public class MainActivity extends AppCompatActivity {
             AutoOn3 = true;
             btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
             btnSkAuto3.setTextColor(getResources().getColor(R.color.white));
+            swSk3.setEnabled(false);
         }else{
             AutoOn3 = false;
             btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto3.setTextColor(getResources().getColor(R.color.colorPrimary));
+            swSk3.setEnabled(true);
         }
     }
     public void auto4(View view) {
@@ -658,27 +804,20 @@ public class MainActivity extends AppCompatActivity {
             AutoOn4 = true;
             btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
             btnSkAuto4.setTextColor(getResources().getColor(R.color.white));
-            new TimeCountDown(15*60000,1000).start();
+            swSk4.setEnabled(false);
+
         }else{
             AutoOn4 = false;
             btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto4.setTextColor(getResources().getColor(R.color.colorPrimary));
-
+            swSk4.setEnabled(true);
         }
     }
 
     //倒數計時器
-    class TimeCountDown extends CountDownTimer {
-
-        public TimeCountDown(long millisInFuture, long countDownInterval) {
-            super(millisInFuture, countDownInterval);
-            // TODO Auto-generated constructor stub
-
-        }
-
+    CountDownTimer TimeCountDown  = new CountDownTimer(60000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
-            // TODO Auto-generated method stub
             long i = millisUntilFinished;
             String b;
             while (i > 60000)
@@ -686,23 +825,39 @@ public class MainActivity extends AppCompatActivity {
                 i = i - 60000;
             }
             if (i < 10000){ b = "0"; }else {b = "";}
-
-            btnSkAuto4.setText(millisUntilFinished/60000 + ":" + b +i/1000);
-
+            if(AutoOn1){btnSkAuto1.setText(millisUntilFinished/60000 + ":" + b +i/1000);}
+            else {btnSkAuto1.setText("AUTO");}
+            if(AutoOn2){btnSkAuto2.setText(millisUntilFinished/60000 + ":" + b +i/1000);}
+            else {btnSkAuto2.setText("AUTO");}
+            if(AutoOn3){btnSkAuto3.setText(millisUntilFinished/60000 + ":" + b +i/1000);}
+            else {btnSkAuto3.setText("AUTO");}
+            if(AutoOn4){btnSkAuto4.setText(millisUntilFinished/60000 + ":" + b +i/1000);}
+            else {btnSkAuto4.setText("AUTO");}
         }
 
         @Override
         public void onFinish() {
-            // TODO Auto-generated method stub
             CustomizedSnackBar("時間到");
-            btnSkAuto4.setText("AUTO");
-
+            if(AutoOn1){
+                btnSkAuto1.setText("AUTO");
+                swSk1.setChecked(false);
+            }
+            if(AutoOn2){
+                btnSkAuto2.setText("AUTO");
+                swSk2.setChecked(false);
+            }
+            if(AutoOn3){
+                btnSkAuto4.setText("AUTO");
+                swSk3.setChecked(false);
+            }
+            if(AutoOn4){
+                btnSkAuto4.setText("AUTO");
+                swSk4.setChecked(false);
+            }
         }
+    };
 
-
-    }
-
-    //seems to be not working
+    //不能運作 除非使用wait for result
     public void CustomizedAlertDialog(String alertDialogTitle, String alertDialogMessage, String alertDialogPositive, String alertDialogNegative){
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle(alertDialogTitle)
@@ -730,19 +885,30 @@ public class MainActivity extends AppCompatActivity {
     public void CustomizedSnackBar(String SnackBarText){
             snackbar = Snackbar.make(findViewById(android.R.id.content), SnackBarText, Snackbar.LENGTH_SHORT)
                     .setAction("DISMISS", null);
-
             snackBarView = snackbar.getView();
             snackBarView.setBackgroundColor(blue);
             snackBarTxV = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
-
             snackbar.show();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu){
+
+        if(!devMode){
+            menu.findItem(R.id.action_bt).setVisible(false);
+            menu.findItem(R.id.action_auto).setVisible(false);
+            menu.findItem(R.id.action_notification).setVisible(false);
+        }else {
+            menu.findItem(R.id.action_bt).setVisible(true);
+            menu.findItem(R.id.action_auto).setVisible(true);
+            menu.findItem(R.id.action_notification).setVisible(true);
+        }
         return true;
     }
 
@@ -785,10 +951,16 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_notification:
                 makeOreoNotification();
                 break;
+            case R.id.action_auto:
+                TimeCountDown.start();
+                break;
+            case R.id.action_dev:
+                item.setChecked(!item.isChecked());
+                devMode = item.isChecked();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     private void makeOreoNotification() {
         final int NOTIFICATION_ID = 8;
@@ -843,8 +1015,6 @@ public class MainActivity extends AppCompatActivity {
         manager.notify(1, builder.build());
     }
 
-
-
     /**
      //noinspection SimplifiableIfStatement
      if (id == R.id.action_settings) {
@@ -853,7 +1023,6 @@ public class MainActivity extends AppCompatActivity {
      return true;
      }
      */
-
 
 }
 

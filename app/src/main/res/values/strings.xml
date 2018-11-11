@@ -13,7 +13,6 @@
     <string name="btnSkStatDescription">Status of the socket. Click to show more information.</string>
     <string name="btnSkAlarmDescription">Alarm of the socket. Click to show more information.</string>
     <string name="btnSkChartDescription">Current chart of the socket. click to show more information.</string>
-    <string name="title">智慧居家系統</string>
     <string name="turnOn">has been turned on.</string>
     <string name="turnOff">has been turned off.</string>
     <string name="intent_exit">Leave this page will stop the connection with Smart Socket.</string>
@@ -136,6 +135,8 @@
     <string name="connect">Connect</string>
     <string name="not_connected">Not Connected</string>
     <string name="bluetooth">Bluetooth</string>
-
+    <string name="current_description_good">The current now is very good. This means the connecting device does not take too much energy. If the current of this device increase strangely, please check it to prevent accident happen.</string>
+    <string name="current_description_off">This socket is currently OFF. Open it to see the current status.</string>
+    <string name="title">Project: Socket</string>
 
 </resources>
