@@ -135,8 +135,9 @@
     <string name="connect">Connect</string>
     <string name="not_connected">Not Connected</string>
     <string name="bluetooth">Bluetooth</string>
-    <string name="current_description_good">The current now is very good. This means the connecting device does not take too much energy. If the current of this device increase strangely, please check it to prevent accident happen.</string>
+    <string name="current_description_good">The current now is very good. This means the connecting device does not take too much power. If the current of this device increase strangely, please check it to prevent accident happen.</string>
     <string name="current_description_off">This socket is currently OFF. Open it to see the current status.</string>
+    <string name="current_description_red">The power supply of the connecting device has been cut off due to extremely high current usage. Please check</string>
     <string name="title">Project: Socket</string>
 
 </resources>
