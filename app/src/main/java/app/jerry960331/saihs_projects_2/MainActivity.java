@@ -43,6 +43,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
            notificationText = "插座電流狀況異常！請立即前往查看";
 
     //Bluetooth
-    String BT_comm;
+    String BT_comm = "";
     String WiFi_comm;
     String BTAddress = null;
 
@@ -155,30 +156,23 @@ public class MainActivity extends AppCompatActivity {
         btHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
-                txLog.setText(txLog.getText() + "4 handleMessage\n");
-                Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
 
                 if(msg.what == MESSAGE_READ){
                     try{
-                        txLog.setText(txLog.getText() + "5 MESSAGE_READ1\n");
                         Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
                         String readMessage = new String((byte[]) msg.obj, "UTF-8");
                         btDataString.append(readMessage);
                     }catch (UnsupportedEncodingException uee){
                         uee.printStackTrace();
                     }
-                    txLog.setText(txLog.getText() + "6 MESSAGE_READ2\n");
                     Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
 
                     int endOfLineIndex = btDataString.indexOf("~");
                     if (endOfLineIndex > 0) {
                         //tvSB.setText(String.value)
                         if (btDataString.charAt(0) == '#') {
-                            //String a = btDataString.substring(1, 3);
-                            txLog.setText(txLog.getText() + "7 data string\n");
+                            String a = btDataString.substring(1, 3);
                             Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
-
-
                         }
                         btDataString.delete(0, btDataString.length());
                     }
@@ -191,27 +185,14 @@ public class MainActivity extends AppCompatActivity {
                         else
                             Toast.makeText(getApplicationContext(), "Connection Failed", Toast.LENGTH_SHORT).show();
                     }catch (Exception e) {
-
-                        txLog.setText(txLog.getText() + "0 connection failed\n");
                     }
-
-
                 }
                 if (btConnectedThread != null){
-                    try {
-                        String sendData = BT_comm;
-                        btConnectedThread.write(sendData);
-                    }catch (Exception e)
-                    {
-                        txLog.setText(txLog.getText() + "0 connected thread\n");
-                        Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
-                    }
+                    String sendData = BT_comm;
+                    btConnectedThread.write(sendData);
                 }
             }
-
         };
-
-
     }
 
     private void setOnClickListeners() {
@@ -229,6 +210,11 @@ public class MainActivity extends AppCompatActivity {
         btnSkAlarm2.setOnClickListener(SkAlarmListener2);
         btnSkAlarm3.setOnClickListener(SkAlarmListener3);
         btnSkAlarm4.setOnClickListener(SkAlarmListener4);
+
+        btnSkChart1.setOnClickListener(SkChartListener1);
+        btnSkChart2.setOnClickListener(SkChartListener2);
+        btnSkChart3.setOnClickListener(SkChartListener3);
+        btnSkChart4.setOnClickListener(SkChartListener4);
 
         swConnectionMethod.setOnClickListener(SwConnectionMethodListener);
     }
@@ -353,6 +339,10 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     break;
                             }
+                            if (btConnectedThread != null){
+                                String sendData = BT_comm;
+                                btConnectedThread.write(sendData);
+                            }
                             CustomizedSnackBar(getResources().getString(R.string.socket) + " " + i + " " + IO);
                         }
                     })
@@ -467,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    //鬧鐘onClick
+    //鬧鐘OnClick
     private Button.OnClickListener SkAlarmListener1 = new Button.OnClickListener(){
         @Override
         public void onClick(View v){
@@ -520,6 +510,45 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+
+    //表格OnClick
+    private Button.OnClickListener SkChartListener1 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+            final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
+
+            String[] xItem = {"1","2","3","4","5","6","7"};
+            String[] yItem = {"10k","20k","30k","40k","50k"};
+            ChartVal.setXItem(xItem);
+            ChartVal.setYItem(yItem);
+            HashMap<Integer,Integer> pointMap = new HashMap();
+            for(int i = 0;i<xItem.length;i++){
+                pointMap.put(i, (int) (Math.random()*5));
+            }
+            ChartVal.setData(pointMap);
+        }
+    };
+    private Button.OnClickListener SkChartListener2 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+
+        }
+    };
+    private Button.OnClickListener SkChartListener3 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+
+        }
+    };
+    private Button.OnClickListener SkChartListener4 = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+
+        }
+    };
+
+
 
     //選擇WiFi、藍牙的連線方式
     private Switch.OnClickListener SwConnectionMethodListener = new Switch.OnClickListener() {
@@ -593,7 +622,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    //測試2
+    //幫你打開藍牙
     public void setBluetoothEnable(Boolean enable) {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(mBluetoothAdapter != null){
@@ -612,25 +641,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //測試中
-    private final BroadcastReceiver openBTReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                if (!btAdapter.isEnabled()) {//如果藍芽沒開啟
-                    Intent enableBtIntent = new
-                            Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);//跳出視窗
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                    //開啟設定藍芽畫面
-                    Toast.makeText(getApplicationContext(), R.string.Bluetooth_tuned_on, Toast.LENGTH_SHORT).show();
-                }
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), R.string.BTCrash,
-                        Toast.LENGTH_SHORT).show();
-
-            }
-        }
-    };
     //連線按鈕 OnClick
     public void Connect (View v){
         swSk1.setEnabled(true);
@@ -678,7 +688,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             //todo progressDialog
-            Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_SHORT).show();
 
 
             txLog.setText(txLog.getText() + "1\n");
@@ -721,90 +731,21 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if(!fail) {
                         //開啟執行緒用於傳輸及接收資料
-                        txLog.setText(txLog.getText() + "3.5\n");
-                        Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
                         btConnectedThread = new MainActivity.ConnectedThread(btSocket);
                         btConnectedThread.start();
                         //開啟新執行緒顯示連接裝置名稱
                         btHandler.obtainMessage(CONNECTING_STATUS, 1, -1, name)
                                 .sendToTarget();
-                        txLog.setText(txLog.getText() + "8\n");
-
+                        btConnectedThread.write("z"); //藍芽連接成功後傳值
                     }
                 }
             }.start();
-            /*
-            new Thread() {
-                public void run() {
-                    boolean fail = false;
-                    //取得裝置MAC找到連接的藍芽裝置
-                    BluetoothDevice device = btAdapter.getRemoteDevice(address);
-
-                    try {
-                        btSocket = createBluetoothSocket(device);
-                    } catch (IOException e) {
-                        fail = true;
-                        Toast.makeText(getBaseContext(), "Socket creation failed",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    // Establish the Bluetooth socket connection.
-                    try {
-                        btSocket.connect(); //建立藍芽連線
-                    } catch (IOException e) {
-                        try {
-                            fail = true;
-                            btSocket.close(); //關閉socket
-                            //開啟執行緒 顯示訊息
-                            btHandler.obtainMessage(CONNECTING_STATUS, -1, -1)
-                                    .sendToTarget();
-                        } catch (IOException e2) {
-                            //insert code to deal with this
-                            Toast.makeText(getBaseContext(), "Socket creation failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    if (!fail) {
-                        //開啟執行緒用於傳輸及接收資料
-                        btConnectedThread = new ConnectedThread(btSocket);
-                        btConnectedThread.start();
-                        //開啟新執行緒顯示連接裝置名稱
-                        btHandler.obtainMessage(CONNECTING_STATUS, 1, -1, name)
-                                .sendToTarget();
-                    }
-                }
-            }.start();
-            //OuterHandler handle = new OuterHandler(this);
-
-            btHandler = new Handler(){
-                public void handleMessage(android.os.Message msg){
-
-                        if(msg.what == MESSAGE_READ){
-                            try{
-                                String readMessage = new String((byte[]) msg.obj, "UTF-8");
-                                btDataString.append(readMessage);
-                            }catch (UnsupportedEncodingException uee){
-                                uee.printStackTrace();
-                            }
-                            int endOfLineIndex = btDataString.indexOf("~");
-                            if (endOfLineIndex > 0) {
-                                //tvSB.setText(String.value)
-                                if (btDataString.charAt(0) == '#') {
-                                    String a = btDataString.substring(1, 3);
-                                }
-                                btDataString.delete(0, btDataString.length());
-                            }
-                        }
-                        if (btConnectedThread != null){
-                            String sendData = "a";
-                            btConnectedThread.write(sendData);
-                        }
-                    }
-
-            };*/
-
         }else if(connectionMethod == "Wi-Fi"){
             Toast.makeText(getBaseContext(), "Unavailable",
                     Toast.LENGTH_LONG).show();
+        }
+        if (progress.isShowing()) {
+            progress.dismiss();
         }
     }
 
@@ -1185,7 +1126,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(openBTReceiver);
+        Disconnect();
     }
 }
 
