@@ -668,10 +668,7 @@ public class MainActivity extends AppCompatActivity {
         txConnectStat.setVisibility(View.INVISIBLE);
         imageConnectStat.setVisibility(View.INVISIBLE);
 
-        isBTConnected = true;
-        /*
-        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        registerReceiver(openBTReceiver, filter);*/
+
 
 
         if(connectionMethod == "Bluetooth") {
@@ -699,7 +696,6 @@ public class MainActivity extends AppCompatActivity {
                     boolean fail = false;
                     //取得裝置MAC找到連接的藍芽裝置
                     BluetoothDevice device = btAdapter.getRemoteDevice(address);
-                    txLog.setText(txLog.getText() + "2\n");
                     try {
                         btSocket = createBluetoothSocket(device);
                         //建立藍芽socket
@@ -709,7 +705,6 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                     // Establish the Bluetooth socket connection.
-                    txLog.setText(txLog.getText() + "3\n");
 
 
                     try {
@@ -721,8 +716,6 @@ public class MainActivity extends AppCompatActivity {
                             //開啟執行緒 顯示訊息
                             btHandler.obtainMessage(CONNECTING_STATUS, -1, -1)
                                     .sendToTarget();
-                            txLog.setText(txLog.getText() + "0-1 failed while connecting\n");
-                            Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
                         } catch (IOException e2) {
                             //insert code to deal with this
                             Toast.makeText(getBaseContext(), "Socket creation failed",
@@ -736,16 +729,16 @@ public class MainActivity extends AppCompatActivity {
                         //開啟新執行緒顯示連接裝置名稱
                         btHandler.obtainMessage(CONNECTING_STATUS, 1, -1, name)
                                 .sendToTarget();
-                        btConnectedThread.write("z"); //藍芽連接成功後傳值
+
+                        //藍牙連接成功
+                        btConnectedThread.write("z"); //成功後傳值
+                        isBTConnected = true;
                     }
                 }
             }.start();
         }else if(connectionMethod == "Wi-Fi"){
             Toast.makeText(getBaseContext(), "Unavailable",
                     Toast.LENGTH_LONG).show();
-        }
-        if (progress.isShowing()) {
-            progress.dismiss();
         }
     }
 
