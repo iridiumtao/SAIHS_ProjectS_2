@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog progress;
 
-    private TextView txConnectStat;
+    private TextView txConnectStat, txLog;
     private ImageView imageConnectStat;
 
     String notificationTitle = "安全警示",
@@ -243,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
         btnSkAuto4 = findViewById(R.id.btnSkAuto4);
 
         txVStat = findViewById(R.id.txVStat);
+        txLog = findViewById(R.id.txLog);
     }
 
     //插座開關
@@ -575,7 +576,10 @@ public class MainActivity extends AppCompatActivity {
         if(mBluetoothAdapter != null){
             if (enable) {
                 if (!mBluetoothAdapter.isEnabled()) {
-                    mBluetoothAdapter.enable();
+                    //mBluetoothAdapter.enable();
+                    Intent enableBtIntent = new
+                            Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);//跳出視窗
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                 }
             } else {
                 if (mBluetoothAdapter.isEnabled()) {
@@ -635,22 +639,22 @@ public class MainActivity extends AppCompatActivity {
         /*
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         registerReceiver(openBTReceiver, filter);*/
-        setBluetoothEnable(true);
+
 
         if(connectionMethod == "Bluetooth") {
 
-            Toast.makeText(getApplicationContext(), "Connecting", Toast.LENGTH_SHORT).show();
-
+            //Toast.makeText(getApplicationContext(), "Connecting", Toast.LENGTH_SHORT).show();
+            setBluetoothEnable(true);
             final String address = "98:D3:33:81:25:60"; //HC05的address
             final String name = "SBLUE";
 
             if(!btAdapter.isEnabled()) {
-                Toast.makeText(getBaseContext(), "Bluetooth not on",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Please try again after bluetooth enabled.",
+                        Toast.LENGTH_LONG).show();
                 return;
             }
 
-            //todo mBTStatTxV.setText("Connecting...");
+            //todo progressDialog
             Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_SHORT).show();
 
 
