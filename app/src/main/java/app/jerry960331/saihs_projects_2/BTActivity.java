@@ -406,9 +406,11 @@ public class BTActivity extends AppCompatActivity {
 
         /* Call this from the main activity to shutdown the connection */
         public void cancel() {
+            if (mmSocket!= null){
             try {
                 mmSocket.close();
             } catch (IOException e) { }
+            }
         }
     }
 
@@ -437,4 +439,12 @@ public class BTActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        ConnectedThread thread = new ConnectedThread(mBTSocket);
+        thread.cancel();
+    }
+
 }

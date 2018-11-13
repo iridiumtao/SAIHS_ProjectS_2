@@ -155,34 +155,57 @@ public class MainActivity extends AppCompatActivity {
         btHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
+                txLog.setText(txLog.getText() + "4 handleMessage\n");
+                Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
+
                 if(msg.what == MESSAGE_READ){
                     try{
+                        txLog.setText(txLog.getText() + "5 MESSAGE_READ1\n");
+                        Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
                         String readMessage = new String((byte[]) msg.obj, "UTF-8");
                         btDataString.append(readMessage);
                     }catch (UnsupportedEncodingException uee){
                         uee.printStackTrace();
                     }
+                    txLog.setText(txLog.getText() + "6 MESSAGE_READ2\n");
+                    Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
+
                     int endOfLineIndex = btDataString.indexOf("~");
                     if (endOfLineIndex > 0) {
                         //tvSB.setText(String.value)
                         if (btDataString.charAt(0) == '#') {
-                            String a = btDataString.substring(1, 3);
+                            //String a = btDataString.substring(1, 3);
+                            txLog.setText(txLog.getText() + "7 data string\n");
+                            Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
+
+
                         }
                         btDataString.delete(0, btDataString.length());
                     }
                 }
                 if (msg.what == CONNECTING_STATUS){
-                    if (msg.arg1 == 1)
-                        Toast.makeText(getApplicationContext(), "Connected successfully", Toast.LENGTH_SHORT).show();
+                    try{
+                        if (msg.arg1 == 1)
+                            Toast.makeText(getApplicationContext(), "Connected successfully", Toast.LENGTH_SHORT).show();
 
-                    else
-                        Toast.makeText(getApplicationContext(), "Connection Failed", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(getApplicationContext(), "Connection Failed", Toast.LENGTH_SHORT).show();
+                    }catch (Exception e) {
+
+                        txLog.setText(txLog.getText() + "0 connection failed\n");
+                    }
 
 
                 }
                 if (btConnectedThread != null){
-                    String sendData = BT_comm;
-                    btConnectedThread.write(sendData);
+                    try {
+                        String sendData = BT_comm;
+                        btConnectedThread.write(sendData);
+                    }catch (Exception e)
+                    {
+                        txLog.setText(txLog.getText() + "0 connected thread\n");
+                        Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -658,7 +681,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_SHORT).show();
 
 
-
+            txLog.setText(txLog.getText() + "1\n");
             // Spawn a new thread to avoid blocking the GUI one
             new Thread()
             {
@@ -666,7 +689,7 @@ public class MainActivity extends AppCompatActivity {
                     boolean fail = false;
                     //取得裝置MAC找到連接的藍芽裝置
                     BluetoothDevice device = btAdapter.getRemoteDevice(address);
-
+                    txLog.setText(txLog.getText() + "2\n");
                     try {
                         btSocket = createBluetoothSocket(device);
                         //建立藍芽socket
@@ -676,6 +699,9 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                     // Establish the Bluetooth socket connection.
+                    txLog.setText(txLog.getText() + "3\n");
+
+
                     try {
                         btSocket.connect(); //建立藍芽連線
                     } catch (IOException e) {
@@ -685,6 +711,8 @@ public class MainActivity extends AppCompatActivity {
                             //開啟執行緒 顯示訊息
                             btHandler.obtainMessage(CONNECTING_STATUS, -1, -1)
                                     .sendToTarget();
+                            txLog.setText(txLog.getText() + "0-1 failed while connecting\n");
+                            Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
                         } catch (IOException e2) {
                             //insert code to deal with this
                             Toast.makeText(getBaseContext(), "Socket creation failed",
@@ -693,11 +721,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if(!fail) {
                         //開啟執行緒用於傳輸及接收資料
+                        txLog.setText(txLog.getText() + "3.5\n");
+                        Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
                         btConnectedThread = new MainActivity.ConnectedThread(btSocket);
                         btConnectedThread.start();
                         //開啟新執行緒顯示連接裝置名稱
                         btHandler.obtainMessage(CONNECTING_STATUS, 1, -1, name)
                                 .sendToTarget();
+                        txLog.setText(txLog.getText() + "8\n");
+
                     }
                 }
             }.start();
