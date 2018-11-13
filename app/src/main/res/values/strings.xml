@@ -133,11 +133,23 @@
     <string name="stop_wifi_connect_to_bt">Change this will stop connecting by Wi-Fi and try to connect by Bluetooth.</string>
     <string name="cancelled">Cancelled</string>
     <string name="connect">Connect</string>
-    <string name="not_connected">Not Connected</string>
+    <string name="not_connected">Not \nConnected</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="current_description_good">The current now is very good. This means the connecting device does not take too much power. If the current of this device increase strangely, please check it to prevent accident happen.</string>
     <string name="current_description_off">This socket is currently OFF. Open it to see the current status.</string>
     <string name="current_description_red">The power supply of the connecting device has been cut off due to extremely high current usage. Please check</string>
     <string name="title">Project: Socket</string>
+    <string name="failed">Failed</string>
+    <string name="connected_successfully">Connected successfully</string>
+    <string name="connection_failed">Connection Failed</string>
+    <string name="developer_mode">Developer Mode</string>
+    <string name="auto_mode_test">Auto Mode Test</string>
+    <string name="notification_test">Notification Test</string>
+    <string name="bt_developer_page">BT Developer Page</string>
+    <string name="average_current">Average Current:</string>
+    <string name="now_current">Now Current:</string>
+    <string name="current_status">Current Status</string>
+    <string name="good">Good</string>
+    <string name="socket_off">Socket not ON</string>
 
 </resources>

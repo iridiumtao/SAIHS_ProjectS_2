@@ -34,7 +34,7 @@
                 android:id="@+id/textView9"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Current Status"
+                android:text="@string/current_status"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
@@ -42,7 +42,7 @@
                 android:id="@+id/txCurrentStat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Good"
+                android:text="@string/good"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -60,7 +60,7 @@
             android:id="@+id/textView10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Now Current:" />
+            android:text="@string/now_current" />
 
         <TextView
             android:id="@+id/txCurrentNow"
@@ -82,7 +82,7 @@
             android:id="@+id/textView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Averge Current:" />
+            android:text="@string/average_current" />
 
         <TextView
             android:id="@+id/txCurrentAve"

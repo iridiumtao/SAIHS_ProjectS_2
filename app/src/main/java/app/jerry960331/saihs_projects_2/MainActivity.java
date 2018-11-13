@@ -131,26 +131,7 @@ public class MainActivity extends AppCompatActivity {
         txVStat.bringToFront();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        swSk1.setEnabled(false);
-        swSk2.setEnabled(false);
-        swSk3.setEnabled(false);
-        swSk4.setEnabled(false);
-        btnSkStat1.setEnabled(false);
-        btnSkStat2.setEnabled(false);
-        btnSkStat3.setEnabled(false);
-        btnSkStat4.setEnabled(false);
-        btnSkAlarm1.setEnabled(false);
-        btnSkAlarm2.setEnabled(false);
-        btnSkAlarm3.setEnabled(false);
-        btnSkAlarm4.setEnabled(false);
-        btnSkChart1.setEnabled(false);
-        btnSkChart2.setEnabled(false);
-        btnSkChart3.setEnabled(false);
-        btnSkChart4.setEnabled(false);
-        btnSkAuto1.setEnabled(false);
-        btnSkAuto2.setEnabled(false);
-        btnSkAuto3.setEnabled(false);
-        btnSkAuto4.setEnabled(false);
+        FunctionSetEnable(false);
 
 
         btHandler = new Handler(){
@@ -180,10 +161,12 @@ public class MainActivity extends AppCompatActivity {
                 if (msg.what == CONNECTING_STATUS){
                     try{
                         if (msg.arg1 == 1)
-                            Toast.makeText(getApplicationContext(), "Connected successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), R.string.connected_successfully, Toast.LENGTH_SHORT).show();
 
                         else
-                            Toast.makeText(getApplicationContext(), "Connection Failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
+                            imageConnectStat.setVisibility(View.VISIBLE);
+                            txConnectStat.setText(R.string.failed);
                     }catch (Exception e) {
                     }
                 }
@@ -379,13 +362,15 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 1;
                 CustomDialog.isSWOn = false;
+                CustomDialog.currentStat = getResources().getString(R.string.socket_off);
                 CustomDialog.currentNow = 0;
                 CustomDialog.currentAve = 0;
                 CustomDialog.show();
             }else {//臨時測試用 todo 把這些東西弄成接收值
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 1;
-                CustomDialog.isSWOn = false;
+                CustomDialog.isSWOn = true;
+                CustomDialog.currentStat = getResources().getString(R.string.good);
                 CustomDialog.currentNow = 100;
                 CustomDialog.currentAve = 100;
                 CustomDialog.show();
@@ -594,7 +579,7 @@ public class MainActivity extends AppCompatActivity {
                         })
                         .show();
 
-            }else if(isWiFiConnected){ //若WIFI已連線 //這段是假的
+            }else if(isWiFiConnected){ //若WIFI已連線 //目前無執行
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle(R.string.confirm)
                         .setMessage(R.string.stop_wifi_connect_to_bt)
@@ -643,37 +628,12 @@ public class MainActivity extends AppCompatActivity {
 
     //連線按鈕 OnClick
     public void Connect (View v){
-        swSk1.setEnabled(true);
-        swSk2.setEnabled(true);
-        swSk3.setEnabled(true);
-        swSk4.setEnabled(true);
-        btnSkStat1.setEnabled(true);
-        btnSkStat2.setEnabled(true);
-        btnSkStat3.setEnabled(true);
-        btnSkStat4.setEnabled(true);
-        btnSkAlarm1.setEnabled(true);
-        btnSkAlarm2.setEnabled(true);
-        btnSkAlarm3.setEnabled(true);
-        btnSkAlarm4.setEnabled(true);
-        btnSkChart1.setEnabled(true);
-        btnSkChart2.setEnabled(true);
-        btnSkChart3.setEnabled(true);
-        btnSkChart4.setEnabled(true);
-        btnSkAuto1.setEnabled(true);
-        btnSkAuto2.setEnabled(true);
-        btnSkAuto3.setEnabled(true);
-        btnSkAuto4.setEnabled(true);
-
         //btnConnect.setVisibility(View.INVISIBLE);
-        txConnectStat.setVisibility(View.INVISIBLE);
-        imageConnectStat.setVisibility(View.INVISIBLE);
-
-
-
+        //txConnectStat.setVisibility(View.INVISIBLE);
+        //imageConnectStat.setVisibility(View.INVISIBLE);
 
         if(connectionMethod == "Bluetooth") {
 
-            //Toast.makeText(getApplicationContext(), "Connecting", Toast.LENGTH_SHORT).show();
             setBluetoothEnable(true);
             final String address = "98:D3:33:81:25:60"; //HC05的address
             final String name = "SBLUE";
@@ -685,10 +645,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             //todo progressDialog
-            //Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_SHORT).show();
+            txConnectStat.setText("Connecting...");
+            imageConnectStat.setVisibility(View.INVISIBLE);
 
-
-            txLog.setText(txLog.getText() + "1\n");
             // Spawn a new thread to avoid blocking the GUI one
             new Thread()
             {
@@ -731,8 +691,13 @@ public class MainActivity extends AppCompatActivity {
                                 .sendToTarget();
 
                         //藍牙連接成功
+                        btnConnect.setVisibility(View.INVISIBLE);
                         btConnectedThread.write("z"); //成功後傳值
                         isBTConnected = true;
+                        txConnectStat.setVisibility(View.INVISIBLE);
+                        imageConnectStat.setVisibility(View.INVISIBLE);
+                        FunctionSetEnable(true);
+
                     }
                 }
             }.start();
@@ -740,6 +705,29 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(), "Unavailable",
                     Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void FunctionSetEnable(boolean b) {
+        swSk1.setEnabled(b);
+        swSk2.setEnabled(b);
+        swSk3.setEnabled(b);
+        swSk4.setEnabled(b);
+        btnSkStat1.setEnabled(b);
+        btnSkStat2.setEnabled(b);
+        btnSkStat3.setEnabled(b);
+        btnSkStat4.setEnabled(b);
+        btnSkAlarm1.setEnabled(b);
+        btnSkAlarm2.setEnabled(b);
+        btnSkAlarm3.setEnabled(b);
+        btnSkAlarm4.setEnabled(b);
+        btnSkChart1.setEnabled(b);
+        btnSkChart2.setEnabled(b);
+        btnSkChart3.setEnabled(b);
+        btnSkChart4.setEnabled(b);
+        btnSkAuto1.setEnabled(b);
+        btnSkAuto2.setEnabled(b);
+        btnSkAuto3.setEnabled(b);
+        btnSkAuto4.setEnabled(b);
     }
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws
@@ -1050,6 +1038,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_dev:
                 item.setChecked(!item.isChecked());
                 devMode = item.isChecked();
+                if(!isWiFiConnected && !isBTConnected){ FunctionSetEnable(item.isChecked()); }
                 break;
         }
         return super.onOptionsItemSelected(item);

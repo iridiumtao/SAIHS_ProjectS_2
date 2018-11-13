@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 public class CustomDialogActivity extends Dialog implements View.OnClickListener {
     Activity c;
-    String functionSelect;
+    String functionSelect, currentStat;
     int socketSelect;
     int currentNow, currentAve;
     boolean isSWOn;
@@ -49,9 +49,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 txCurrentDescription = findViewById(R.id.txCurrentDescription);
                 imageCurrentStat = findViewById(R.id.imageCurrentStat);
 
+                txCurrentStat.setText(currentStat);
                 txCurrentNow.setText(currentNow+" mA");
                 txCurrentAve.setText(currentAve+" mA");
-
 
                 if (currentNow == 0) {//todo ERROR
                     txCurrentDescription.setText(R.string.current_description_off);

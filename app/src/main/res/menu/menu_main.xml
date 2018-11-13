@@ -4,7 +4,7 @@
     tools:context="app.jerry960331.saihs_projects_2.MainActivity">
     <item
         android:id="@+id/action_bt"
-        android:title="BT Developer Page"
+        android:title="@string/bt_developer_page"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
@@ -13,15 +13,15 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_notification"
-        android:title="Notification Test" />
+        android:title="@string/notification_test" />
 
     <item
         android:id="@+id/action_auto"
-        android:title="Auto Mode Test"/>
+        android:title="@string/auto_mode_test"/>
     <item
         android:id="@+id/action_dev"
         android:checkable="true"
-        android:title="Developer Mode" />
+        android:title="@string/developer_mode" />
     <item
         android:id="@+id/action_help"
         android:title="@string/action_help"
