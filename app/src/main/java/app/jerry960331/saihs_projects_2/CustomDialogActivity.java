@@ -26,7 +26,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     Activity c;
     String functionSelect, currentStat;
     int socketSelect;
-    int currentNow, currentAve;
+    int currentNow;
+    Double currentAve;
     boolean isSWOn;
     private TextView txCurrentStat, txCurrentNow, txCurrentAve, txCurrentDescription;
     private ImageView imageCurrentStat;
@@ -84,15 +85,19 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 txCurrentNow.setText(currentNow+" mA");
                 txCurrentAve.setText(currentAve+" mA");
 
-                if (currentNow == 0) {//todo ERROR
+                if (currentNow == 0) {
+                    txCurrentStat.setText(R.string.current_description_off);
                     txCurrentDescription.setText(R.string.current_description_off);
                     imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
                 }else if (currentNow > 0 && currentNow < 8000){
+                    txCurrentStat.setText(R.string.current_description_good);
                     txCurrentDescription.setText(R.string.current_description_good);
                     imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
                 }else if (currentNow > 8000 && currentNow < 15000) {
+                    txCurrentStat.setText(R.string.current_description_good);
                     imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
                 }else if (currentNow > 15000) {
+                    txCurrentStat.setText(R.string.current_description_red);
                     imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
                 }else {
                     txCurrentDescription.setText(R.string.current_description_off);
@@ -133,33 +138,21 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         @Override
         public void onClick(View v) {
             if (!editTextMinute.getText().toString().isEmpty()) {
-                // fetching value from edit text and type cast to integer
                 timeSet = Integer.parseInt(editTextMinute.getText().toString().trim());
             }
-            // assigning values after converting to milliseconds
             timeCountInMilliSeconds = timeSet * 60 * 1000;
 
             if (timerStatus == TimerStatus.STOPPED) {
-                // call to initialize the progress bar values
                 setProgressBarValues();
-                // showing the reset icon
                 imageViewReset.setVisibility(View.VISIBLE);
-                // changing play icon to stop icon
                 imageViewStartStop.setImageResource(R.drawable.icon_stop);
-                // making edit text not editable
                 editTextMinute.setEnabled(false);
-                // changing the timer status to started
                 timerStatus = TimerStatus.STARTED;
-                // call to start the count down timer
                 DialogTimer.start();
             } else {
-                // hiding the reset icon
                 imageViewReset.setVisibility(View.GONE);
-                // changing stop icon to start icon
                 imageViewStartStop.setImageResource(R.drawable.icon_start);
-                // making edit text editable
                 editTextMinute.setEnabled(true);
-                // changing the timer status to stopped
                 timerStatus = TimerStatus.STOPPED;
                 DialogTimer.cancel();
             }

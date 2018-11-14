@@ -48,7 +48,9 @@
     <string name="developer_mode">開發人員模式</string>
     <string name="connection_failed">連線失敗</string>
     <string name="connected_successfully">連線成功</string>
-    <string name="failed">失敗</string>
+    <string name="failed">連線失敗</string>
     <string name="current_description_red">警告！超出安全電流範圍，該插座之電力供給已經被切斷。請檢查該連線裝置。</string>
     <string name="socket_off">插座未開啟</string>
+    <string name="current_description_orange">該插座目前處於高負載狀態，若連接設備為高功率裝置(例如：微波爐、吹風機)，請忽略此警示。</string>
+    <string name="connecting_with_dots">連線中...</string>
 </resources>

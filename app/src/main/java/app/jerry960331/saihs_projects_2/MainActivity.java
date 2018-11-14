@@ -95,13 +95,15 @@ public class MainActivity extends AppCompatActivity {
     boolean isBTConnected = false;
     boolean isWiFiConnected = false;
     boolean confirmSwitch;
-
     boolean AutoOn1 = false;
-    boolean AutoOn2= false;
+    boolean AutoOn2 = false;
     boolean AutoOn3 = false;
     boolean AutoOn4 = false;
-
     boolean devMode = false;
+    String PIR;
+    String current1 = "0", current2 = "0", current3 = "0", current4 = "0";
+    Double currentAv1 = 0.0, currentAv2 = 0.0, currentAv3 = 0.0, currentAv4 = 0.0;
+    Integer i = 0;
 
     //color
     public static int red = 0xfff44336;
@@ -131,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         txVStat.bringToFront();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        //FunctionSetEnable(false);
+        FunctionSetEnable(false);
 
 
 
@@ -141,20 +143,41 @@ public class MainActivity extends AppCompatActivity {
 
                 if(msg.what == MESSAGE_READ){
                     try{
-                        Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
                         String readMessage = new String((byte[]) msg.obj, "UTF-8");
                         btDataString.append(readMessage);
                     }catch (UnsupportedEncodingException uee){
                         uee.printStackTrace();
                     }
-                    Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
 
                     int endOfLineIndex = btDataString.indexOf("~");
                     if (endOfLineIndex > 0) {
                         //tvSB.setText(String.value)
                         if (btDataString.charAt(0) == '#') {
-                            String a = btDataString.substring(1, 3);
-                            Toast.makeText(getApplicationContext(), txLog.getText(), Toast.LENGTH_SHORT).show();
+                            PIR = btDataString.substring(1, 2);
+                            current1 = btDataString.substring(3, 8);
+                            current2 = btDataString.substring(9, 14);
+                            current3 = btDataString.substring(15, 20);
+                            current4 = btDataString.substring(21, 26);
+
+                            i++;
+                            currentAv1 += Double.parseDouble(current1) / i;
+                            currentAv2 += Double.parseDouble(current2) / i;
+                            currentAv3 += Double.parseDouble(current3) / i;
+                            currentAv4 += Double.parseDouble(current4) / i;
+                            if(PIR == "1") {
+                                try{
+                                    TimeCountDown.cancel();
+                                }catch (Exception e){}
+                            }
+                            else{
+                                if (AutoOn1 || AutoOn2 || AutoOn3 || AutoOn4) {
+                                    try {
+                                        TimeCountDown.start();
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }
+
                         }
                         btDataString.delete(0, btDataString.length());
                     }
@@ -359,21 +382,20 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v){
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-            if(!swSk1.isChecked()){
+            if(!swSk1.isChecked()){ //沒開
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 1;
                 CustomDialog.isSWOn = false;
                 CustomDialog.currentStat = getResources().getString(R.string.socket_off);
                 CustomDialog.currentNow = 0;
-                CustomDialog.currentAve = 0;
+                CustomDialog.currentAve = 0.0 ;
                 CustomDialog.show();
-            }else {//臨時測試用 todo 把這些東西弄成接收值
+            }else {//有開
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 1;
                 CustomDialog.isSWOn = true;
-                CustomDialog.currentStat = getResources().getString(R.string.good);
-                CustomDialog.currentNow = 100;
-                CustomDialog.currentAve = 100;
+                CustomDialog.currentNow = Integer.parseInt(current1);
+                CustomDialog.currentAve = currentAv1;
                 CustomDialog.show();
             }
         }
@@ -387,14 +409,14 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.socketSelect = 1;
                 CustomDialog.isSWOn = false;
                 CustomDialog.currentNow = 0;
-                CustomDialog.currentAve = 0;
+                CustomDialog.currentAve = 0.0;
                 CustomDialog.show();
-            }else {//臨時測試用 todo 把這些東西弄成接收值
+            }else {
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 1;
                 CustomDialog.isSWOn = false;
-                CustomDialog.currentNow = 100;
-                CustomDialog.currentAve = 100;
+                CustomDialog.currentNow = Integer.parseInt(current2);
+                CustomDialog.currentAve = currentAv2;
                 CustomDialog.show();
             }
         }
@@ -408,14 +430,14 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.socketSelect = 1;
                 CustomDialog.isSWOn = false;
                 CustomDialog.currentNow = 0;
-                CustomDialog.currentAve = 0;
+                CustomDialog.currentAve = 0.0;
                 CustomDialog.show();
-            }else {//臨時測試用 todo 把這些東西弄成接收值
+            }else {
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 1;
                 CustomDialog.isSWOn = false;
-                CustomDialog.currentNow = 100;
-                CustomDialog.currentAve = 100;
+                CustomDialog.currentNow = Integer.parseInt(current3);
+                CustomDialog.currentAve = currentAv3;
                 CustomDialog.show();
             }
         }
@@ -429,21 +451,21 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.socketSelect = 1;
                 CustomDialog.isSWOn = false;
                 CustomDialog.currentNow = 0;
-                CustomDialog.currentAve = 0;
+                CustomDialog.currentAve = 0.0;
                 CustomDialog.show();
-            }else {//臨時測試用 todo 把這些東西弄成接收值
+            }else {
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 1;
                 CustomDialog.isSWOn = false;
-                CustomDialog.currentNow = 100;
-                CustomDialog.currentAve = 100;
+                CustomDialog.currentNow = Integer.parseInt(current4);
+                CustomDialog.currentAve = currentAv4;
                 CustomDialog.show();
 
             }
 
         }
     };
-    CustomDialogActivity[]
+
     //鬧鐘OnClick
     private Button.OnClickListener SkAlarmListener1 = new Button.OnClickListener(){
         @Override
@@ -670,8 +692,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             //todo progressDialog
-            Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_SHORT).show();
-            txConnectStat.setText("Connecting...");
+            Toast.makeText(getApplicationContext(), R.string.connecting_with_dots, Toast.LENGTH_SHORT).show();
+            txConnectStat.setText(R.string.connecting_with_dots);
             imageConnectStat.setVisibility(View.INVISIBLE);
 
             // Spawn a new thread to avoid blocking the GUI one
@@ -721,7 +743,7 @@ public class MainActivity extends AppCompatActivity {
                         isBTConnected = true;
                         txConnectStat.setVisibility(View.INVISIBLE);
                         imageConnectStat.setVisibility(View.INVISIBLE);
-                        //FunctionSetEnable(true);
+                        FunctionSetEnable(true);
 
                     }
                 }
@@ -947,18 +969,22 @@ public class MainActivity extends AppCompatActivity {
             if(AutoOn1){
                 btnSkAuto1.setText("AUTO");
                 swSk1.setChecked(false);
+                btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
             }
             if(AutoOn2){
                 btnSkAuto2.setText("AUTO");
                 swSk2.setChecked(false);
+                btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
             }
             if(AutoOn3){
-                btnSkAuto4.setText("AUTO");
+                btnSkAuto3.setText("AUTO");
                 swSk3.setChecked(false);
+                btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
             }
             if(AutoOn4){
                 btnSkAuto4.setText("AUTO");
                 swSk4.setChecked(false);
+                btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
             }
         }
     };
