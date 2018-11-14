@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         FunctionSetEnable(false);
 
 
+
         btHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
@@ -447,12 +448,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v){
 
-                LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-                View alarm_dialog_title = layoutInflater.inflate(R.layout.alarm_dialog_title, null);
-                new AlertDialog.Builder(MainActivity.this)
-                        .setCustomTitle(alarm_dialog_title)
-                        .setView(R.layout.alarm_dialog)
-                        .show();
+
 
         }
     };
@@ -460,12 +456,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v){
 
-            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-            View alarm_dialog_title = layoutInflater.inflate(R.layout.alarm_dialog_title, null);
-            new AlertDialog.Builder(MainActivity.this)
-                    .setCustomTitle(alarm_dialog_title)
-                    .setView(R.layout.alarm_dialog)
-                    .show();
+
 
         }
     };
@@ -473,12 +464,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v){
 
-            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-            View alarm_dialog_title = layoutInflater.inflate(R.layout.alarm_dialog_title, null);
-            new AlertDialog.Builder(MainActivity.this)
-                    .setCustomTitle(alarm_dialog_title)
-                    .setView(R.layout.alarm_dialog)
-                    .show();
+
 
         }
     };
@@ -486,12 +472,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v){
 
-            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-            View alarm_dialog_title = layoutInflater.inflate(R.layout.alarm_dialog_title, null);
-            new AlertDialog.Builder(MainActivity.this)
-                    .setCustomTitle(alarm_dialog_title)
-                    .setView(R.layout.alarm_dialog)
-                    .show();
+
 
         }
     };
@@ -502,20 +483,22 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v){
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
             final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
-            //CustomDialog.functionSelect = "Chart";
+            CustomDialog.functionSelect = "Chart";
             String[] xItem = {"1","2","3","4","5","6","7"};
-            String[] yItem = {"10k","20k","30k","40k","50k"};
-            ChartVal.setXItem(xItem);
-            ChartVal.setYItem(yItem);
-            HashMap<Integer,Integer> pointMap = new HashMap();
+            String[] yItem = {"29mA","28mA","27mA","26mA","25mA"};
+            int[] currentValue = new int[xItem.length];
+            CustomDialog.xChart = xItem;
+            CustomDialog.yChart = yItem;
             for(int i = 0;i<xItem.length;i++){
-                pointMap.put(i, (int) (Math.random()*5));
+                currentValue[i] = (int)(Math.random()*5);
             }
-            ChartVal.setData(pointMap);
+            CustomDialog.currentValue = currentValue;
+            CustomDialog.show();
 
+            /*
             new AlertDialog.Builder(MainActivity.this)
                     .setView(R.layout.chart_dialog)
-                    .show();
+                    .show();*/
         }
     };
     private Button.OnClickListener SkChartListener2 = new Button.OnClickListener(){
@@ -900,7 +883,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //倒數計時器
-    CountDownTimer TimeCountDown  = new CountDownTimer(60000, 1000) {
+    CountDownTimer TimeCountDown  = new CountDownTimer(10000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
             long i = millisUntilFinished;

@@ -18,7 +18,7 @@ public class SimpleLineChart extends View {
     private float mYAxisFontSize = 24;
 
     //线的颜色
-    private int mLineColor = Color.parseColor("#00BCD4");
+    private int mLineColor = Color.parseColor("#00b9a9"); //"#00BCD4"
 
     //线条的宽度
     private float mStrokeWidth = 8.0f;
@@ -82,7 +82,7 @@ public class SimpleLineChart extends View {
         //画坐标线的轴
         Paint axisPaint = new Paint();
         axisPaint.setTextSize(mYAxisFontSize);
-        axisPaint.setColor(Color.parseColor("#3F51B5"));
+        axisPaint.setColor(Color.parseColor("#000000"));
 
         if (mPointMap == null || mPointMap.size() == 0) {
             int textLength = (int) axisPaint.measureText(mNoDataMsg);

@@ -25,9 +25,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     boolean isSWOn;
     private TextView txCurrentStat, txCurrentNow, txCurrentAve, txCurrentDescription;
     private ImageView imageCurrentStat;
+    private SimpleLineChart mSimpleLineChart;
 
     String[] xChart = {};
     String[] yChart = {};
+    int[] currentValue = {};
 
 
     CustomDialogActivity(Activity a){
@@ -42,6 +44,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
         switch (functionSelect){
             case "Stat":
+                Log.d("d","Stat");
                 setContentView(R.layout.current_dialog);
 
                 txCurrentStat = findViewById(R.id.txCurrentStat);
@@ -72,8 +75,16 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
             case "Alarm":
                 break;
             case "Chart":
+                Log.d("d","chart");
                 setContentView(R.layout.chart_dialog);
-
+                mSimpleLineChart = (SimpleLineChart) findViewById(R.id.simpleLineChart);
+                mSimpleLineChart.setXItem(xChart);
+                mSimpleLineChart.setYItem(yChart);
+                HashMap<Integer,Integer> pointMap = new HashMap();
+                for(int i = 0;i<xChart.length;i++){
+                    pointMap.put(i,currentValue[i]);
+                }
+                mSimpleLineChart.setData(pointMap);
                 break;
         }
     }
