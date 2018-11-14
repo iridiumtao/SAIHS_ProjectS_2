@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         txVStat.bringToFront();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        FunctionSetEnable(false);
+        //FunctionSetEnable(false);
 
 
 
@@ -438,15 +438,20 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.currentNow = 100;
                 CustomDialog.currentAve = 100;
                 CustomDialog.show();
+
             }
 
         }
     };
-
+    CustomDialogActivity[]
     //鬧鐘OnClick
     private Button.OnClickListener SkAlarmListener1 = new Button.OnClickListener(){
         @Override
         public void onClick(View v){
+            final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+            CustomDialog.functionSelect = "Alarm";
+            CustomDialog.socketSelect = 1;
+
 
 
 
@@ -477,6 +482,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+
     //表格OnClick
     private Button.OnClickListener SkChartListener1 = new Button.OnClickListener(){
         @Override
@@ -494,29 +501,60 @@ public class MainActivity extends AppCompatActivity {
             }
             CustomDialog.currentValue = currentValue;
             CustomDialog.show();
-
-            /*
-            new AlertDialog.Builder(MainActivity.this)
-                    .setView(R.layout.chart_dialog)
-                    .show();*/
         }
     };
     private Button.OnClickListener SkChartListener2 = new Button.OnClickListener(){
         @Override
         public void onClick(View v){
-
+            final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+            final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
+            CustomDialog.functionSelect = "Chart";
+            String[] xItem = {"1","2","3","4","5","6","7"};
+            String[] yItem = {"29mA","28mA","27mA","26mA","25mA"};
+            int[] currentValue = new int[xItem.length];
+            CustomDialog.xChart = xItem;
+            CustomDialog.yChart = yItem;
+            for(int i = 0;i<xItem.length;i++){
+                currentValue[i] = (int)(Math.random()*5);
+            }
+            CustomDialog.currentValue = currentValue;
+            CustomDialog.show();
         }
     };
     private Button.OnClickListener SkChartListener3 = new Button.OnClickListener(){
         @Override
         public void onClick(View v){
-
+            final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+            final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
+            CustomDialog.functionSelect = "Chart";
+            String[] xItem = {"1","2","3","4","5","6","7"};
+            String[] yItem = {"29mA","28mA","27mA","26mA","25mA"};
+            int[] currentValue = new int[xItem.length];
+            CustomDialog.xChart = xItem;
+            CustomDialog.yChart = yItem;
+            for(int i = 0;i<xItem.length;i++){
+                currentValue[i] = (int)(Math.random()*5);
+            }
+            CustomDialog.currentValue = currentValue;
+            CustomDialog.show();
         }
     };
     private Button.OnClickListener SkChartListener4 = new Button.OnClickListener(){
         @Override
         public void onClick(View v){
-
+            final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+            final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
+            CustomDialog.functionSelect = "Chart";
+            String[] xItem = {"1","2","3","4","5","6","7"};
+            String[] yItem = {"29mA","28mA","27mA","26mA","25mA"};
+            int[] currentValue = new int[xItem.length];
+            CustomDialog.xChart = xItem;
+            CustomDialog.yChart = yItem;
+            for(int i = 0;i<xItem.length;i++){
+                currentValue[i] = (int)(Math.random()*5);
+            }
+            CustomDialog.currentValue = currentValue;
+            CustomDialog.show();
         }
     };
 
@@ -683,7 +721,7 @@ public class MainActivity extends AppCompatActivity {
                         isBTConnected = true;
                         txConnectStat.setVisibility(View.INVISIBLE);
                         imageConnectStat.setVisibility(View.INVISIBLE);
-                        FunctionSetEnable(true);
+                        //FunctionSetEnable(true);
 
                     }
                 }
@@ -972,10 +1010,13 @@ public class MainActivity extends AppCompatActivity {
             menu.findItem(R.id.action_bt).setVisible(false);
             menu.findItem(R.id.action_auto).setVisible(false);
             menu.findItem(R.id.action_notification).setVisible(false);
+            menu.findItem(R.id.action_destroy).setVisible(false);
         }else {
             menu.findItem(R.id.action_bt).setVisible(true);
             menu.findItem(R.id.action_auto).setVisible(true);
             menu.findItem(R.id.action_notification).setVisible(true);
+            menu.findItem(R.id.action_destroy).setVisible(true);
+
         }
         return true;
     }
@@ -1027,6 +1068,11 @@ public class MainActivity extends AppCompatActivity {
                 devMode = item.isChecked();
                 if(!isWiFiConnected && !isBTConnected){ FunctionSetEnable(item.isChecked()); }
                 break;
+            case  R.id.action_destroy:
+                Intent i = getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
         }
         return super.onOptionsItemSelected(item);
     }

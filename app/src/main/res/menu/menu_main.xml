@@ -26,4 +26,7 @@
         android:id="@+id/action_help"
         android:title="@string/action_help"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_destroy"
+        android:title="Restart App" />
 </menu>
