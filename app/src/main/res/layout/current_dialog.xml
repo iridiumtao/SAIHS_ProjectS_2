@@ -7,7 +7,7 @@
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="173dp"
         android:scaleType="centerInside"
         app:srcCompat="@drawable/current_background" />
 
@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -112,7 +113,7 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/imageButton2"
+            android:id="@+id/btnAlarm"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginRight="10dp"
@@ -122,7 +123,7 @@
             app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/btnChart"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_weight="1"

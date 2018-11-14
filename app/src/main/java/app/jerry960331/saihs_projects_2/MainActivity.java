@@ -502,7 +502,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v){
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
             final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
-
+            //CustomDialog.functionSelect = "Chart";
             String[] xItem = {"1","2","3","4","5","6","7"};
             String[] yItem = {"10k","20k","30k","40k","50k"};
             ChartVal.setXItem(xItem);
@@ -512,6 +512,10 @@ public class MainActivity extends AppCompatActivity {
                 pointMap.put(i, (int) (Math.random()*5));
             }
             ChartVal.setData(pointMap);
+
+            new AlertDialog.Builder(MainActivity.this)
+                    .setView(R.layout.chart_dialog)
+                    .show();
         }
     };
     private Button.OnClickListener SkChartListener2 = new Button.OnClickListener(){
