@@ -167,6 +167,22 @@ public class MainActivity extends AppCompatActivity {
                             if(PIR == "1") {
                                 try{
                                     TimeCountDown.cancel();
+                                    if(AutoOn1 && !swSk1.isChecked()){
+                                        swSk1.setChecked(true);
+                                        btConnectedThread.write("a");
+                                    }
+                                    if(AutoOn2 && !swSk2.isChecked()){
+                                        swSk2.setChecked(true);
+                                        btConnectedThread.write("c");
+                                    }
+                                    if(AutoOn3 && !swSk3.isChecked()){
+                                        swSk3.setChecked(true);
+                                        btConnectedThread.write("e");
+                                    }
+                                    if(AutoOn4 && !swSk4.isChecked()){
+                                        swSk4.setChecked(true);
+                                        btConnectedThread.write("g");
+                                    }
                                 }catch (Exception e){}
                             }
                             else{
@@ -866,7 +882,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 if (btConnectedThread != null){
-                    String sendData = "ab";
+                    String sendData = "z";
                     btConnectedThread.write(sendData);
 
                 }
@@ -970,22 +986,35 @@ public class MainActivity extends AppCompatActivity {
                 btnSkAuto1.setText("AUTO");
                 swSk1.setChecked(false);
                 btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
+                if (btConnectedThread != null){
+                    btConnectedThread.write("b");
+                }
             }
             if(AutoOn2){
                 btnSkAuto2.setText("AUTO");
                 swSk2.setChecked(false);
                 btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
+                if (btConnectedThread != null){
+                    btConnectedThread.write("d");
+                }
             }
             if(AutoOn3){
                 btnSkAuto3.setText("AUTO");
                 swSk3.setChecked(false);
                 btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
+                if (btConnectedThread != null){
+                    btConnectedThread.write("f");
+                }
             }
             if(AutoOn4){
                 btnSkAuto4.setText("AUTO");
                 swSk4.setChecked(false);
                 btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
+                if (btConnectedThread != null){
+                    btConnectedThread.write("h");
+                }
             }
+
         }
     };
 
@@ -1087,7 +1116,9 @@ public class MainActivity extends AppCompatActivity {
                 makeOreoNotification();
                 break;
             case R.id.action_auto:
-                TimeCountDown.start();
+                if (AutoOn1 || AutoOn2 || AutoOn3 || AutoOn4) {
+                    TimeCountDown.start();
+                }
                 break;
             case R.id.action_dev:
                 item.setChecked(!item.isChecked());
