@@ -68,6 +68,12 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         imageViewReset = (ImageView) findViewById(R.id.imageViewReset);
         imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartStop);
 
+        /*
+        CountDownTimer[] timer = new CountDownTimer[4];
+        timer.
+        timer[1].start();
+*/
+
 
 
         switch (functionSelect){
@@ -158,13 +164,16 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 editTextMinute.setEnabled(true);
                 timerStatus = TimerStatus.STOPPED;
                 DialogTimer.cancel();
+
+
             }
 
 
 
         }
     };
-    CountDownTimer[] timer = new CountDownTimer[4];
+
+
 
     private CountDownTimer DialogTimer = new CountDownTimer(timeCountInMilliSeconds,1000) {
         @Override

@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         txVStat.bringToFront();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        FunctionSetEnable(false);
+        //FunctionSetEnable(false);
 
 
 
@@ -160,10 +160,10 @@ public class MainActivity extends AppCompatActivity {
                             current4 = btDataString.substring(21, 26);
 
                             i++;
-                            currentAv1 += Double.parseDouble(current1) / i;
-                            currentAv2 += Double.parseDouble(current2) / i;
-                            currentAv3 += Double.parseDouble(current3) / i;
-                            currentAv4 += Double.parseDouble(current4) / i;
+                            currentAv1 = (currentAv1 + Double.parseDouble(current1)) / i;
+                            currentAv2 = (currentAv2 + Double.parseDouble(current2)) / i;
+                            currentAv3 = (currentAv3 + Double.parseDouble(current3)) / i;
+                            currentAv4 = (currentAv4+ Double.parseDouble(current4)) / i;
                             if(PIR == "1") {
                                 try{
                                     TimeCountDown.cancel();
@@ -759,7 +759,8 @@ public class MainActivity extends AppCompatActivity {
                         isBTConnected = true;
                         txConnectStat.setVisibility(View.INVISIBLE);
                         imageConnectStat.setVisibility(View.INVISIBLE);
-                        FunctionSetEnable(true);
+
+                        //FunctionSetEnable(true);
 
                     }
                 }
