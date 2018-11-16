@@ -69,6 +69,7 @@ public class BTActivity extends AppCompatActivity {
     private final static int CONNECTING_STATUS = 3;
     // used in bluetooth handler to identify message status
     private  String _receiveData = "";
+    private BluetoothSocket mmSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -350,7 +351,7 @@ public class BTActivity extends AppCompatActivity {
     }
 
     private class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
+
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
@@ -405,16 +406,16 @@ public class BTActivity extends AppCompatActivity {
         }
 
         /* Call this from the main activity to shutdown the connection */
-        public void cancel() {
-            if (mmSocket!= null){
+
+    }
+
+    public void cancel() {
+        if (mmSocket!= null){
             try {
                 mmSocket.close();
             } catch (IOException e) { }
-            }
         }
     }
-
-
 
 
 
@@ -443,8 +444,9 @@ public class BTActivity extends AppCompatActivity {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        ConnectedThread thread = new ConnectedThread(mBTSocket);
-        thread.cancel();
+
+
+        cancel();
     }
 
 }

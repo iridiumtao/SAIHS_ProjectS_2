@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
@@ -27,16 +28,14 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     String functionSelect, currentStat;
     int socketSelect;
     int currentNow;
+    int powerNow;
     Double currentAve;
     boolean isSWOn;
-    private TextView txCurrentStat, txCurrentNow, txCurrentAve, txCurrentDescription;
+    private TextView txCurrentStat, txCurrentNow , txPowerNow, txCurrentAve, txCurrentDescription;
     private ImageView imageCurrentStat;
     private SimpleLineChart mSimpleLineChart;
 
-    private enum TimerStatus {
-        STARTED,
-        STOPPED
-    }
+
     int timeSet;
     private long timeCountInMilliSeconds = 1 * 60000;
     private ProgressBar progressBarCircle;
@@ -45,7 +44,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     private ImageView imageViewReset;
     private ImageView imageViewStartStop;
     private CountDownTimer countDownTimer;
-    private TimerStatus timerStatus = TimerStatus.STOPPED;
+    private boolean timerOn1 = false, timerOn2 = false, timerOn3 = false, timerOn4 = false;
+
+    Long remainTime = (long)0;
 
 
     String[] xChart = {};
@@ -62,19 +63,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
-        editTextMinute = (EditText) findViewById(R.id.editTextMinute);
-        textViewTime = (TextView) findViewById(R.id.textViewTime);
-        imageViewReset = (ImageView) findViewById(R.id.imageViewReset);
-        imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartStop);
-
-        /*
-        CountDownTimer[] timer = new CountDownTimer[4];
-        timer.
-        timer[1].start();
-*/
-
-
 
         switch (functionSelect){
             case "Stat":
@@ -86,10 +74,12 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 txCurrentAve = findViewById(R.id.txCurrentAve);
                 txCurrentDescription = findViewById(R.id.txCurrentDescription);
                 imageCurrentStat = findViewById(R.id.imageCurrentStat);
+                txPowerNow = findViewById(R.id.txPowerNow);
 
                 txCurrentStat.setText(currentStat);
                 txCurrentNow.setText(currentNow+" mA");
                 txCurrentAve.setText(currentAve+" mA");
+                txPowerNow.setText(currentNow*0.11+" mW");
 
                 if (currentNow == 0) {
                     txCurrentStat.setText(R.string.socket_off);
@@ -99,11 +89,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     txCurrentStat.setText(R.string.good);
                     txCurrentDescription.setText(R.string.current_description_good);
                     imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
-                }else if (currentNow > 8000 && currentNow < 15000) {
+                }else if (currentNow > 8000 && currentNow < 12000) {
                     txCurrentStat.setText(R.string.orange);
                     txCurrentDescription.setText(R.string.current_description_orange);
                     imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
-                }else if (currentNow > 15000) {
+                }else if (currentNow > 12000) {
                     txCurrentStat.setText(R.string.red);
                     txCurrentDescription.setText(R.string.current_description_red);
                     imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
@@ -115,9 +105,16 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 break;
             case "Alarm": //todo==============================================
                 setContentView(R.layout.alarm_dialog);
+                progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
+                editTextMinute = (EditText) findViewById(R.id.editTextMinute);
+                textViewTime = (TextView) findViewById(R.id.textViewTime);
+                imageViewReset = (ImageView) findViewById(R.id.imageViewReset);
+                imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartStop);
                 imageViewStartStop.setOnClickListener(SetTimer);
                 switch (socketSelect){
                     case 1:
+                        textViewTime.setText(hmsTimeFormatter(remainTime));
+                        progressBarCircle.setProgress((int) (remainTime / 1000));
                         break;
                     case 2:
                         break;
@@ -150,23 +147,34 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 timeSet = Integer.parseInt(editTextMinute.getText().toString().trim());
             }
             timeCountInMilliSeconds = timeSet * 60 * 1000;
-
-            if (timerStatus == TimerStatus.STOPPED) {
-                setProgressBarValues();
-                imageViewReset.setVisibility(View.VISIBLE);
-                imageViewStartStop.setImageResource(R.drawable.icon_stop);
-                editTextMinute.setEnabled(false);
-                timerStatus = TimerStatus.STARTED;
-                DialogTimer.start();
-            } else {
-                imageViewReset.setVisibility(View.GONE);
-                imageViewStartStop.setImageResource(R.drawable.icon_start);
-                editTextMinute.setEnabled(true);
-                timerStatus = TimerStatus.STOPPED;
-                DialogTimer.cancel();
+            //MainActivity main = new MainActivity(CustomDialogActivity.this);
 
 
+            switch (socketSelect){
+                case 1:
+                    if (!timerOn1) {
+                        setProgressBarValues();
+                        imageViewReset.setVisibility(View.VISIBLE);
+                        imageViewStartStop.setImageResource(R.drawable.icon_stop);
+                        editTextMinute.setEnabled(false);
+                        //main.DialogTimer.start();
+                        timerOn1 = true;
+                    }else {
+                        imageViewReset.setVisibility(View.GONE);
+                        imageViewStartStop.setImageResource(R.drawable.icon_start);
+                        editTextMinute.setEnabled(true);
+                        timerOn1 = false;
+                    }
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
             }
+
+
 
 
 
@@ -175,7 +183,25 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
 
 
-    private CountDownTimer DialogTimer = new CountDownTimer(timeCountInMilliSeconds,1000) {
+    private CountDownTimer DialogTimer1 = new CountDownTimer(timeCountInMilliSeconds,1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
+            progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
+            Log.d("s", "onTick: 1");
+        }
+
+        @Override
+        public void onFinish() {
+            textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
+            setProgressBarValues();
+            imageViewReset.setVisibility(View.GONE);
+            imageViewStartStop.setImageResource(R.drawable.icon_start);
+            editTextMinute.setEnabled(true);
+            timerOn1 = false;
+        }
+    };
+    private CountDownTimer DialogTimer2 = new CountDownTimer(timeCountInMilliSeconds,1000) {
         @Override
         public void onTick(long millisUntilFinished) {
             textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
@@ -185,16 +211,45 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         @Override
         public void onFinish() {
             textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
-            // call to initialize the progress bar values
             setProgressBarValues();
-            // hiding the reset icon
             imageViewReset.setVisibility(View.GONE);
-            // changing stop icon to start icon
             imageViewStartStop.setImageResource(R.drawable.icon_start);
-            // making edit text editable
             editTextMinute.setEnabled(true);
-            // changing the timer status to stopped
-            timerStatus = CustomDialogActivity.TimerStatus.STOPPED;
+            timerOn2 = false;
+        }
+    };
+    private CountDownTimer DialogTimer3 = new CountDownTimer(timeCountInMilliSeconds,1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
+            progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
+        }
+
+        @Override
+        public void onFinish() {
+            textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
+            setProgressBarValues();
+            imageViewReset.setVisibility(View.GONE);
+            imageViewStartStop.setImageResource(R.drawable.icon_start);
+            editTextMinute.setEnabled(true);
+            timerOn3 = false;
+        }
+    };
+    private CountDownTimer DialogTimer4 = new CountDownTimer(timeCountInMilliSeconds,1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
+            progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
+        }
+
+        @Override
+        public void onFinish() {
+            textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
+            setProgressBarValues();
+            imageViewReset.setVisibility(View.GONE);
+            imageViewStartStop.setImageResource(R.drawable.icon_start);
+            editTextMinute.setEnabled(true);
+            timerOn4 = false;
         }
     };
 

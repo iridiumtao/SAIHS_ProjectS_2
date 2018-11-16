@@ -1,5 +1,6 @@
 package app.jerry960331.saihs_projects_2;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -25,6 +26,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +51,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
+    CustomDialogActivity c;
     private ImageButton
             btnSkStat1, btnSkStat2, btnSkStat3, btnSkStat4,
             btnSkAlarm1, btnSkAlarm2, btnSkAlarm3, btnSkAlarm4,
@@ -100,10 +103,15 @@ public class MainActivity extends AppCompatActivity {
     boolean AutoOn3 = false;
     boolean AutoOn4 = false;
     boolean devMode = false;
+    boolean AutoTimerIsOn = false;
+    boolean AutoTimerRepeatNOPE = false;
     String PIR;
     String current1 = "0", current2 = "0", current3 = "0", current4 = "0";
+	Integer currentSum1 = 60,currentSum2 = 60,currentSum3 = 60,currentSum4 = 60;
     Double currentAv1 = 0.0, currentAv2 = 0.0, currentAv3 = 0.0, currentAv4 = 0.0;
     Integer i = 0;
+
+    private long timeCountInMilliSeconds;
 
     //color
     public static int red = 0xfff44336;
@@ -115,6 +123,11 @@ public class MainActivity extends AppCompatActivity {
     private Snackbar snackbar;
     private View snackBarView;
     private TextView txVStat, snackBarTxV;
+
+    TextView TxTest;
+    String test = "";
+
+    String sendData = "z";
 
 
 //alt+enter 字串抽離
@@ -132,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         setOnClickListeners();
         txVStat.bringToFront();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-
+        TxTest = findViewById(R.id.textView);
         //FunctionSetEnable(false);
 
 
@@ -153,46 +166,66 @@ public class MainActivity extends AppCompatActivity {
                     if (endOfLineIndex > 0) {
                         //tvSB.setText(String.value)
                         if (btDataString.charAt(0) == '#') {
+                            test = btDataString.substring(1,2);
                             PIR = btDataString.substring(1, 2);
                             current1 = btDataString.substring(3, 8);
                             current2 = btDataString.substring(9, 14);
                             current3 = btDataString.substring(15, 20);
                             current4 = btDataString.substring(21, 26);
+                            try {
 
-                            i++;
-                            currentAv1 = (currentAv1 + Double.parseDouble(current1)) / i;
-                            currentAv2 = (currentAv2 + Double.parseDouble(current2)) / i;
-                            currentAv3 = (currentAv3 + Double.parseDouble(current3)) / i;
-                            currentAv4 = (currentAv4+ Double.parseDouble(current4)) / i;
-                            if(PIR == "1") {
+                                TxTest.setText(BT_comm);
+                                currentSum1 += Integer.parseInt(current1);
+                                currentSum2 += Integer.parseInt(current2);
+                                currentSum3 += Integer.parseInt(current3);
+                                currentSum4 += Integer.parseInt(current4);
+                                i++;
+                                currentAv1 = currentSum1 / i + .0;
+                                currentAv2 = currentSum2 / i + .0;
+                                currentAv3 = currentSum3 / i + .0;
+                                currentAv4 = currentSum4 / i + .0;
+                            }catch (Exception e){}
+                            /*
+                            Log.d("PIR", PIR);
+                            if(PIR == "0") { //如果偵測到人 把插座打開
+
                                 try{
+
+                                    sendData = "";
                                     TimeCountDown.cancel();
+                                    AutoTimerIsOn = false;
                                     if(AutoOn1 && !swSk1.isChecked()){
                                         swSk1.setChecked(true);
-                                        btConnectedThread.write("a");
+                                        sendData = "a";
+                                        //btConnectedThread.write("a");
                                     }
                                     if(AutoOn2 && !swSk2.isChecked()){
                                         swSk2.setChecked(true);
-                                        btConnectedThread.write("c");
+                                        sendData = "c";
+                                        //btConnectedThread.write("c");
                                     }
                                     if(AutoOn3 && !swSk3.isChecked()){
                                         swSk3.setChecked(true);
+                                        sendData = "e";
                                         btConnectedThread.write("e");
                                     }
                                     if(AutoOn4 && !swSk4.isChecked()){
                                         swSk4.setChecked(true);
+                                        sendData = "g";
                                         btConnectedThread.write("g");
                                     }
                                 }catch (Exception e){}
                             }
-                            else{
+                            else{ //1
                                 if (AutoOn1 || AutoOn2 || AutoOn3 || AutoOn4) {
-                                    try {
-                                        TimeCountDown.start();
-                                    } catch (Exception e) {
-                                    }
+								//如果沒偵測到人，且任意Auto是開啟的，則開始倒數計時
+                                    Log.d("timer", String.valueOf(AutoTimerIsOn));
+                                    if (!AutoTimerIsOn){
+                                        if(!AutoTimerRepeatNOPE){
+                                        TimeCountDown.start();}}
+
                                 }
-                            }
+                            }*/
 
                         }
                         btDataString.delete(0, btDataString.length());
@@ -200,19 +233,24 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (msg.what == CONNECTING_STATUS){
                     try{
-                        if (msg.arg1 == 1)
+                        if (msg.arg1 == 1) {
                             Toast.makeText(getApplicationContext(), R.string.connected_successfully, Toast.LENGTH_SHORT).show();
-
-                        else
+                        }
+                        else{
                             Toast.makeText(getApplicationContext(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
                             imageConnectStat.setVisibility(View.VISIBLE);
-                            txConnectStat.setText(R.string.failed);
+                            txConnectStat.setText(R.string.failed);}
                     }catch (Exception e) {
                     }
                 }
                 if (btConnectedThread != null){
-                    String sendData = BT_comm;
-                    btConnectedThread.write(sendData);
+                    /*
+                    Log.d("sendData", sendData);
+                    if(sendData == "z"){
+                        return;
+                    }else if(sendData != ""){
+                        btConnectedThread.write(sendData);
+                    }*/
                 }
             }
         };
@@ -302,6 +340,11 @@ public class MainActivity extends AppCompatActivity {
                             String IO = "";
                             switch (switchId) {
                                 case R.id.swSk1:
+
+                                    AutoOn1 = false;
+                                    btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto));
+                                    btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
+
                                     if (s.isChecked()) {
                                         btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
                                         i = 1;
@@ -317,6 +360,11 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     break;
                                 case R.id.swSk2:
+
+                                    AutoOn2 = false;
+                                    btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto));
+                                    btnSkAuto2.setTextColor(getResources().getColor(R.color.colorPrimary));
+
                                     if (s.isChecked()) {
                                         btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
                                         i = 2;
@@ -332,6 +380,11 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     break;
                                 case R.id.swSk3:
+
+                                    AutoOn3 = false;
+                                    btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto));
+                                    btnSkAuto3.setTextColor(getResources().getColor(R.color.colorPrimary));
+
                                     if (s.isChecked()) {
                                         btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
                                         IO = getResources().getString(R.string.turnOn);
@@ -347,6 +400,11 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     break;
                                 case R.id.swSk4:
+
+                                    AutoOn4 = false;
+                                    btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto));
+                                    btnSkAuto4.setTextColor(getResources().getColor(R.color.colorPrimary));
+
                                     if (s.isChecked()) {
                                         btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
                                         i = 4;
@@ -489,9 +547,7 @@ public class MainActivity extends AppCompatActivity {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
             CustomDialog.functionSelect = "Alarm";
             CustomDialog.socketSelect = 1;
-
-
-
+            CustomDialog.show();
 
         }
     };
@@ -519,7 +575,25 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+/*
+    MainActivity(CustomDialogActivity dialog){
+        //super(dialog);
+        c = dialog;
+    }*/
+/*
+    CountDownTimer DialogTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
+        CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
 
+        @Override
+        public void onTick(long millisUntilFinished) {
+            CustomDialog.remainTime = timeCountInMilliSeconds;
+        }
+
+        @Override
+        public void onFinish() {
+
+        }
+    };*/
 
 
     //表格OnClick
@@ -530,12 +604,20 @@ public class MainActivity extends AppCompatActivity {
             final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
             CustomDialog.functionSelect = "Chart";
             String[] xItem = {"1","2","3","4","5","6","7"};
-            String[] yItem = {"29mA","28mA","27mA","26mA","25mA"};
+            String[] yItem = {Integer.parseInt(current1) + 2 + "mA", Integer.parseInt(current1) + 1 + "mA",
+                    Integer.parseInt(current1) + "mA",Integer.parseInt(current1) - 1 + "mA",Integer.parseInt(current1) - 2 + "mA"};
             int[] currentValue = new int[xItem.length];
             CustomDialog.xChart = xItem;
             CustomDialog.yChart = yItem;
-            for(int i = 0;i<xItem.length;i++){
-                currentValue[i] = (int)(Math.random()*5);
+            if(Integer.parseInt(current1) == 0)
+            {
+                for(int i = 0;i<xItem.length;i++){
+                    currentValue[i] = 2;
+                }
+            }else {
+                for(int i = 0;i<xItem.length;i++){
+                    currentValue[i] = (int)(Math.random()*5);
+                }
             }
             CustomDialog.currentValue = currentValue;
             CustomDialog.show();
@@ -548,12 +630,20 @@ public class MainActivity extends AppCompatActivity {
             final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
             CustomDialog.functionSelect = "Chart";
             String[] xItem = {"1","2","3","4","5","6","7"};
-            String[] yItem = {"29mA","28mA","27mA","26mA","25mA"};
+            String[] yItem = {Integer.parseInt(current2) + 2 + "mA", Integer.parseInt(current2) + 1 + "mA",
+                    Integer.parseInt(current2) + "mA",Integer.parseInt(current2) - 1 + "mA",Integer.parseInt(current2) - 2 + "mA"};
             int[] currentValue = new int[xItem.length];
             CustomDialog.xChart = xItem;
             CustomDialog.yChart = yItem;
-            for(int i = 0;i<xItem.length;i++){
-                currentValue[i] = (int)(Math.random()*5);
+            if(Integer.parseInt(current2) == 0)
+            {
+                for(int i = 0;i<xItem.length;i++){
+                    currentValue[i] = 2;
+                }
+            }else {
+                for(int i = 0;i<xItem.length;i++){
+                    currentValue[i] = (int)(Math.random()*5);
+                }
             }
             CustomDialog.currentValue = currentValue;
             CustomDialog.show();
@@ -566,12 +656,20 @@ public class MainActivity extends AppCompatActivity {
             final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
             CustomDialog.functionSelect = "Chart";
             String[] xItem = {"1","2","3","4","5","6","7"};
-            String[] yItem = {"29mA","28mA","27mA","26mA","25mA"};
+            String[] yItem = {Integer.parseInt(current3) + 2 + "mA", Integer.parseInt(current3) + 1 + "mA",
+                    Integer.parseInt(current3) + "mA",Integer.parseInt(current3) - 1 + "mA",Integer.parseInt(current3) - 2 + "mA"};
             int[] currentValue = new int[xItem.length];
             CustomDialog.xChart = xItem;
             CustomDialog.yChart = yItem;
-            for(int i = 0;i<xItem.length;i++){
-                currentValue[i] = (int)(Math.random()*5);
+            if(Integer.parseInt(current3) == 0)
+            {
+                for(int i = 0;i<xItem.length;i++){
+                    currentValue[i] = 2;
+                }
+            }else {
+                for(int i = 0;i<xItem.length;i++){
+                    currentValue[i] = (int)(Math.random()*5);
+                }
             }
             CustomDialog.currentValue = currentValue;
             CustomDialog.show();
@@ -584,12 +682,20 @@ public class MainActivity extends AppCompatActivity {
             final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
             CustomDialog.functionSelect = "Chart";
             String[] xItem = {"1","2","3","4","5","6","7"};
-            String[] yItem = {"29mA","28mA","27mA","26mA","25mA"};
+            String[] yItem = {Integer.parseInt(current4) + 2 + "mA", Integer.parseInt(current4) + 1 + "mA",
+                    Integer.parseInt(current4) + "mA",Integer.parseInt(current4) - 1 + "mA",Integer.parseInt(current4) - 2 + "mA"};
             int[] currentValue = new int[xItem.length];
             CustomDialog.xChart = xItem;
             CustomDialog.yChart = yItem;
-            for(int i = 0;i<xItem.length;i++){
-                currentValue[i] = (int)(Math.random()*5);
+            if(Integer.parseInt(current4) == 0)
+            {
+                for(int i = 0;i<xItem.length;i++){
+                    currentValue[i] = 2;
+                }
+            }else {
+                for(int i = 0;i<xItem.length;i++){
+                    currentValue[i] = (int)(Math.random()*5);
+                }
             }
             CustomDialog.currentValue = currentValue;
             CustomDialog.show();
@@ -702,7 +808,7 @@ public class MainActivity extends AppCompatActivity {
             final String name = "SBLUE";
 
             if(!btAdapter.isEnabled()) {
-                Toast.makeText(getBaseContext(), "Please try again after bluetooth enabled.",
+                Toast.makeText(getBaseContext(), R.string.please_try_again_after_bt_enable,
                         Toast.LENGTH_LONG).show();
                 return;
             }
@@ -727,7 +833,6 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "Socket creation failed",
                                 Toast.LENGTH_SHORT).show();
                     }
-                    // Establish the Bluetooth socket connection.
 
 
                     try {
@@ -758,7 +863,7 @@ public class MainActivity extends AppCompatActivity {
                         btConnectedThread.write("z"); //成功後傳值
                         isBTConnected = true;
                         txConnectStat.setVisibility(View.INVISIBLE);
-                        imageConnectStat.setVisibility(View.INVISIBLE);
+                        //imageConnectStat.setVisibility(View.INVISIBLE);
 
                         //FunctionSetEnable(true);
 
@@ -776,6 +881,7 @@ public class MainActivity extends AppCompatActivity {
         swSk2.setEnabled(b);
         swSk3.setEnabled(b);
         swSk4.setEnabled(b);
+        /*
         btnSkStat1.setEnabled(b);
         btnSkStat2.setEnabled(b);
         btnSkStat3.setEnabled(b);
@@ -788,6 +894,7 @@ public class MainActivity extends AppCompatActivity {
         btnSkChart2.setEnabled(b);
         btnSkChart3.setEnabled(b);
         btnSkChart4.setEnabled(b);
+        */
         btnSkAuto1.setEnabled(b);
         btnSkAuto2.setEnabled(b);
         btnSkAuto3.setEnabled(b);
@@ -833,7 +940,7 @@ public class MainActivity extends AppCompatActivity {
                     if (bytes != 0) {
                         SystemClock.sleep(100);
                         bytes = mmInStream.available();
-                        bytes = mmInStream.read(buffer, 0, bytes);
+                        bytes = mmInStream.read(buffer, 0, bytes);//todo 連線時會造成crash
                         btHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                     }
                 } catch (IOException e) {
@@ -845,8 +952,10 @@ public class MainActivity extends AppCompatActivity {
 
         /* Call this from the main activity to send data to the remote device */
         public void write(String input) {
+
+
             byte[] bytes = input.getBytes();
-            try {
+                try {
                 mmOutStream.write(bytes);
             } catch (IOException e) {
             }
@@ -905,17 +1014,22 @@ public class MainActivity extends AppCompatActivity {
 
     //auto按鈕的onClickListener
     //因為switch-case有問題 所以用最原始的方法
+    //使用單晶自動模式 所以插座鎖定被取消了
     public void auto1(View view) {
         if (!AutoOn1){
             AutoOn1 = true;
             btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
             btnSkAuto1.setTextColor(getResources().getColor(R.color.white));
-            swSk1.setEnabled(false);
+            //swSk1.setEnabled(false);
+            AutoTimerRepeatNOPE = false;
+            if (btConnectedThread != null){
+                btConnectedThread.write("i");
+            }
         }else{
             AutoOn1 = false;
             btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
-            swSk1.setEnabled(true);
+            //swSk1.setEnabled(true);
         }
     }
     public void auto2(View view) {
@@ -923,12 +1037,16 @@ public class MainActivity extends AppCompatActivity {
             AutoOn2 = true;
             btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
             btnSkAuto2.setTextColor(getResources().getColor(R.color.white));
-            swSk2.setEnabled(false);
+            //swSk2.setEnabled(false);
+            AutoTimerRepeatNOPE = false;
+            if (btConnectedThread != null){
+                btConnectedThread.write("j");
+            }
         }else{
             AutoOn2 = false;
             btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto2.setTextColor(getResources().getColor(R.color.colorPrimary));
-            swSk2.setEnabled(true);
+            //swSk2.setEnabled(true);
         }
     }
     public void auto3(View view) {
@@ -936,12 +1054,15 @@ public class MainActivity extends AppCompatActivity {
             AutoOn3 = true;
             btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
             btnSkAuto3.setTextColor(getResources().getColor(R.color.white));
-            swSk3.setEnabled(false);
-        }else{
+            //swSk3.setEnabled(false);
+            AutoTimerRepeatNOPE = false;
+            if (btConnectedThread != null){
+                btConnectedThread.write("k");
+            }        }else{
             AutoOn3 = false;
             btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto3.setTextColor(getResources().getColor(R.color.colorPrimary));
-            swSk3.setEnabled(true);
+            //swSk3.setEnabled(true);
         }
     }
     public void auto4(View view) {
@@ -949,13 +1070,16 @@ public class MainActivity extends AppCompatActivity {
             AutoOn4 = true;
             btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
             btnSkAuto4.setTextColor(getResources().getColor(R.color.white));
-            swSk4.setEnabled(false);
-
+            //swSk4.setEnabled(false);
+            AutoTimerRepeatNOPE = false;
+            if (btConnectedThread != null){
+                btConnectedThread.write("l");
+            }
         }else{
             AutoOn4 = false;
             btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto4.setTextColor(getResources().getColor(R.color.colorPrimary));
-            swSk4.setEnabled(true);
+            //swSk4.setEnabled(true);
         }
     }
 
@@ -963,6 +1087,7 @@ public class MainActivity extends AppCompatActivity {
     CountDownTimer TimeCountDown  = new CountDownTimer(10000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
+            AutoTimerIsOn = true;
             long i = millisUntilFinished;
             String b;
             while (i > 60000)
@@ -978,11 +1103,17 @@ public class MainActivity extends AppCompatActivity {
             else {btnSkAuto3.setText("AUTO");}
             if(AutoOn4){btnSkAuto4.setText(millisUntilFinished/60000 + ":" + b +i/1000);}
             else {btnSkAuto4.setText("AUTO");}
+            if (!AutoOn1 && !AutoOn2 && !AutoOn3 && !AutoOn4){
+                TimeCountDown.cancel();
+                AutoTimerIsOn = false;
+            }
         }
 
         @Override
         public void onFinish() {
+            AutoTimerIsOn = false;
             CustomizedSnackBar("時間到");
+            AutoTimerRepeatNOPE = true;
             if(AutoOn1){
                 btnSkAuto1.setText("AUTO");
                 swSk1.setChecked(false);
@@ -990,6 +1121,7 @@ public class MainActivity extends AppCompatActivity {
                 if (btConnectedThread != null){
                     btConnectedThread.write("b");
                 }
+
             }
             if(AutoOn2){
                 btnSkAuto2.setText("AUTO");
