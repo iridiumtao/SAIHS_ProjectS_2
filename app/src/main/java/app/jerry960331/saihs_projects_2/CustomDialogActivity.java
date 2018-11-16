@@ -66,7 +66,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
         switch (functionSelect){
             case "Stat":
-                Log.d("d","Stat");
+
                 setContentView(R.layout.current_dialog);
 
                 txCurrentStat = findViewById(R.id.txCurrentStat);
