@@ -157,5 +157,9 @@
     <string name="connecting_with_dots">Connecting...</string>
     <string name="orange">Warning</string>
     <string name="red">Caution</string>
+    <string name="please_try_again_after_bt_enable">Please try again after bluetooth enabled.</string>
+    <string name="current_chart">Current Chart</string>
+    <string name="chart_description">This is the chart of the current. You can see recently current here.</string>
+    <string name="now_power">Now Power:</string>
 
 </resources>
