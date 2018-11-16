@@ -768,7 +768,8 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO: 11/8/2018 關閉BT連線，並連接至WIFI
                                 //TODO ======================================
-                                Toast.makeText(getApplicationContext(), "ERROR. There is no Wi-Fi connection.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), R.string.connecting_with_dots, Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), R.string.connected_successfully, Toast.LENGTH_LONG).show();
                                 s.setChecked(true);
                                 //TODO ======================================
                             }
@@ -843,7 +844,7 @@ public class MainActivity extends AppCompatActivity {
         //txConnectStat.setVisibility(View.INVISIBLE);
         //imageConnectStat.setVisibility(View.INVISIBLE);
 
-        if (connectionMethod == "Bluetooth") {
+        //if (connectionMethod == "Bluetooth") {
 
             setBluetoothEnable(true);
             final String address = "98:D3:33:81:25:60"; //HC05的address
@@ -911,10 +912,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }.start();
-        } else if (connectionMethod == "Wi-Fi") {
-            Toast.makeText(getBaseContext(), "Unavailable",
-                    Toast.LENGTH_LONG).show();
-        }
+        //} else if (connectionMethod == "Wi-Fi") {
+        //    Toast.makeText(getBaseContext(), "Unavailable",
+        //            Toast.LENGTH_LONG).show();
+        //}
     }
 
     private void FunctionSetEnable(boolean b) {
