@@ -180,6 +180,14 @@ public class MainActivity extends AppCompatActivity {
 
 
                             try {
+                                if(Integer.parseInt(current3) > 700){
+                                    makeOreoNotification();
+                                    btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
+                                }
+                                if(Integer.parseInt(current1) > 700){
+                                    makeOreoNotification();
+                                    btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
+                                }
 
                                 if (Integer.parseInt(chipAutoOn1) == 1) {
                                     if (Integer.parseInt(PIR) == 0) {

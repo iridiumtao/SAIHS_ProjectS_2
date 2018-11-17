@@ -63,6 +63,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //MainActivity main = new MainActivity(CustomDialogActivity.this);
+
 
         switch (functionSelect){
             case "Stat":
@@ -79,24 +81,26 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 txCurrentStat.setText(currentStat);
                 txCurrentNow.setText(currentNow+" mA");
                 txCurrentAve.setText(currentAve+" mA");
-                txPowerNow.setText(currentNow*0.11+" mW");
+                txPowerNow.setText(currentNow*0.11+" W");
 
                 if (currentNow == 0) {
                     txCurrentStat.setText(R.string.socket_off);
                     txCurrentDescription.setText(R.string.current_description_off);
                     imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
-                }else if (currentNow > 0 && currentNow < 8000){
+                }else if (currentNow > 0 && currentNow < 700){
                     txCurrentStat.setText(R.string.good);
                     txCurrentDescription.setText(R.string.current_description_good);
                     imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
-                }else if (currentNow > 8000 && currentNow < 12000) {
-                    txCurrentStat.setText(R.string.orange);
-                    txCurrentDescription.setText(R.string.current_description_orange);
-                    imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
-                }else if (currentNow > 12000) {
+                //}else if (currentNow > 8000 && currentNow < 12000) {
+                  //  txCurrentStat.setText(R.string.orange);
+                  //  txCurrentDescription.setText(R.string.current_description_orange);
+                  //  imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
+                }else if (currentNow > 700) {
                     txCurrentStat.setText(R.string.red);
                     txCurrentDescription.setText(R.string.current_description_red);
                     imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
+
+
                 }else {
                     txCurrentStat.setText(R.string.socket_off);
                     txCurrentDescription.setText(R.string.current_description_off);
@@ -147,7 +151,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 timeSet = Integer.parseInt(editTextMinute.getText().toString().trim());
             }
             timeCountInMilliSeconds = timeSet * 60 * 1000;
-            //MainActivity main = new MainActivity(CustomDialogActivity.this);
 
 
             switch (socketSelect){
@@ -267,6 +270,13 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
         return hms;
     }
+
+
+
+
+
+
+
 
     @Override
     public void onClick(View v) {
