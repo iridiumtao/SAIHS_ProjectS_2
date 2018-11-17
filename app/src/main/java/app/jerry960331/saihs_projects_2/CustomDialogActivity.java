@@ -78,16 +78,19 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 imageCurrentStat = findViewById(R.id.imageCurrentStat);
                 txPowerNow = findViewById(R.id.txPowerNow);
 
-                txCurrentStat.setText(currentStat);
-                txCurrentNow.setText(currentNow+" mA");
-                txCurrentAve.setText(currentAve+" mA");
-                txPowerNow.setText(currentNow*0.11+" W");
+
+
+                    txCurrentStat.setText(currentStat);
+                    txCurrentNow.setText(currentNow + " mA");
+                    txCurrentAve.setText(currentAve + " mA");
+                    txPowerNow.setText(currentNow * 0.11 + " W");
+
 
                 if (currentNow == 0) {
                     txCurrentStat.setText(R.string.socket_off);
                     txCurrentDescription.setText(R.string.current_description_off);
                     imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
-                }else if (currentNow > 0 && currentNow < 700){
+                }else if (currentNow > 0 && currentNow < 3000){
                     txCurrentStat.setText(R.string.good);
                     txCurrentDescription.setText(R.string.current_description_good);
                     imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
@@ -95,7 +98,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                   //  txCurrentStat.setText(R.string.orange);
                   //  txCurrentDescription.setText(R.string.current_description_orange);
                   //  imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
-                }else if (currentNow > 700) {
+                }else if (currentNow > 3000) {
                     txCurrentStat.setText(R.string.red);
                     txCurrentDescription.setText(R.string.current_description_red);
                     imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);

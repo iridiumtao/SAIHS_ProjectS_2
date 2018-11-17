@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
     boolean AutoOn2 = false;
     boolean AutoOn3 = false;
     boolean AutoOn4 = false;
+    boolean unsafeCurrent1 = false, unsafeCurrent3 = false;
     boolean devMode = false;
     boolean AutoTimerIsOn = false;
     boolean AutoTimerRepeatNOPE = false;
@@ -166,28 +167,48 @@ public class MainActivity extends AppCompatActivity {
                     if (endOfLineIndex > 0) {
                         //tvSB.setText(String.value)
                         if (btDataString.charAt(0) == '#') {
-                            test = btDataString.substring(1, 2);
-                            PIR = btDataString.substring(1, 2);//偵測到人會收到0
-                            current1 = btDataString.substring(3, 8);
-                            current2 = btDataString.substring(9, 14);
-                            current3 = btDataString.substring(15, 20);
-                            current4 = btDataString.substring(21, 26);
-                            chipAutoOn1 = btDataString.substring(27, 28);//插座1的自動模式有開
-                            chipAutoOn2 = btDataString.substring(29, 30);
-                            chipAutoOn3 = btDataString.substring(21, 32);
-                            chipAutoOn4 = btDataString.substring(33, 34);
-                            Log.d("autoON", chipAutoOn1+" "+PIR);
-
-
                             try {
-                                if(Integer.parseInt(current3) > 700){
-                                    makeOreoNotification();
-                                    btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
+                                test = btDataString.substring(1, 2);
+                                PIR = btDataString.substring(1, 2);//偵測到人會收到0
+
+
+                                if (!unsafeCurrent1) {
+                                    current1 = btDataString.substring(3, 8);
                                 }
-                                if(Integer.parseInt(current1) > 700){
+                                if (Integer.parseInt(btDataString.substring(3, 8)) > 3000) {
                                     makeOreoNotification();
+                                    unsafeCurrent1 = true;
+                                }
+                                current2 = btDataString.substring(9, 14);
+
+
+                                if (!unsafeCurrent3) {
+                                    current3 = btDataString.substring(15, 20);
+                                }
+                                if (Integer.parseInt(btDataString.substring(15, 20)) > 3000) {
+                                    makeOreoNotification();
+                                    unsafeCurrent3 = true;
+                                }
+
+                                current4 = btDataString.substring(21, 26);
+
+
+                                chipAutoOn1 = btDataString.substring(27, 28);//插座1的自動模式有開
+                                chipAutoOn2 = btDataString.substring(29, 30);
+                                chipAutoOn3 = btDataString.substring(31, 32);
+                                chipAutoOn4 = btDataString.substring(33, 34);
+                                Log.d("current3", current3);
+
+
+                                if (Integer.parseInt(current1) > 3000) {
                                     btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
+                                    unsafeCurrent1 = true;
                                 }
+                                if (Integer.parseInt(current3) > 3000) {
+                                    btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
+                                    unsafeCurrent3 = true;
+                                }
+
 
                                 if (Integer.parseInt(chipAutoOn1) == 1) {
                                     if (Integer.parseInt(PIR) == 0) {
@@ -197,9 +218,9 @@ public class MainActivity extends AppCompatActivity {
                                         swSk1.setChecked(false);
                                         btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
                                     }
-                                }else {Log.d("autoif","else");}
+                                }
                                 if (Integer.parseInt(chipAutoOn2) == 1) {
-                                    if (PIR == "0") {
+                                    if (Integer.parseInt(PIR) == 0) {
                                         swSk2.setChecked(true);
                                         btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
                                     } else {
@@ -208,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
                                 if (Integer.parseInt(chipAutoOn3) == 1) {
-                                    if (PIR == "0") {
+                                    if (Integer.parseInt(PIR) == 0) {
                                         swSk3.setChecked(true);
                                         btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
                                     } else {
@@ -217,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
                                 if (Integer.parseInt(chipAutoOn4) == 1) {
-                                    if (PIR == "0") {
+                                    if (Integer.parseInt(PIR) == 0) {
                                         swSk4.setChecked(true);
                                         btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
                                     } else {
@@ -226,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
 
+                                //Log.d("currentSUM",currentSum1+" "+currentSum2+ " "+currentSum3+" "+currentSum4);
                                 TxTest.setText(BT_comm);
                                 currentSum1 += Integer.parseInt(current1);
                                 currentSum2 += Integer.parseInt(current2);
@@ -238,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                                 currentAv4 = currentSum4 / i + .0;
                             } catch (Exception e) {
 
-                                Log.d("e", e+"");
+                                Log.d("e", e + "");
                             }
                             /*軟體自動模式
                             Log.d("PIR", PIR);
@@ -412,6 +434,7 @@ public class MainActivity extends AppCompatActivity {
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "b";
                                         WiFi_comm = "10W";
+                                        unsafeCurrent1 = false;
                                     }
                                     break;
                                 case R.id.swSk2:
@@ -452,6 +475,7 @@ public class MainActivity extends AppCompatActivity {
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "f";
                                         WiFi_comm = "30W";
+                                        unsafeCurrent3 = false;
                                     }
                                     break;
                                 case R.id.swSk4:
@@ -511,7 +535,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-            Log.d("sk1mA", current1);
+
             if (!swSk1.isChecked()) { //沒開
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 1;
@@ -528,6 +552,8 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.currentAve = currentAv1;
                 CustomDialog.show();
             }
+
+
         }
     };
     private Button.OnClickListener SkStatListener2 = new Button.OnClickListener() {
@@ -854,72 +880,72 @@ public class MainActivity extends AppCompatActivity {
 
         //if (connectionMethod == "Bluetooth") {
 
-            setBluetoothEnable(true);
-            final String address = "98:D3:33:81:25:60"; //HC05的address
-            final String name = "SBLUE";
+        setBluetoothEnable(true);
+        final String address = "98:D3:33:81:25:60"; //HC05的address
+        final String name = "SBLUE";
 
-            if (!btAdapter.isEnabled()) {
-                Toast.makeText(getBaseContext(), R.string.please_try_again_after_bt_enable,
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
+        if (!btAdapter.isEnabled()) {
+            Toast.makeText(getBaseContext(), R.string.please_try_again_after_bt_enable,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
 
-            //todo progressDialog
-            Toast.makeText(getApplicationContext(), R.string.connecting_with_dots, Toast.LENGTH_SHORT).show();
-            txConnectStat.setText(R.string.connecting_with_dots);
-            imageConnectStat.setVisibility(View.INVISIBLE);
+        //todo progressDialog
+        Toast.makeText(getApplicationContext(), R.string.connecting_with_dots, Toast.LENGTH_SHORT).show();
+        txConnectStat.setText(R.string.connecting_with_dots);
+        imageConnectStat.setVisibility(View.INVISIBLE);
 
-            // Spawn a new thread to avoid blocking the GUI one
-            new Thread() {
-                public void run() {
-                    boolean fail = false;
-                    //取得裝置MAC找到連接的藍芽裝置
-                    BluetoothDevice device = btAdapter.getRemoteDevice(address);
+        // Spawn a new thread to avoid blocking the GUI one
+        new Thread() {
+            public void run() {
+                boolean fail = false;
+                //取得裝置MAC找到連接的藍芽裝置
+                BluetoothDevice device = btAdapter.getRemoteDevice(address);
+                try {
+                    btSocket = createBluetoothSocket(device);
+                    //建立藍芽socket
+                } catch (IOException e) {
+                    fail = true;
+                    Toast.makeText(getBaseContext(), "Socket creation failed",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+
+                try {
+                    btSocket.connect(); //建立藍芽連線
+                } catch (IOException e) {
                     try {
-                        btSocket = createBluetoothSocket(device);
-                        //建立藍芽socket
-                    } catch (IOException e) {
                         fail = true;
+                        btSocket.close(); //關閉socket
+                        //開啟執行緒 顯示訊息
+                        btHandler.obtainMessage(CONNECTING_STATUS, -1, -1)
+                                .sendToTarget();
+                    } catch (IOException e2) {
+                        //insert code to deal with this
                         Toast.makeText(getBaseContext(), "Socket creation failed",
                                 Toast.LENGTH_SHORT).show();
                     }
-
-
-                    try {
-                        btSocket.connect(); //建立藍芽連線
-                    } catch (IOException e) {
-                        try {
-                            fail = true;
-                            btSocket.close(); //關閉socket
-                            //開啟執行緒 顯示訊息
-                            btHandler.obtainMessage(CONNECTING_STATUS, -1, -1)
-                                    .sendToTarget();
-                        } catch (IOException e2) {
-                            //insert code to deal with this
-                            Toast.makeText(getBaseContext(), "Socket creation failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    if (!fail) {
-                        //開啟執行緒用於傳輸及接收資料
-                        btConnectedThread = new MainActivity.ConnectedThread(btSocket);
-                        btConnectedThread.start();
-                        //開啟新執行緒顯示連接裝置名稱
-                        btHandler.obtainMessage(CONNECTING_STATUS, 1, -1, name)
-                                .sendToTarget();
-
-                        //藍牙連接成功
-                        btnConnect.setVisibility(View.INVISIBLE);
-                        btConnectedThread.write("z"); //成功後傳值
-                        isBTConnected = true;
-                        txConnectStat.setVisibility(View.INVISIBLE);
-                        //imageConnectStat.setVisibility(View.INVISIBLE);
-
-                        //FunctionSetEnable(true);
-
-                    }
                 }
-            }.start();
+                if (!fail) {
+                    //開啟執行緒用於傳輸及接收資料
+                    btConnectedThread = new MainActivity.ConnectedThread(btSocket);
+                    btConnectedThread.start();
+                    //開啟新執行緒顯示連接裝置名稱
+                    btHandler.obtainMessage(CONNECTING_STATUS, 1, -1, name)
+                            .sendToTarget();
+
+                    //藍牙連接成功
+                    btnConnect.setVisibility(View.INVISIBLE);
+                    btConnectedThread.write("z"); //成功後傳值
+                    isBTConnected = true;
+                    txConnectStat.setVisibility(View.INVISIBLE);
+                    //imageConnectStat.setVisibility(View.INVISIBLE);
+
+                    //FunctionSetEnable(true);
+
+                }
+            }
+        }.start();
         //} else if (connectionMethod == "Wi-Fi") {
         //    Toast.makeText(getBaseContext(), "Unavailable",
         //            Toast.LENGTH_LONG).show();
@@ -1011,6 +1037,11 @@ public class MainActivity extends AppCompatActivity {
             byte[] bytes = input.getBytes();
             try {
                 Log.d("send data", input);
+                mmOutStream.write(bytes);
+            } catch (IOException e) {
+            }
+            try {
+                Log.d("send data2", input);
                 mmOutStream.write(bytes);
             } catch (IOException e) {
             }
