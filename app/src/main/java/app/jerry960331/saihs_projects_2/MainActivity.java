@@ -45,6 +45,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Array;
+import java.net.ContentHandlerFactory;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -52,32 +55,27 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     CustomDialogActivity c;
+
+    //介面
     private ImageButton
             btnSkStat1, btnSkStat2, btnSkStat3, btnSkStat4,
             btnSkAlarm1, btnSkAlarm2, btnSkAlarm3, btnSkAlarm4,
             btnSkChart1, btnSkChart2, btnSkChart3, btnSkChart4;
-
     private Switch
-            swSk1,
-            swSk2,
-            swSk3,
-            swSk4,
+            swSk1, swSk2, swSk3, swSk4,
             swConnectionMethod;
-
     private Button
             btnConnect,
             btnSkAuto1, btnSkAuto2, btnSkAuto3, btnSkAuto4;
-
-    String connectionMethod = "Bluetooth";
-
-    private ProgressDialog progress;
-
     private TextView txConnectStat, txLog;
     private ImageView imageConnectStat;
+
+    private ProgressDialog progress;
 
     String notificationTitle = "安全警示",
             notificationText = "插座電流狀況異常！請立即前往查看";
 
+    String connectionMethod = "Bluetooth";
     //Bluetooth
     String BT_comm = "";
     String WiFi_comm;
@@ -95,9 +93,9 @@ public class MainActivity extends AppCompatActivity {
     Handler btHandler;
     static StringBuilder btDataString = new StringBuilder();
 
+    //選擇、判斷、運算數值
     boolean isBTConnected = false;
     boolean isWiFiConnected = false;
-    boolean confirmSwitch;
     boolean AutoOn1 = false;
     boolean AutoOn2 = false;
     boolean AutoOn3 = false;
@@ -110,8 +108,13 @@ public class MainActivity extends AppCompatActivity {
     String current1 = "0", current2 = "0", current3 = "0", current4 = "0";
     Integer currentSum1 = 60, currentSum2 = 60, currentSum3 = 60, currentSum4 = 60;
     Double currentAv1 = 0.0, currentAv2 = 0.0, currentAv3 = 0.0, currentAv4 = 0.0;
-    Integer i = 0;//計算電流平均用
+    Integer handlerTick = 0;//計算電流平均用
     String chipAutoOn1 = "0", chipAutoOn2 = "0", chipAutoOn3 = "0", chipAutoOn4 = "0";
+    //x軸=x軸 y軸=y軸
+    Integer[][] receivedCurrent = new Integer[7][4];
+    Integer[] sortCurrent = new Integer[7];
+    int xLength = 0, yLength = 3;
+
 
     private long timeCountInMilliSeconds;
 
@@ -121,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     public static int blue = 0xff2195f3;
     public static int orange = 0xffffc107;
 
-    //snackbar customize
+    //snackBar customize
     private Snackbar snackbar;
     private View snackBarView;
     private TextView txVStat, snackBarTxV;
@@ -168,10 +171,7 @@ public class MainActivity extends AppCompatActivity {
                         //tvSB.setText(String.value)
                         if (btDataString.charAt(0) == '#') {
                             try {
-                                test = btDataString.substring(1, 2);
                                 PIR = btDataString.substring(1, 2);//偵測到人會收到0
-
-
                                 if (!unsafeCurrent1) {
                                     current1 = btDataString.substring(3, 8);
                                 }
@@ -180,8 +180,6 @@ public class MainActivity extends AppCompatActivity {
                                     unsafeCurrent1 = true;
                                 }
                                 current2 = btDataString.substring(9, 14);
-
-
                                 if (!unsafeCurrent3) {
                                     current3 = btDataString.substring(15, 20);
                                 }
@@ -189,11 +187,29 @@ public class MainActivity extends AppCompatActivity {
                                     makeOreoNotification();
                                     unsafeCurrent3 = true;
                                 }
-
                                 current4 = btDataString.substring(21, 26);
 
+                                if (xLength < 7) {
+                                    receivedCurrent[xLength][0] = Integer.parseInt(current1);
+                                    receivedCurrent[xLength][1] = Integer.parseInt(current2);
+                                    receivedCurrent[xLength][2] = Integer.parseInt(current3);
+                                    receivedCurrent[xLength][3] = Integer.parseInt(current4);
+                                    xLength++;
+                                }else {
+                                    receivedCurrent[7][0] = Integer.parseInt(current1);
+                                    receivedCurrent[7][1] = Integer.parseInt(current2);
+                                    receivedCurrent[7][2] = Integer.parseInt(current3);
+                                    receivedCurrent[7][3] = Integer.parseInt(current4);
+                                    for(int x = 0; x < 7; x++){
+                                        for(int y = 0; y < 4; y++){
+                                            receivedCurrent[x][y] = receivedCurrent[x+1][y];
+                                        }
+                                    }
+                                }
 
-                                chipAutoOn1 = btDataString.substring(27, 28);//插座1的自動模式有開
+
+
+                                chipAutoOn1 = btDataString.substring(27, 28);//自動模式有開
                                 chipAutoOn2 = btDataString.substring(29, 30);
                                 chipAutoOn3 = btDataString.substring(31, 32);
                                 chipAutoOn4 = btDataString.substring(33, 34);
@@ -253,11 +269,11 @@ public class MainActivity extends AppCompatActivity {
                                 currentSum2 += Integer.parseInt(current2);
                                 currentSum3 += Integer.parseInt(current3);
                                 currentSum4 += Integer.parseInt(current4);
-                                i++;
-                                currentAv1 = currentSum1 / i + .0;
-                                currentAv2 = currentSum2 / i + .0;
-                                currentAv3 = currentSum3 / i + .0;
-                                currentAv4 = currentSum4 / i + .0;
+                                handlerTick++;
+                                currentAv1 = currentSum1 / handlerTick + .0;
+                                currentAv2 = currentSum2 / handlerTick + .0;
+                                currentAv3 = currentSum3 / handlerTick + .0;
+                                currentAv4 = currentSum4 / handlerTick + .0;
                             } catch (Exception e) {
 
                                 Log.d("e", e + "");
@@ -332,6 +348,9 @@ public class MainActivity extends AppCompatActivity {
             }
         };
     }
+
+
+
 
     private void setOnClickListeners() {
         swSk1.setOnClickListener(SwListener);
@@ -654,25 +673,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-/*
-    MainActivity(CustomDialogActivity dialog){
-        //super(dialog);
-        c = dialog;
-    }*/
-/*
-    CountDownTimer DialogTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
-        CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-
-        @Override
-        public void onTick(long millisUntilFinished) {
-            CustomDialog.remainTime = timeCountInMilliSeconds;
-        }
-
-        @Override
-        public void onFinish() {
-
-        }
-    };*/
 
 
     //表格OnClick
@@ -682,19 +682,27 @@ public class MainActivity extends AppCompatActivity {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
             final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
             CustomDialog.functionSelect = "Chart";
+            for(int x = 0; x < receivedCurrent[1].length; x++){
+                sortCurrent[x] = receivedCurrent[x][1];
+            }
+            Arrays.sort(sortCurrent);
+
             String[] xItem = {"1", "2", "3", "4", "5", "6", "7"};
-            String[] yItem = {Integer.parseInt(current1) + 2 + "mA", Integer.parseInt(current1) + 1 + "mA",
-                    Integer.parseInt(current1) + "mA", Integer.parseInt(current1) - 1 + "mA", Integer.parseInt(current1) - 2 + "mA"};
+            String[] yItem = new String[7];
+            for(int i = 0; i < sortCurrent.length; i++){
+                yItem[i] = sortCurrent[i] + " mA";
+            }
+
             int[] currentValue = new int[xItem.length];
             CustomDialog.xChart = xItem;
             CustomDialog.yChart = yItem;
             if (Integer.parseInt(current1) == 0) {
                 for (int i = 0; i < xItem.length; i++) {
-                    currentValue[i] = 2;
+                    currentValue[i] = 0;
                 }
             } else {
                 for (int i = 0; i < xItem.length; i++) {
-                    currentValue[i] = (int) (Math.random() * 5);
+                    currentValue[i] = receivedCurrent[i][1];
                 }
             }
             CustomDialog.currentValue = currentValue;
@@ -957,7 +965,6 @@ public class MainActivity extends AppCompatActivity {
         swSk2.setEnabled(b);
         swSk3.setEnabled(b);
         swSk4.setEnabled(b);
-        /*
         btnSkStat1.setEnabled(b);
         btnSkStat2.setEnabled(b);
         btnSkStat3.setEnabled(b);
@@ -970,7 +977,6 @@ public class MainActivity extends AppCompatActivity {
         btnSkChart2.setEnabled(b);
         btnSkChart3.setEnabled(b);
         btnSkChart4.setEnabled(b);
-        */
         btnSkAuto1.setEnabled(b);
         btnSkAuto2.setEnabled(b);
         btnSkAuto3.setEnabled(b);
@@ -1044,44 +1050,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("send data2", input);
                 mmOutStream.write(bytes);
             } catch (IOException e) {
-            }
-        }
-    }
-
-
-    private static class OuterHandler extends Handler {
-        private final WeakReference<MainActivity> mActivity;
-
-        public OuterHandler(MainActivity activity) {
-            mActivity = new WeakReference<MainActivity>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            MainActivity activity = mActivity.get();
-            if (activity != null) {
-                // do something...
-                if (msg.what == MESSAGE_READ) {
-                    try {
-                        String readMessage = new String((byte[]) msg.obj, "UTF-8");
-                        btDataString.append(readMessage);
-                    } catch (UnsupportedEncodingException uee) {
-                        uee.printStackTrace();
-                    }
-                    int endOfLineIndex = btDataString.indexOf("~");
-                    if (endOfLineIndex > 0) {
-                        //tvSB.setText(String.value)
-                        if (btDataString.charAt(0) == '#') {
-                            String a = btDataString.substring(1, 3);
-                        }
-                        btDataString.delete(0, btDataString.length());
-                    }
-                }
-                if (btConnectedThread != null) {
-                    String sendData = "z";
-                    btConnectedThread.write(sendData);
-
-                }
             }
         }
     }
@@ -1242,31 +1210,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
     */
-    //不能運作 除非使用wait for result
-    public void CustomizedAlertDialog(String alertDialogTitle, String alertDialogMessage, String alertDialogPositive, String alertDialogNegative) {
-        new AlertDialog.Builder(MainActivity.this)
-                .setTitle(alertDialogTitle)
-                .setMessage(alertDialogMessage)
-                .setPositiveButton(alertDialogPositive, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        confirmSwitch = true;
-                    }
-                })
-                .setNegativeButton(alertDialogNegative, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        confirmSwitch = false;
-                    }
-                })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        confirmSwitch = false;
-                    }
-                })
-                .show();
-    }
+
 
     public void CustomizedSnackBar(String SnackBarText) {
         snackbar = Snackbar.make(findViewById(android.R.id.content), SnackBarText, Snackbar.LENGTH_SHORT)
@@ -1425,6 +1369,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        btHandler.removeCallbacksAndMessages(null);
         Disconnect();
     }
 }

@@ -274,13 +274,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         return hms;
     }
 
-
-
-
-
-
-
-
     @Override
     public void onClick(View v) {
 
