@@ -682,10 +682,17 @@ public class MainActivity extends AppCompatActivity {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
             final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
             CustomDialog.functionSelect = "Chart";
-            for(int x = 0; x < receivedCurrent[1].length; x++){
-                sortCurrent[x] = receivedCurrent[x][1];
+            for(int x = 0; x < 7; x++){
+                if (receivedCurrent[x][1] == null){ //如果沒有數值 則為0
+                    sortCurrent[x] = 0;
+                }else {
+                    sortCurrent[x] = receivedCurrent[x][1];
+                }
+                Log.d("sortCurrent", sortCurrent[x] + " " + x);
             }
-            Arrays.sort(sortCurrent);
+            if (receivedCurrent[1][1] != null){ //沒有數值即不排序
+                Arrays.sort(sortCurrent);
+            }
 
             String[] xItem = {"1", "2", "3", "4", "5", "6", "7"};
             String[] yItem = new String[7];
@@ -698,7 +705,7 @@ public class MainActivity extends AppCompatActivity {
             CustomDialog.yChart = yItem;
             if (Integer.parseInt(current1) == 0) {
                 for (int i = 0; i < xItem.length; i++) {
-                    currentValue[i] = 0;
+                    currentValue[i] = 7;
                 }
             } else {
                 for (int i = 0; i < xItem.length; i++) {
