@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,8 +64,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //MainActivity main = new MainActivity(CustomDialogActivity.this);
-
+        //sectionPageAdapter = new SectionPageAdapter;
 
         switch (functionSelect){
             case "Stat":
@@ -111,7 +111,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 }
                 break;
             case "Alarm": //todo==============================================
-                setContentView(R.layout.alarm_dialog);
+                setContentView(R.layout.alarm_dialog_title);
+                /*
                 progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
                 editTextMinute = (EditText) findViewById(R.id.editTextMinute);
                 textViewTime = (TextView) findViewById(R.id.textViewTime);
@@ -129,7 +130,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                         break;
                     case 4:
                         break;
-                }
+                }*/
                 break;
             case "Chart":
                 Log.d("d","chart");
@@ -145,6 +146,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 break;
         }
     }
+
 
 
     private ImageView.OnClickListener SetTimer = new ImageView.OnClickListener(){
