@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <ImageButton
-        android:id="@+id/btnAlarmIsOn"
+        android:id="@+id/btnAlarmIsOn1"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:background="@android:color/transparent"
@@ -28,11 +28,11 @@
         android:layout_marginEnd="8dp"
         android:text="18:20"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn"
+        app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.075"
-        app:layout_constraintStart_toEndOf="@+id/btnAlarmIsOn"
-        app:layout_constraintTop_toTopOf="@+id/btnAlarmIsOn"
+        app:layout_constraintStart_toEndOf="@+id/btnAlarmIsOn1"
+        app:layout_constraintTop_toTopOf="@+id/btnAlarmIsOn1"
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
@@ -43,11 +43,11 @@
         android:layout_marginEnd="8dp"
         android:text="明天"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn"
+        app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/btnAlarmIsOn"
-        app:layout_constraintTop_toTopOf="@+id/btnAlarmIsOn"
+        app:layout_constraintStart_toEndOf="@+id/btnAlarmIsOn1"
+        app:layout_constraintTop_toTopOf="@+id/btnAlarmIsOn1"
         app:layout_constraintVertical_bias="0.085" />
 
     <TextView
@@ -57,11 +57,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="開啟插座1,2"
-        app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn"
+        app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.639"
-        app:layout_constraintStart_toEndOf="@+id/btnAlarmIsOn"
-        app:layout_constraintTop_toTopOf="@+id/btnAlarmIsOn"
+        app:layout_constraintStart_toEndOf="@+id/btnAlarmIsOn1"
+        app:layout_constraintTop_toTopOf="@+id/btnAlarmIsOn1"
         app:layout_constraintVertical_bias="0.85" />
 
     <TextView
@@ -71,10 +71,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="時間到後："
-        app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn"
+        app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.624"
-        app:layout_constraintStart_toEndOf="@+id/btnAlarmIsOn"
-        app:layout_constraintTop_toTopOf="@+id/btnAlarmIsOn"
+        app:layout_constraintStart_toEndOf="@+id/btnAlarmIsOn1"
+        app:layout_constraintTop_toTopOf="@+id/btnAlarmIsOn1"
         app:layout_constraintVertical_bias="0.108" />
 </android.support.constraint.ConstraintLayout>

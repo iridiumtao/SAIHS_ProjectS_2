@@ -2,28 +2,22 @@ package app.jerry960331.saihs_projects_2;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -41,9 +35,19 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     private SimpleLineChart mSimpleLineChart;
 
 
+    Button btnGotoTimer;
+    TextView txNowTime;
+    TextView txNowDate;
+    ImageButton btnAlarmIsOn1;
+    TextView txAlarmSetSchedule1;
+    TextView txAlarmSetTime1;
+    TextView txAlarmIntent1;
+    FloatingActionButton fabAlarm;
+    boolean IsAlarmOn;
 
 
-    int timeSet;
+
+    private int timeSet;
     private long timeCountInMilliSeconds = 1 * 60000;
     private ProgressBar progressBarCircle;
     private EditText editTextMinute;
@@ -117,9 +121,19 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 }
                 break;
             case "Alarm": //todo==============================================
-                setContentView(R.layout.alarm_dialog_title);
+                setContentView(R.layout.alarm_dialog);
+                setTitle("Alarm");
 
 
+                btnGotoTimer = findViewById(R.id.btnGotoTimer);
+                txNowTime = findViewById(R.id.txNowTime);
+                txNowDate = findViewById(R.id.txNowDate);
+                btnAlarmIsOn1 = findViewById(R.id.btnAlarmIsOn1);
+                btnAlarmIsOn1.setOnClickListener(AlarmIsOnOnClick1);
+                txAlarmSetSchedule1 = findViewById(R.id.txAlarmSetSchedule1);
+                txAlarmSetTime1 = findViewById(R.id.txAlarmSetTime1);
+                txAlarmIntent1 = findViewById(R.id.txAlarmIntent1);
+                fabAlarm = findViewById(R.id.fabAlarm);
 
                 /*
                 progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
@@ -128,18 +142,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 imageViewReset = (ImageView) findViewById(R.id.imageViewReset);
                 imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartStop);
                 imageViewStartStop.setOnClickListener(SetTimer);
-                switch (socketSelect){
-                    case 1:
-                        textViewTime.setText(hmsTimeFormatter(remainTime));
-                        progressBarCircle.setProgress((int) (remainTime / 1000));
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                    case 4:
-                        break;
-                }*/
+                */
                 break;
             case "Chart":
                 Log.d("d","chart");
@@ -190,11 +193,13 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 case 4:
                     break;
             }
+        }
+    };
 
-
-
-
-
+    private ImageButton.OnClickListener AlarmIsOnOnClick1 = new ImageButton.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
         }
     };
 

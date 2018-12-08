@@ -1,92 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#FFFFFF">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/progressBarCircle"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="270dp"
-        android:layout_height="275dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/drawable_circle_dark_blue"
-        android:indeterminate="false"
-        android:max="100"
-        android:progress="100"
-        android:progressDrawable="@drawable/drawable_circle_yellow"
-        android:rotation="-90"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.067" />
 
-    <EditText
-        android:id="@+id/editTextMinute"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:hint="@string/hint_minute"
-        android:inputType="number"
-        android:maxLength="15"
-        android:maxLines="1"
-        android:minEms="5"
-        android:text="1"
-        android:textColor="@color/colorPrimary"
-        android:textColorHint="@color/colorPrimary"
-        app:layout_constraintBottom_toTopOf="@+id/textViewTime"
-        app:layout_constraintEnd_toEndOf="@+id/progressBarCircle"
-        app:layout_constraintStart_toStartOf="@+id/progressBarCircle"
-        app:layout_constraintTop_toTopOf="@+id/progressBarCircle"
-        app:layout_constraintVertical_bias="1.0" />
+    <Button
+        android:id="@+id/btnGotoTimer"
+        android:layout_width="71dp"
+        android:layout_height="31dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/button_auto"
+        android:text="Timer  >"
+        android:textColor="@color/colorPrimary" />
 
     <TextView
-        android:id="@+id/textViewTime"
+        android:id="@+id/txNowTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="00:01:00"
-        android:textColor="@color/colorPrimary"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="center_horizontal"
+        android:text="08:00"
+        android:textColor="@color/black"
+        android:textSize="64sp" />
 
-    <ImageView
-        android:id="@+id/imageViewReset"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/icon_reset"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTime"
-        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/txNowDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="48dp"
+        android:text="12月5日 星期三"
+        android:textSize="16sp" />
 
-    <ImageView
-        android:id="@+id/imageViewStartStop"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:onClick="SetTimer"
-        android:src="@drawable/icon_start"
-        app:layout_constraintBottom_toBottomOf="@+id/progressBarCircle"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTime"
-        app:layout_constraintVertical_bias="0.121" />
+    <LinearLayout
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:orientation="horizontal">
 
-</android.support.constraint.ConstraintLayout>
+        <ImageButton
+            android:id="@+id/btnAlarmIsOn1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="15dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.018"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.092"
+            app:srcCompat="@drawable/icon_alarm_on" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txAlarmSetSchedule1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="明天"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/txAlarmSetTime1"
+                app:layout_constraintTop_toTopOf="@+id/btnAlarmIsOn1"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/txAlarmSetTime1"
+                android:layout_width="59dp"
+                android:layout_height="32dp"
+                android:text="18:20"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn1"
+                app:layout_constraintEnd_toStartOf="@+id/txAlarmIntent1"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/btnAlarmIsOn1"
+                app:layout_constraintTop_toTopOf="@+id/btnAlarmIsOn1"
+                app:layout_constraintVertical_bias="1.0" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:text="當時間到"
+                app:layout_constraintBottom_toTopOf="@+id/txAlarmIntent1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.83"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/btnAlarmIsOn1"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/txAlarmIntent1"
+                android:layout_width="76dp"
+                android:layout_height="19dp"
+                android:layout_gravity="end"
+                android:text="開啟插座1,2"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.977"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabAlarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="24dp"
+        android:clickable="true"
+        android:src="@drawable/icon_add" />
+
+
+</LinearLayout>

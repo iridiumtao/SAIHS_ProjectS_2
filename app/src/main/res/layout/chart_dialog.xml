@@ -6,27 +6,16 @@
     android:orientation="vertical"
     tools:context="app.jerry960331.saihs_projects_2.MainActivity">
 
-    <android.support.design.widget.TabLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp">
-
-        <android.support.design.widget.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Left" />
-
-        <android.support.design.widget.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Center" />
-
-        <android.support.design.widget.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Right" />
-    </android.support.design.widget.TabLayout>
+    <Button
+        android:id="@+id/btnGotoDatabase"
+        android:layout_width="wrap_content"
+        android:layout_height="31dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/button_auto"
+        android:text="  Database chart  >  "
+        android:textColor="@color/colorPrimary" />
 
     <TextView
         android:id="@+id/textView12"
@@ -35,7 +24,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="30dp"
-        android:text="@string/current_chart"
+        android:text="Real-Time Current Chart"
         android:textColor="@color/black"
         android:textSize="20sp" />
 
