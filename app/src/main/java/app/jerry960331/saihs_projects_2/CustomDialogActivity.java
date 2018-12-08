@@ -8,12 +8,16 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,6 +39,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     private TextView txCurrentStat, txCurrentNow , txPowerNow, txCurrentAve, txCurrentDescription;
     private ImageView imageCurrentStat;
     private SimpleLineChart mSimpleLineChart;
+
+
 
 
     int timeSet;
@@ -112,6 +118,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 break;
             case "Alarm": //todo==============================================
                 setContentView(R.layout.alarm_dialog_title);
+
+
+
                 /*
                 progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
                 editTextMinute = (EditText) findViewById(R.id.editTextMinute);
@@ -189,7 +198,28 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         }
     };
 
+    class AlarmAdapter extends BaseAdapter{
 
+        @Override
+        public int getCount() {
+            return 0;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return null;
+        }
+    }
 
     private CountDownTimer DialogTimer1 = new CountDownTimer(timeCountInMilliSeconds,1000) {
         @Override
@@ -280,6 +310,5 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     public void onClick(View v) {
 
     }
-
-
 }
+

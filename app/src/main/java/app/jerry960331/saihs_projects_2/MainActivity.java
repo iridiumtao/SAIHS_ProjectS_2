@@ -121,11 +121,6 @@ public class MainActivity extends AppCompatActivity {
 
     private long timeCountInMilliSeconds;
 
-    //tabs
-    private SectionPageAdapter sectionPageAdapter;
-    private ViewPager alarmViewPager;
-    private TabLayout alarmTabLayout;
-
     //color
     public static int red = 0xfff44336;
     public static int green = 0xff4caf50;
@@ -160,12 +155,6 @@ public class MainActivity extends AppCompatActivity {
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         TxTest = findViewById(R.id.textView);
         //FunctionSetEnable(false);
-
-        sectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
-        setupViewPager(alarmViewPager);
-
-        alarmTabLayout.setupWithViewPager(alarmViewPager);
-
 
 
         btHandler = new Handler() {
@@ -425,9 +414,7 @@ public class MainActivity extends AppCompatActivity {
         txVStat = findViewById(R.id.txVStat);
         txLog = findViewById(R.id.txLog);
 
-        View inflatedView = getLayoutInflater().inflate(R.layout.alarm_dialog_title, null);
-        alarmViewPager = inflatedView.findViewById(R.id.container);
-        alarmTabLayout = inflatedView.findViewById(R.id.alarmTabs);
+
     }
 
     //插座開關
@@ -1236,12 +1223,7 @@ public class MainActivity extends AppCompatActivity {
         };
     */
 
-    private void setupViewPager(ViewPager viewPager){
-        SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new AlarmAlarmFragment(), "TAB1");
-        adapter.addFragment(new AlarmTimerFragment(), "TAB2");
-        viewPager.setAdapter(adapter);
-    }
+
 
 
     public void CustomizedSnackBar(String SnackBarText) {
