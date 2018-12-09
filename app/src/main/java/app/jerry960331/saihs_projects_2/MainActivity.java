@@ -49,15 +49,17 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
 import java.net.ContentHandlerFactory;
+import java.security.KeyStore;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
-    CustomDialogActivity c;
+    Activity c;
 
     //介面
     private ImageButton
@@ -138,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
     String sendData = "z";
 
 
+
 //alt+enter 字串抽離
 
     @Override
@@ -147,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(R.string.title);
-
+        getSharedPreferences("test", MODE_PRIVATE);
 
         findViews();
         setOnClickListeners();
@@ -653,6 +656,14 @@ public class MainActivity extends AppCompatActivity {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
             CustomDialog.functionSelect = "Alarm";
             CustomDialog.socketSelect = 1;
+            Bundle bundle = getIntent().getExtras();
+            try{
+                Log.d("Bundle isAlarmOn1", bundle.getBoolean("isAlarmOn1")+"");
+                boolean isAlarmOn1 = bundle.getBoolean("isAlarmOn1");
+                CustomDialog.isAlarmOn1 = isAlarmOn1;
+            }catch (Exception e){
+                Log.d("Exception", e+"");
+            }
             CustomDialog.show();
 
         }
@@ -1372,6 +1383,8 @@ public class MainActivity extends AppCompatActivity {
         manager.notify(1, builder.build());
     }
 
+
+
     /**
      * //noinspection SimplifiableIfStatement
      * if (id == R.id.action_settings) {
@@ -1380,6 +1393,14 @@ public class MainActivity extends AppCompatActivity {
      * return true;
      * }
      */
+
+
+    @Override
+    protected void onStop() {
+        Log.d("MainActivity:", "onStop");
+        super.onStop();
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
