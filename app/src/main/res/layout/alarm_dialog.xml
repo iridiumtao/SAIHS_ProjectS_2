@@ -79,7 +79,7 @@
 
             <TextView
                 android:id="@+id/txAlarmSetTime1"
-                android:layout_width="59dp"
+                android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:text="18:20"
                 android:textColor="@color/black"

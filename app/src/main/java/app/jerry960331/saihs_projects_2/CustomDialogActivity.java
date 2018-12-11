@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -45,6 +46,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     TextView txAlarmIntent1;
     FloatingActionButton fabAlarm;
     boolean isAlarmOn1;
+    OnMyDialogResult mDialogResult; //回傳鬧鐘資料
 
 
     private int timeSet;
@@ -82,6 +84,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
             case "Stat":
 
                 setContentView(R.layout.current_dialog);
+
+                //final MainActivity MainActivity = new MainActivity(getOwnerActivity());
+                //MainActivity.fuck = 45;
 
                 txCurrentStat = findViewById(R.id.txCurrentStat);
                 txCurrentNow = findViewById(R.id.txCurrentNow);
@@ -139,6 +144,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 if (isAlarmOn1){
                     btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_on);
                     isAlarmOn1 = true;
+                    Toast.makeText(getContext(),"XD",Toast.LENGTH_SHORT).show();
                 }else {
                     btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
                     isAlarmOn1 = false;
@@ -328,12 +334,22 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     @Override
     protected void onStop() {
         Log.d("CustomDialogActivity:", "onStop");
+        mDialogResult.finish("FUCK");
+        mDialogResult.isAlarmOn1(isAlarmOn1);
         super.onStop();
-        Intent intent = new Intent();
-        Bundle bundle = new Bundle();
-        bundle.putBoolean("isAlarmOn1" , isAlarmOn1);
-        intent.putExtras(bundle);
 
+
+    }
+    public void setDialogResult(OnMyDialogResult dialogResult){
+        mDialogResult = dialogResult;
+    }
+
+    public interface OnMyDialogResult{
+        void finish(String result);
+        void isAlarmOn1(Boolean b);
+        void alarmSetTime1(String hhmm);
+        void alarmSetSchedule1(String schedule);
+        void alarmIntent1(String function);
     }
 
     @Override

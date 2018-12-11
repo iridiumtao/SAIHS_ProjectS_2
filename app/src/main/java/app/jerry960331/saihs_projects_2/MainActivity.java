@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
     Integer[][] receivedCurrent = new Integer[7][4];
     Integer[] sortCurrent = new Integer[7];
     int xLength = 0, yLength = 3;
+    String fuck = "0";
 
 
     private long timeCountInMilliSeconds;
@@ -142,6 +143,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 //alt+enter 字串抽離
+
+    /*
+    MainActivity(Activity a){
+        //super(a);
+        c = a;
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -656,14 +663,33 @@ public class MainActivity extends AppCompatActivity {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
             CustomDialog.functionSelect = "Alarm";
             CustomDialog.socketSelect = 1;
-            Bundle bundle = getIntent().getExtras();
-            try{
-                Log.d("Bundle isAlarmOn1", bundle.getBoolean("isAlarmOn1")+"");
-                boolean isAlarmOn1 = bundle.getBoolean("isAlarmOn1");
-                CustomDialog.isAlarmOn1 = isAlarmOn1;
-            }catch (Exception e){
-                Log.d("Exception", e+"");
-            }
+
+
+            CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult(){
+                public void finish(String result){
+                    fuck = result;
+                }
+
+                @Override
+                public void isAlarmOn1(Boolean b) {
+                    CustomDialog.isAlarmOn1 = b;
+                }
+
+                @Override
+                public void alarmSetTime1(String hhmm) {
+
+                }
+
+                @Override
+                public void alarmSetSchedule1(String schedule) {
+
+                }
+
+                @Override
+                public void alarmIntent1(String function) {
+
+                }
+            });
             CustomDialog.show();
 
         }
@@ -1384,6 +1410,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onPause() {
+        Log.d("MainActivity:", "onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onPostResume() {
+        Log.d("MainActivity:", "onPostResume");
+        super.onPostResume();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d("MainActivity:", "onStart");
+        super.onStart();
+    }
 
     /**
      * //noinspection SimplifiableIfStatement
@@ -1395,14 +1438,18 @@ public class MainActivity extends AppCompatActivity {
      */
 
 
+
+
     @Override
     protected void onStop() {
         Log.d("MainActivity:", "onStop");
         super.onStop();
+        Log.d("fuck", fuck+"");
     }
 
     @Override
     public void onDestroy() {
+        Log.d("MainActivity:", "onDestroy");
         super.onDestroy();
         btHandler.removeCallbacksAndMessages(null);
         Disconnect();
