@@ -121,6 +121,11 @@ public class MainActivity extends AppCompatActivity {
     int xLength = 0, yLength = 3;
     String fuck = "0";
 
+    boolean isAlarmOn1 = false;
+    String alarmSetTime1;
+    String alarmSetSchedule1;
+    String alarmIntent1;
+
 
     private long timeCountInMilliSeconds;
 
@@ -663,8 +668,10 @@ public class MainActivity extends AppCompatActivity {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
             CustomDialog.functionSelect = "Alarm";
             CustomDialog.socketSelect = 1;
+            CustomDialog.isAlarmOn1 = isAlarmOn1;
+            //CustomDialog.txAlarmSetTime1.setText();
 
-
+            CustomDialog.show();
             CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult(){
                 public void finish(String result){
                     fuck = result;
@@ -672,25 +679,25 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void isAlarmOn1(Boolean b) {
-                    CustomDialog.isAlarmOn1 = b;
+                    isAlarmOn1 = b;
                 }
 
                 @Override
                 public void alarmSetTime1(String hhmm) {
-
+                    alarmSetTime1 = hhmm;
                 }
 
                 @Override
                 public void alarmSetSchedule1(String schedule) {
-
+                    alarmSetSchedule1 = schedule;
                 }
 
                 @Override
                 public void alarmIntent1(String function) {
-
+                    alarmIntent1 = function;
                 }
             });
-            CustomDialog.show();
+
 
         }
     };

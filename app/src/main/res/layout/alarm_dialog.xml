@@ -37,17 +37,19 @@
         android:textSize="16sp" />
 
     <LinearLayout
+        android:id="@+id/alarmSet1"
         android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
         android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/btnAlarmIsOn1"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginStart="20dp"
             android:layout_marginEnd="15dp"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
@@ -104,6 +106,7 @@
                 android:layout_gravity="end"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginBottom="4dp"
                 android:text="當時間到"
                 app:layout_constraintBottom_toTopOf="@+id/txAlarmIntent1"
@@ -118,6 +121,7 @@
                 android:layout_width="76dp"
                 android:layout_height="19dp"
                 android:layout_gravity="end"
+                android:layout_marginEnd="20dp"
                 android:text="開啟插座1,2"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="@+id/btnAlarmIsOn1"
@@ -135,7 +139,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:clickable="true"
         android:src="@drawable/icon_add" />

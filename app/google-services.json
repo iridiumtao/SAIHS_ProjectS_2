@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "143478142968",
+    "firebase_url": "https://smart-socket-cloud-a.firebaseio.com",
+    "project_id": "smart-socket-cloud-a",
+    "storage_bucket": "smart-socket-cloud-a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:143478142968:android:f6a9c98a8a903ca5",
+        "android_client_info": {
+          "package_name": "app.jerry960331.saihs_projects_2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "143478142968-jk2ug854sbqej5e46uc447m57252cuqa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.jerry960331.saihs_projects_2",
+            "certificate_hash": "dcd9150276505868992f3494fc0852f2e62b1e46"
+          }
+        },
+        {
+          "client_id": "143478142968-roci4mud58v087nqtkhhe44s4tlmns4i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNdqzKARIDxwU_DdmCLKsNhPEC6c4HsgI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "143478142968-roci4mud58v087nqtkhhe44s4tlmns4i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

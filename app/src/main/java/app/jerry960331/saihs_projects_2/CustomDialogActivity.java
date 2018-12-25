@@ -2,10 +2,12 @@ package app.jerry960331.saihs_projects_2;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +17,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -47,6 +52,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     FloatingActionButton fabAlarm;
     boolean isAlarmOn1;
     OnMyDialogResult mDialogResult; //回傳鬧鐘資料
+    LinearLayout alarmSet1;
 
 
     private int timeSet;
@@ -140,6 +146,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 txAlarmSetTime1 = findViewById(R.id.txAlarmSetTime1);
                 txAlarmIntent1 = findViewById(R.id.txAlarmIntent1);
                 fabAlarm = findViewById(R.id.fabAlarm);
+                alarmSet1 = findViewById(R.id.alarmSet1);
 
                 if (isAlarmOn1){
                     btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_on);
@@ -172,6 +179,24 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 mSimpleLineChart.setData(pointMap);
                 break;
         }
+
+        alarmSet1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar c = Calendar.getInstance();
+                int hour = c.get(Calendar.HOUR_OF_DAY);
+                int minute = c.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        txAlarmSetTime1.setText(hourOfDay  +":" + minute);
+                    }
+                }, hour, minute, false);
+
+                timePickerDialog.show();
+            }
+        });
     }
 
 
@@ -246,75 +271,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         }
     }
 
-    private CountDownTimer DialogTimer1 = new CountDownTimer(timeCountInMilliSeconds, 1000) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-            textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
-            progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
-            Log.d("s", "onTick: 1");
-        }
-
-        @Override
-        public void onFinish() {
-            textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
-            setProgressBarValues();
-            imageViewReset.setVisibility(View.GONE);
-            imageViewStartStop.setImageResource(R.drawable.icon_start);
-            editTextMinute.setEnabled(true);
-            timerOn1 = false;
-        }
-    };
-    private CountDownTimer DialogTimer2 = new CountDownTimer(timeCountInMilliSeconds, 1000) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-            textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
-            progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
-        }
-
-        @Override
-        public void onFinish() {
-            textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
-            setProgressBarValues();
-            imageViewReset.setVisibility(View.GONE);
-            imageViewStartStop.setImageResource(R.drawable.icon_start);
-            editTextMinute.setEnabled(true);
-            timerOn2 = false;
-        }
-    };
-    private CountDownTimer DialogTimer3 = new CountDownTimer(timeCountInMilliSeconds, 1000) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-            textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
-            progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
-        }
-
-        @Override
-        public void onFinish() {
-            textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
-            setProgressBarValues();
-            imageViewReset.setVisibility(View.GONE);
-            imageViewStartStop.setImageResource(R.drawable.icon_start);
-            editTextMinute.setEnabled(true);
-            timerOn3 = false;
-        }
-    };
-    private CountDownTimer DialogTimer4 = new CountDownTimer(timeCountInMilliSeconds, 1000) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-            textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
-            progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
-        }
-
-        @Override
-        public void onFinish() {
-            textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
-            setProgressBarValues();
-            imageViewReset.setVisibility(View.GONE);
-            imageViewStartStop.setImageResource(R.drawable.icon_start);
-            editTextMinute.setEnabled(true);
-            timerOn4 = false;
-        }
-    };
 
 
     private void setProgressBarValues() {
@@ -336,6 +292,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         Log.d("CustomDialogActivity:", "onStop");
         mDialogResult.finish("FUCK");
         mDialogResult.isAlarmOn1(isAlarmOn1);
+        mDialogResult.alarmSetTime1("");
+        mDialogResult.alarmSetSchedule1("");
+        mDialogResult.alarmIntent1("");
         super.onStop();
 
 
