@@ -122,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
     String fuck = "0";
 
     boolean isAlarmOn1 = false;
-    String alarmSetTime1;
-    String alarmSetSchedule1;
-    String alarmIntent1;
+    String alarmSetTime1 = "";
+    String alarmSetSchedule1 = "";
+    String alarmIntent1 = "";
 
 
     private long timeCountInMilliSeconds;
@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
         TxTest = findViewById(R.id.textView);
         //FunctionSetEnable(false);
 
+        Log.d("RND", Math.random()*180+"");
 
         btHandler = new Handler() {
             @Override
@@ -669,7 +670,7 @@ public class MainActivity extends AppCompatActivity {
             CustomDialog.functionSelect = "Alarm";
             CustomDialog.socketSelect = 1;
             CustomDialog.isAlarmOn1 = isAlarmOn1;
-            //CustomDialog.txAlarmSetTime1.setText();
+            CustomDialog.alarmSetTime1 = alarmSetTime1;
 
             CustomDialog.show();
             CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult(){

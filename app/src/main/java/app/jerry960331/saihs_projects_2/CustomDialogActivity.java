@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.text.Layout;
 import android.util.Log;
@@ -19,15 +20,22 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
+import static android.os.Looper.getMainLooper;
 
 public class CustomDialogActivity extends Dialog implements View.OnClickListener {
     Activity c;
@@ -51,6 +59,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     TextView txAlarmIntent1;
     FloatingActionButton fabAlarm;
     boolean isAlarmOn1;
+    String alarmSetTime1 = "";
+    Calendar alarmCal;
     OnMyDialogResult mDialogResult; //回傳鬧鐘資料
     LinearLayout alarmSet1;
 
@@ -137,6 +147,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 setTitle("Alarm");
 
 
+
                 btnGotoTimer = findViewById(R.id.btnGotoTimer);
                 txNowTime = findViewById(R.id.txNowTime);
                 txNowDate = findViewById(R.id.txNowDate);
@@ -148,13 +159,31 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 fabAlarm = findViewById(R.id.fabAlarm);
                 alarmSet1 = findViewById(R.id.alarmSet1);
 
+
+                final Handler someHandler = new Handler(getMainLooper());
+                someHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        txNowTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
+                        txNowDate.setText(new SimpleDateFormat("MM月dd日 E", Locale.getDefault()).format(new Date()));
+                        someHandler.postDelayed(this, 1000);
+                    }
+                }, 10);
+
+
                 if (isAlarmOn1){
                     btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_on);
                     isAlarmOn1 = true;
-                    Toast.makeText(getContext(),"XD",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"鬧鐘先前設定開啟",Toast.LENGTH_SHORT).show();
                 }else {
                     btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
                     isAlarmOn1 = false;
+                }
+
+                if(alarmSetTime1 == ""){
+                    txAlarmSetTime1.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
+                }else {
+                    txAlarmSetTime1.setText(alarmSetTime1);
                 }
 
                 /*
@@ -165,6 +194,25 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartStop);
                 imageViewStartStop.setOnClickListener(SetTimer);
                 */
+
+                alarmSet1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Calendar c = Calendar.getInstance();
+                        int hour = Integer.parseInt(txAlarmSetTime1.getText().toString().substring(0,2));
+                        int minute = Integer.parseInt(txAlarmSetTime1.getText().toString().substring(3));
+
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                txAlarmSetTime1.setText(String.format("%02d:%02d", hourOfDay, minute, Locale.getDefault()));
+                            }
+                        }, hour, minute, true);
+
+                        timePickerDialog.show();
+                    }
+                });
+
                 break;
             case "Chart":
                 Log.d("d", "chart");
@@ -180,23 +228,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 break;
         }
 
-        alarmSet1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Calendar c = Calendar.getInstance();
-                int hour = c.get(Calendar.HOUR_OF_DAY);
-                int minute = c.get(Calendar.MINUTE);
 
-                TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        txAlarmSetTime1.setText(hourOfDay  +":" + minute);
-                    }
-                }, hour, minute, false);
-
-                timePickerDialog.show();
-            }
-        });
     }
 
 
@@ -290,11 +322,30 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     @Override
     protected void onStop() {
         Log.d("CustomDialogActivity:", "onStop");
-        mDialogResult.finish("FUCK");
-        mDialogResult.isAlarmOn1(isAlarmOn1);
-        mDialogResult.alarmSetTime1("");
-        mDialogResult.alarmSetSchedule1("");
-        mDialogResult.alarmIntent1("");
+
+
+
+        if(functionSelect == "Stat") {
+            Toast.makeText(getContext(),"Stat finish",Toast.LENGTH_SHORT).show();
+        }else if(functionSelect == "Alarm"){
+            mDialogResult.finish("FUCK");
+            mDialogResult.isAlarmOn1(isAlarmOn1);
+            mDialogResult.alarmSetTime1(txAlarmSetTime1.getText().toString());
+            mDialogResult.alarmSetSchedule1("");
+            mDialogResult.alarmIntent1("");
+
+
+            alarmCal = Calendar.getInstance();
+            //alarmCal.set()
+
+
+
+            Toast.makeText(getContext(),"Alarm finish",Toast.LENGTH_SHORT).show();
+
+        }else if(functionSelect == "Chart"){
+            Toast.makeText(getContext(),"Chart finish",Toast.LENGTH_SHORT).show();
+
+        }
         super.onStop();
 
 
