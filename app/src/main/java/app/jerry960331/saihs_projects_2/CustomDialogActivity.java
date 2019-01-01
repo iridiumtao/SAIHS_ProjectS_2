@@ -1,8 +1,11 @@
 package app.jerry960331.saihs_projects_2;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -29,6 +32,7 @@ import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +49,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     int powerNow;
     Double currentAve;
     boolean isSWOn;
-    private TextView txCurrentStat, txCurrentNow, txPowerNow, txCurrentAve, txCurrentDescription;
+    TextView txCurrentStat, txCurrentNow, txPowerNow, txCurrentAve, txCurrentDescription;
     private ImageView imageCurrentStat;
     private SimpleLineChart mSimpleLineChart;
 
@@ -63,6 +67,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     Calendar alarmCal;
     OnMyDialogResult mDialogResult; //回傳鬧鐘資料
     LinearLayout alarmSet1;
+    private ArrayList selectedItems = new ArrayList();
 
 
     private int timeSet;
@@ -160,6 +165,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 alarmSet1 = findViewById(R.id.alarmSet1);
 
 
+
                 final Handler someHandler = new Handler(getMainLooper());
                 someHandler.postDelayed(new Runnable() {
                     @Override
@@ -210,6 +216,67 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                         }, hour, minute, true);
 
                         timePickerDialog.show();
+                    }
+                });
+
+                txAlarmSetSchedule1.setOnClickListener(new View.OnClickListener() {
+
+                    final boolean[] checkedItems = {false, false, false, false, false, false, false, false, false};
+
+
+                    @Override
+                    public void onClick(View v) {
+/*
+                        if(selectedItems.size() != 0) {
+                            Toast.makeText(getContext(),"s",Toast.LENGTH_SHORT).show();
+                            for (int i = 0; i < selectedItems.size(); i++) {
+                                checkedItems[selectedItems.indexOf(i)] = true;
+                            }
+                        }*/
+                        final String[] date = {"今天","明天","週一","週二","週三","週四","週五","週六","週日",};
+                        final AlertDialog.Builder datePickDialog = new AlertDialog.Builder(getContext());
+                        datePickDialog.setTitle("請選擇週期");
+                        datePickDialog.setNeutralButton("不重複", new OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                               //TODO 按下之後隱藏目前Dialog(或只隱藏date ListView)，顯示下一個時間點及一個時間(點擊後開啟DatePicker)
+                            }
+                           });
+                        datePickDialog.setMultiChoiceItems(date, checkedItems, new OnMultiChoiceClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                                if (isChecked) {
+                                    // If the user checked the item, add it to the selected items
+                                    selectedItems.add(which);
+                                    Toast.makeText(getContext(),which+"",Toast.LENGTH_SHORT).show();
+
+                                } else if (selectedItems.contains(which)) {
+                                    // Else, if the item is already in the array, remove it
+                                    selectedItems.remove(Integer.valueOf(which));
+                                    Toast.makeText(getContext(),"-"+which,Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        datePickDialog.setPositiveButton(R.string.confirm, new OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getContext(),"已設定開啟週期為" + selectedItems,Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        datePickDialog.setNegativeButton(R.string.cancel, new OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getContext(),R.string.cancelled,Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        datePickDialog.setOnCancelListener(new OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                Toast.makeText(getContext(),R.string.cancelled,Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        datePickDialog.show();
                     }
                 });
 
@@ -336,7 +403,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
 
             alarmCal = Calendar.getInstance();
-            //alarmCal.set()
+            alarmCal.add(Calendar.DATE,1);
 
 
 
