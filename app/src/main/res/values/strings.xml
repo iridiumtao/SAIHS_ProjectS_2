@@ -163,5 +163,6 @@
     <string name="now_power">Now Power:</string>
     <string name="gotoalarm"><![CDATA[< Alarm]]></string>
     <string name="finish">finish</string>
+    <string name="not_set">not set</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package app.jerry960331.saihs_projects_2;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -50,8 +51,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     Double currentAve;
     boolean isSWOn;
     TextView txCurrentStat, txCurrentNow, txPowerNow, txCurrentAve, txCurrentDescription;
-    private ImageView imageCurrentStat;
-    private SimpleLineChart mSimpleLineChart;
+    ImageView imageCurrentStat;
 
 
     Button btnGotoTimer;
@@ -94,6 +94,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         c = a;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,12 +159,13 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 txNowTime = findViewById(R.id.txNowTime);
                 txNowDate = findViewById(R.id.txNowDate);
                 btnAlarmIsOn1 = findViewById(R.id.btnAlarmIsOn1);
-                btnAlarmIsOn1.setOnClickListener(AlarmIsOnOnClick1);
                 txAlarmSetSchedule1 = findViewById(R.id.txAlarmSetSchedule1);
                 txAlarmSetTime1 = findViewById(R.id.txAlarmSetTime1);
                 txAlarmIntent1 = findViewById(R.id.txAlarmIntent1);
                 fabAlarm = findViewById(R.id.fabAlarm);
                 alarmSet1 = findViewById(R.id.alarmSet1);
+                txAlarmSetSchedule1.setSelected(true);
+                final String[] date = {"週一","週二","週三","週四","週五","週六","週日"};
 
 
 
@@ -177,7 +179,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     }
                 }, 10);
 
-
+                //若鬧鐘先前已開啟，則將圖示開啟
                 if (isAlarmOn1){
                     btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_on);
                     isAlarmOn1 = true;
@@ -187,11 +189,33 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     isAlarmOn1 = false;
                 }
 
+
+                //todo 讓「週期」的字能夠在開啟時跑出來
+                //todo 目前暫時在這邊跑，之後希望可以打開的時候去鬧鐘那邊check是不是有設定
+                String s = "";
+                try {
+                    for (int i = 0; i < checkedItems.length; i++) {
+                        if (checkedItems[i]) {
+                            s += date[i] + "、";
+                        }
+                    }
+                    s = s.substring(0, s.length() - 1);
+                    txAlarmSetSchedule1.setText(s);
+                }catch (Exception ignore){}
+
+                //若未設定週期 則不允許鬧鐘開啟
+                if(txAlarmSetSchedule1.getText().toString().equals(getContext().getString(R.string.not_set))) {
+                    btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
+                    isAlarmOn1 = false;
+                }
+
+                //如果未設定鬧鐘時間 則預設為目前時間
                 if(alarmSetTime1 == ""){
                     txAlarmSetTime1.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
                 }else {
                     txAlarmSetTime1.setText(alarmSetTime1);
                 }
+
 
                 /*
                 progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
@@ -224,13 +248,13 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     @Override
                     public void onClick(View v) {
 
-                        final String[] date = {"今天","明天","週一","週二","週三","週四","週五","週六","週日",};
+
                         final AlertDialog.Builder datePickDialog = new AlertDialog.Builder(getContext());
                         datePickDialog.setTitle("請選擇週期");
                         datePickDialog.setNeutralButton("不重複", new OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                               //TODO 按下之後隱藏目前Dialog(或只隱藏date ListView)，顯示下一個時間點及一個時間(點擊後開啟DatePicker)
+                               //TODO 按下「不重複」之後隱藏目前Dialog(或只隱藏date ListView)，顯示下一個時間點及一個時間(點擊後開啟DatePicker)
                             }
                            });
                         datePickDialog.setMultiChoiceItems(date, checkedItems, new OnMultiChoiceClickListener() {
@@ -254,40 +278,85 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             public void onClick(DialogInterface dialog, int which) {
                                 String s = "";
 
-                                for(int i = 0 ; i < checkedItems.length ; i++){
-                                    if(checkedItems[i]){
-                                        s += date[i] + "、";
+                                try {
+                                    for (int i = 0; i < checkedItems.length; i++) {
+                                        if (checkedItems[i]) {
+                                            s += date[i] + "、";
+                                        }
                                     }
+                                    s = s.substring(0, s.length() - 1);
+                                    Toast.makeText(getContext(), "已設定週期為" + s, Toast.LENGTH_LONG).show();
+                                    txAlarmSetSchedule1.setText(s);
+                                }catch (Exception e){
+                                    Toast.makeText(getContext(), "未完成設定", Toast.LENGTH_LONG).show();
+                                    txAlarmSetSchedule1.setText(R.string.not_set);
+                                    btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
+                                    isAlarmOn1 = false;
                                 }
-                                s = s.substring(0,s.length() -1);
-                                Toast.makeText(getContext(), "已設定開啟週期為" + s, Toast.LENGTH_LONG).show();
-                                txAlarmSetSchedule1.setText(s);
                             }
                         });
                         datePickDialog.setOnCancelListener(new OnCancelListener() {
                             @Override
                             public void onCancel(DialogInterface dialog) {
-                                String s = "";
-                                for(int i = 0 ; i < checkedItems.length ; i++){
-                                    if(checkedItems[i]){
-                                        s += date[i] + "、";
+                                //我也不知道StringBuilder是啥 按那個燈泡它自己跑出來的
+                                StringBuilder s = new StringBuilder();
+                                try {
+                                    for (int i = 0; i < checkedItems.length; i++) {
+                                        if (checkedItems[i]) {
+                                            s.append(date[i]).append("、");
+                                        }
                                     }
+                                    s = new StringBuilder(s.substring(0, s.length() - 1));
+                                    Toast.makeText(getContext(), "已設定週期為" + s, Toast.LENGTH_LONG).show();
+                                    txAlarmSetSchedule1.setText(s.toString());
+                                }catch (Exception e){
+                                    Toast.makeText(getContext(), "未完成設定", Toast.LENGTH_LONG).show();
+                                    txAlarmSetSchedule1.setText(R.string.not_set);
+                                    btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
+                                    isAlarmOn1 = false;
                                 }
-                                s = s.substring(0,s.length() -1);
-                                Toast.makeText(getContext(), "已設定開啟週期為" + s, Toast.LENGTH_LONG).show();
-                                txAlarmSetSchedule1.setText(s);
                             }
                         });
                         datePickDialog.show();
                     }
                 });
 
+                txAlarmIntent1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //todo
+                    }
+                });
+
+                btnAlarmIsOn1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(txAlarmSetSchedule1.getText().toString().equals(getContext().getString(R.string.not_set))) {
+                            btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
+                            isAlarmOn1 = false;
+                            Toast.makeText(getContext(),"未設定週期",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if(!isAlarmOn1){//turn on
+                            //todo 記住這個鬧鐘
+                            btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_on);
+
+                            isAlarmOn1 = true;
+                        }else {//turn off
+                            //todo 取消這個鬧鐘
+                            btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
+                            isAlarmOn1 = false;
+                        }
+
+                    }
+                });
                 break;
 
             case "Chart":
                 Log.d("d", "chart");
                 setContentView(R.layout.chart_dialog);
-                mSimpleLineChart = (SimpleLineChart) findViewById(R.id.simpleLineChart);
+                SimpleLineChart mSimpleLineChart = (SimpleLineChart) findViewById(R.id.simpleLineChart);
                 mSimpleLineChart.setXItem(xChart);
                 mSimpleLineChart.setYItem(yChart);
                 HashMap<Integer, Integer> pointMap = new HashMap();
@@ -337,18 +406,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         }
     };
 
-    private ImageButton.OnClickListener AlarmIsOnOnClick1 = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (isAlarmOn1){
-                btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
-                isAlarmOn1 = false;
-            }else {
-                btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_on);
-                isAlarmOn1 = true;
-            }
-        }
-    };
+
 
 
 
@@ -365,36 +423,39 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     protected void onStop() {
         Log.d("CustomDialogActivity:", "onStop");
 
+        switch (functionSelect) {
+            case "Stat":
+                Toast.makeText(getContext(), "Stat dialog finish", Toast.LENGTH_SHORT).show();
+                break;
+
+            case "Alarm":
+                mDialogResult.finish("FUCK");
+                mDialogResult.isAlarmOn1(isAlarmOn1);
+                mDialogResult.alarmSetTime1(txAlarmSetTime1.getText().toString());
+                mDialogResult.alarmSetSchedule1("");
+                mDialogResult.alarmIntent1("");
+                mDialogResult.selectedItems(selectedItems);
+                mDialogResult.checkedItems(checkedItems);
 
 
-        if(functionSelect == "Stat") {
-            Toast.makeText(getContext(),"Stat finish",Toast.LENGTH_SHORT).show();
-        }else if(functionSelect == "Alarm"){
-            mDialogResult.finish("FUCK");
-            mDialogResult.isAlarmOn1(isAlarmOn1);
-            mDialogResult.alarmSetTime1(txAlarmSetTime1.getText().toString());
-            mDialogResult.alarmSetSchedule1("");
-            mDialogResult.alarmIntent1("");
-            mDialogResult.selectedItems(selectedItems);
-            mDialogResult.checkedItems(checkedItems);
+                alarmCal = Calendar.getInstance();
+                alarmCal.add(Calendar.DATE, 1);
+                //todo 呼叫broadcast執行鬧鐘
 
+                Toast.makeText(getContext(), "Alarm dialog finish", Toast.LENGTH_SHORT).show();
 
-            alarmCal = Calendar.getInstance();
-            alarmCal.add(Calendar.DATE,1);
+                break;
 
+            case "Chart":
+                Toast.makeText(getContext(), "Chart dialog finish", Toast.LENGTH_SHORT).show();
 
-
-            Toast.makeText(getContext(),"Alarm finish",Toast.LENGTH_SHORT).show();
-
-        }else if(functionSelect == "Chart"){
-            Toast.makeText(getContext(),"Chart finish",Toast.LENGTH_SHORT).show();
-
+                break;
         }
         super.onStop();
 
 
     }
-    public void setDialogResult(OnMyDialogResult dialogResult){
+    void setDialogResult(OnMyDialogResult dialogResult){
         mDialogResult = dialogResult;
     }
 

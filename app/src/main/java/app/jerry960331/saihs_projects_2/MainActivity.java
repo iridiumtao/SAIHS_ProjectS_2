@@ -1,5 +1,6 @@
 package app.jerry960331.saihs_projects_2;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationChannel;
@@ -147,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
 
     TextView TxTest;
     String test = "";
-
     String sendData = "z";
 
 
@@ -160,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
         c = a;
     }*/
 
+    @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -302,47 +303,6 @@ public class MainActivity extends AppCompatActivity {
 
                                 Log.d("e", e + "");
                             }
-                            /*軟體自動模式
-                            Log.d("PIR", PIR);
-                            if(PIR == "0") { //如果偵測到人 把插座打開
-
-                                try{
-
-                                    sendData = "";
-                                    TimeCountDown.cancel();
-                                    AutoTimerIsOn = false;
-                                    if(AutoOn1 && !swSk1.isChecked()){
-                                        swSk1.setChecked(true);
-                                        sendData = "a";
-                                        //btConnectedThread.write("a");
-                                    }
-                                    if(AutoOn2 && !swSk2.isChecked()){
-                                        swSk2.setChecked(true);
-                                        sendData = "c";
-                                        //btConnectedThread.write("c");
-                                    }
-                                    if(AutoOn3 && !swSk3.isChecked()){
-                                        swSk3.setChecked(true);
-                                        sendData = "e";
-                                        btConnectedThread.write("e");
-                                    }
-                                    if(AutoOn4 && !swSk4.isChecked()){
-                                        swSk4.setChecked(true);
-                                        sendData = "g";
-                                        btConnectedThread.write("g");
-                                    }
-                                }catch (Exception e){}
-                            }
-                            else{ //1
-                                if (AutoOn1 || AutoOn2 || AutoOn3 || AutoOn4) {
-								//如果沒偵測到人，且任意Auto是開啟的，則開始倒數計時
-                                    Log.d("timer", String.valueOf(AutoTimerIsOn));
-                                    if (!AutoTimerIsOn){
-                                        if(!AutoTimerRepeatNOPE){
-                                        TimeCountDown.start();}}
-
-                                }
-                            }*/
 
                         }
                         btDataString.delete(0, btDataString.length());
@@ -357,18 +317,10 @@ public class MainActivity extends AppCompatActivity {
                             imageConnectStat.setVisibility(View.VISIBLE);
                             txConnectStat.setText(R.string.failed);
                         }
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 }
-                if (btConnectedThread != null) {
-/*
-                    Log.d("sendData", sendData);
-                    if(sendData == "z"){
-                        return;
-                    }else if(sendData != ""){
-                        btConnectedThread.write(sendData);
-                    }*/
-                }
+
             }
         };
     }
@@ -1068,7 +1020,7 @@ public class MainActivity extends AppCompatActivity {
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
-        public ConnectedThread(BluetoothSocket socket) {
+        ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -1078,7 +1030,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
 
             mmInStream = tmpIn;
@@ -1111,19 +1063,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /* Call this from the main activity to send data to the remote device */
-        public void write(String input) {
+        void write(String input) {
 
 
             byte[] bytes = input.getBytes();
             try {
                 Log.d("send data", input);
                 mmOutStream.write(bytes);
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
             try {
                 Log.d("send data2", input);
                 mmOutStream.write(bytes);
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
     }
@@ -1133,7 +1085,7 @@ public class MainActivity extends AppCompatActivity {
         if (btSocket != null) {
             try {
                 btSocket.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             btSocket = null;
         }
@@ -1384,7 +1336,7 @@ public class MainActivity extends AppCompatActivity {
     private void makeOreoNotification() {
         final int NOTIFICATION_ID = 8;
         String channelId = "love";
-        String channelName = "我的最愛";
+        String channelName = "安全警示";
         NotificationManager manager = getNotificationManager(channelId, channelName);
 
         //產生通知
