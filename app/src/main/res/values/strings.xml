@@ -162,5 +162,6 @@
     <string name="chart_description">This is the chart of the current. You can see recently current here.</string>
     <string name="now_power">Now Power:</string>
     <string name="gotoalarm"><![CDATA[< Alarm]]></string>
+    <string name="finish">finish</string>
 
 </resources>

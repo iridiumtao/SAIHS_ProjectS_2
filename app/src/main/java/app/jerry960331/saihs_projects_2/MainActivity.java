@@ -50,6 +50,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
 import java.net.ContentHandlerFactory;
 import java.security.KeyStore;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -121,10 +122,14 @@ public class MainActivity extends AppCompatActivity {
     int xLength = 0, yLength = 3;
     String fuck = "0";
 
+    //鬧鐘回傳
     boolean isAlarmOn1 = false;
     String alarmSetTime1 = "";
     String alarmSetSchedule1 = "";
     String alarmIntent1 = "";
+    ArrayList selectedItems1 = new ArrayList();
+    boolean[] checkedItems1 = {false, false, false, false, false, false, false, false, false};
+
 
 
     private long timeCountInMilliSeconds;
@@ -671,6 +676,8 @@ public class MainActivity extends AppCompatActivity {
             CustomDialog.socketSelect = 1;
             CustomDialog.isAlarmOn1 = isAlarmOn1;
             CustomDialog.alarmSetTime1 = alarmSetTime1;
+            CustomDialog.selectedItems = selectedItems1;
+            CustomDialog.checkedItems = checkedItems1;
 
             CustomDialog.show();
             CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult(){
@@ -696,6 +703,16 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void alarmIntent1(String function) {
                     alarmIntent1 = function;
+                }
+
+                @Override
+                public void selectedItems(ArrayList selectedItems) {
+                    selectedItems1 = selectedItems;
+                }
+
+                @Override
+                public void checkedItems(boolean[] checkedItems) {
+                    checkedItems1 = checkedItems;
                 }
             });
 

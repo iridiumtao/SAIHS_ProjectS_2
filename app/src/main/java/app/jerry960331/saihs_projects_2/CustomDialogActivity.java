@@ -67,7 +67,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     Calendar alarmCal;
     OnMyDialogResult mDialogResult; //回傳鬧鐘資料
     LinearLayout alarmSet1;
-    private ArrayList selectedItems = new ArrayList();
+    ArrayList selectedItems = new ArrayList();
+    boolean[] checkedItems;
 
 
     private int timeSet;
@@ -147,7 +148,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
                 }
                 break;
-            case "Alarm": //todo==============================================
+            case "Alarm": //todo================================================================
                 setContentView(R.layout.alarm_dialog);
                 setTitle("Alarm");
 
@@ -166,13 +167,13 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
 
 
-                final Handler someHandler = new Handler(getMainLooper());
-                someHandler.postDelayed(new Runnable() {
+                final Handler clockHandler = new Handler(getMainLooper());
+                clockHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         txNowTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
                         txNowDate.setText(new SimpleDateFormat("MM月dd日 E", Locale.getDefault()).format(new Date()));
-                        someHandler.postDelayed(this, 1000);
+                        clockHandler.postDelayed(this, 1000);
                     }
                 }, 10);
 
@@ -220,19 +221,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 });
 
                 txAlarmSetSchedule1.setOnClickListener(new View.OnClickListener() {
-
-                    final boolean[] checkedItems = {false, false, false, false, false, false, false, false, false};
-
-
                     @Override
                     public void onClick(View v) {
-/*
-                        if(selectedItems.size() != 0) {
-                            Toast.makeText(getContext(),"s",Toast.LENGTH_SHORT).show();
-                            for (int i = 0; i < selectedItems.size(); i++) {
-                                checkedItems[selectedItems.indexOf(i)] = true;
-                            }
-                        }*/
+
                         final String[] date = {"今天","明天","週一","週二","週三","週四","週五","週六","週日",};
                         final AlertDialog.Builder datePickDialog = new AlertDialog.Builder(getContext());
                         datePickDialog.setTitle("請選擇週期");
@@ -258,22 +249,33 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                                 }
                             }
                         });
-                        datePickDialog.setPositiveButton(R.string.confirm, new OnClickListener() {
+                        datePickDialog.setPositiveButton(R.string.finish, new OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getContext(),"已設定開啟週期為" + selectedItems,Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        datePickDialog.setNegativeButton(R.string.cancel, new OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getContext(),R.string.cancelled,Toast.LENGTH_LONG).show();
+                                String s = "";
+
+                                for(int i = 0 ; i < checkedItems.length ; i++){
+                                    if(checkedItems[i]){
+                                        s += date[i] + "、";
+                                    }
+                                }
+                                s = s.substring(0,s.length() -1);
+                                Toast.makeText(getContext(), "已設定開啟週期為" + s, Toast.LENGTH_LONG).show();
+                                txAlarmSetSchedule1.setText(s);
                             }
                         });
                         datePickDialog.setOnCancelListener(new OnCancelListener() {
                             @Override
                             public void onCancel(DialogInterface dialog) {
-                                Toast.makeText(getContext(),R.string.cancelled,Toast.LENGTH_LONG).show();
+                                String s = "";
+                                for(int i = 0 ; i < checkedItems.length ; i++){
+                                    if(checkedItems[i]){
+                                        s += date[i] + "、";
+                                    }
+                                }
+                                s = s.substring(0,s.length() -1);
+                                Toast.makeText(getContext(), "已設定開啟週期為" + s, Toast.LENGTH_LONG).show();
+                                txAlarmSetSchedule1.setText(s);
                             }
                         });
                         datePickDialog.show();
@@ -281,6 +283,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 });
 
                 break;
+
             case "Chart":
                 Log.d("d", "chart");
                 setContentView(R.layout.chart_dialog);
@@ -347,28 +350,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         }
     };
 
-    class AlarmAdapter extends BaseAdapter {
 
-        @Override
-        public int getCount() {
-            return 0;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return null;
-        }
-    }
 
 
 
@@ -378,13 +360,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
     }
 
-    private String hmsTimeFormatter(long milliSeconds) {
-        String hms = String.format("%02d:%02d:%02d",
-                TimeUnit.MILLISECONDS.toHours(milliSeconds),
-                TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliSeconds)),
-                TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
-        return hms;
-    }
 
     @Override
     protected void onStop() {
@@ -400,6 +375,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
             mDialogResult.alarmSetTime1(txAlarmSetTime1.getText().toString());
             mDialogResult.alarmSetSchedule1("");
             mDialogResult.alarmIntent1("");
+            mDialogResult.selectedItems(selectedItems);
+            mDialogResult.checkedItems(checkedItems);
 
 
             alarmCal = Calendar.getInstance();
@@ -427,6 +404,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         void alarmSetTime1(String hhmm);
         void alarmSetSchedule1(String schedule);
         void alarmIntent1(String function);
+        void selectedItems(ArrayList selectedItems);
+        void checkedItems(boolean[] checkedItems);
     }
 
     @Override
