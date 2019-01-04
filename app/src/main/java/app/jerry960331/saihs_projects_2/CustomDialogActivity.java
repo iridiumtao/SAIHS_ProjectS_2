@@ -362,8 +362,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 HashMap<Integer, Integer> pointMap = new HashMap();
                 for (int i = 0; i < xChart.length; i++) {
                     pointMap.put(i, currentValue[i]);
+                    Log.d("xItem", currentValue[i]+"");
                 }
                 mSimpleLineChart.setData(pointMap);
+
+
                 break;
         }
 

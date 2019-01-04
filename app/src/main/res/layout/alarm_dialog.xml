@@ -36,6 +36,7 @@
         android:text="12月5日 星期三"
         android:textSize="16sp" />
 
+
     <LinearLayout
         android:id="@+id/alarmSet1"
         android:layout_width="320dp"
@@ -43,7 +44,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="     "
+        android:layout_marginBottom="40dp"
         android:orientation="horizontal">
 
         <ImageButton

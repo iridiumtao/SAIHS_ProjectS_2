@@ -43,7 +43,7 @@
                 android:layout_height="175dp"
 
                 android:scaleType="fitXY"
-                android:src="@drawable/home_page_2"
+                android:src="@mipmap/home_page_2"
                 android:visibility="visible"
 
                 app:layout_collapseMode="pin" />
