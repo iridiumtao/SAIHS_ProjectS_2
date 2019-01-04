@@ -36,6 +36,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageConnectStat;
 
     private ProgressDialog progress;
+    private FrameLayout devLayout;
 
     String notificationTitle = "安全警示",
             notificationText = "插座電流狀況異常！請立即前往查看";
@@ -112,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
     boolean AutoTimerIsOn = false;
     boolean AutoTimerRepeatNOPE = false;
     String PIR;
+    int safeCurrentValue = 3000;
     String current1 = "0", current2 = "0", current3 = "0", current4 = "0";
     Integer currentSum1 = 60, currentSum2 = 60, currentSum3 = 60, currentSum4 = 60;
     Double currentAv1 = 0.0, currentAv2 = 0.0, currentAv3 = 0.0, currentAv4 = 0.0;
@@ -174,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         setOnClickListeners();
         txVStat.bringToFront();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        TxTest = findViewById(R.id.textView);
+        devLayout.setVisibility(View.GONE);
         //FunctionSetEnable(false);
 
         Log.d("RND", Math.random()*180+"");
@@ -196,11 +199,15 @@ public class MainActivity extends AppCompatActivity {
                         //tvSB.setText(String.value)
                         if (btDataString.charAt(0) == '#') {
                             try {
+                                txLog.setText(btDataString + "\n" + txLog.getText().toString());
                                 PIR = btDataString.substring(1, 2);//偵測到人會收到0
+
+                                //僅於安全電流範圍收值
                                 if (!unsafeCurrent1) {
                                     current1 = btDataString.substring(3, 8);
                                 }
-                                if (Integer.parseInt(btDataString.substring(3, 8)) > 3000) {
+                                //若值超過設定電流上限
+                                if (Integer.parseInt(btDataString.substring(3, 8)) > safeCurrentValue) {
                                     makeOreoNotification();
                                     unsafeCurrent1 = true;
                                 }
@@ -208,31 +215,11 @@ public class MainActivity extends AppCompatActivity {
                                 if (!unsafeCurrent3) {
                                     current3 = btDataString.substring(15, 20);
                                 }
-                                if (Integer.parseInt(btDataString.substring(15, 20)) > 3000) {
+                                if (Integer.parseInt(btDataString.substring(15, 20)) > safeCurrentValue) {
                                     makeOreoNotification();
                                     unsafeCurrent3 = true;
                                 }
                                 current4 = btDataString.substring(21, 26);
-
-                                if (xLength < 7) {
-                                    receivedCurrent[xLength][0] = Integer.parseInt(current1);
-                                    receivedCurrent[xLength][1] = Integer.parseInt(current2);
-                                    receivedCurrent[xLength][2] = Integer.parseInt(current3);
-                                    receivedCurrent[xLength][3] = Integer.parseInt(current4);
-                                    xLength++;
-                                }else {
-                                    receivedCurrent[7][0] = Integer.parseInt(current1);
-                                    receivedCurrent[7][1] = Integer.parseInt(current2);
-                                    receivedCurrent[7][2] = Integer.parseInt(current3);
-                                    receivedCurrent[7][3] = Integer.parseInt(current4);
-                                    for(int x = 0; x < 7; x++){
-                                        for(int y = 0; y < 4; y++){
-                                            receivedCurrent[x][y] = receivedCurrent[x+1][y];
-                                        }
-                                    }
-                                }
-
-
 
                                 chipAutoOn1 = btDataString.substring(27, 28);//自動模式有開
                                 chipAutoOn2 = btDataString.substring(29, 30);
@@ -241,11 +228,11 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("current3", current3);
 
 
-                                if (Integer.parseInt(current1) > 3000) {
+                                if (Integer.parseInt(current1) > safeCurrentValue) {
                                     btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
                                     unsafeCurrent1 = true;
                                 }
-                                if (Integer.parseInt(current3) > 3000) {
+                                if (Integer.parseInt(current3) > safeCurrentValue) {
                                     btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
                                     unsafeCurrent3 = true;
                                 }
@@ -288,7 +275,6 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                //Log.d("currentSUM",currentSum1+" "+currentSum2+ " "+currentSum3+" "+currentSum4);
                                 TxTest.setText(BT_comm);
                                 currentSum1 += Integer.parseInt(current1);
                                 currentSum2 += Integer.parseInt(current2);
@@ -386,6 +372,8 @@ public class MainActivity extends AppCompatActivity {
 
         txVStat = findViewById(R.id.txVStat);
         txLog = findViewById(R.id.txLog);
+
+        devLayout = findViewById(R.id.devLayout);
 
 
     }
@@ -699,39 +687,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-            final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
-            CustomDialog.functionSelect = "Chart";
-            for(int x = 0; x < 7; x++){
-                if (receivedCurrent[x][1] == null){ //如果沒有數值 則為0
-                    sortCurrent[x] = 0;
-                }else {
-                    sortCurrent[x] = receivedCurrent[x][1];
-                }
-                Log.d("sortCurrent", sortCurrent[x] + " " + x);
-            }
-            if (receivedCurrent[1][1] != null){ //沒有數值即不排序
-                Arrays.sort(sortCurrent);
-            }
+            CustomDialog.functionSelect = "Chart2";
 
-            String[] xItem = {"1", "2", "3", "4", "5", "6", "7"};
-            String[] yItem = new String[7];
-            for(int i = 0; i < sortCurrent.length; i++){
-                yItem[i] = sortCurrent[i] + " mA";
-            }
-
-            int[] currentValue = new int[xItem.length];
-            CustomDialog.xChart = xItem;
-            CustomDialog.yChart = yItem;
-            if (Integer.parseInt(current1) == 0) {
-                for (int i = 0; i < xItem.length; i++) {
-                    currentValue[i] = 7;
-                }
-            } else {
-                for (int i = 0; i < xItem.length; i++) {
-                    currentValue[i] = receivedCurrent[i][1];
-                }
-            }
-            CustomDialog.currentValue = currentValue;
             CustomDialog.show();
         }
     };
@@ -1263,11 +1220,14 @@ public class MainActivity extends AppCompatActivity {
             menu.findItem(R.id.action_auto).setVisible(false);
             menu.findItem(R.id.action_notification).setVisible(false);
             menu.findItem(R.id.action_destroy).setVisible(false);
+            menu.findItem(R.id.action_log).setVisible(false);
         } else {
             menu.findItem(R.id.action_bt).setVisible(true);
             menu.findItem(R.id.action_auto).setVisible(true);
             menu.findItem(R.id.action_notification).setVisible(true);
             menu.findItem(R.id.action_destroy).setVisible(true);
+            menu.findItem(R.id.action_log).setVisible(true);
+
 
         }
         return true;
@@ -1329,6 +1289,12 @@ public class MainActivity extends AppCompatActivity {
                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
+                break;
+            case R.id.action_log:
+                item.setChecked(!item.isChecked());
+                devLayout.setVisibility(item.isChecked() ? View.VISIBLE : View.GONE);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }

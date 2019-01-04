@@ -29,6 +29,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
 import org.w3c.dom.Text;
 
 import java.text.DateFormat;
@@ -357,6 +363,13 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 Log.d("d", "chart");
                 setContentView(R.layout.chart_dialog);
                 SimpleLineChart mSimpleLineChart = (SimpleLineChart) findViewById(R.id.simpleLineChart);
+                LinearLayout simpleLineChartLinerLayout = findViewById(R.id.simpleLineChartLinerLayout);
+                LineChart currentChartRT = findViewById(R.id.currentChartRT);
+
+                simpleLineChartLinerLayout.setVisibility(View.VISIBLE);
+                currentChartRT.setVisibility(View.GONE);
+
+
                 mSimpleLineChart.setXItem(xChart);
                 mSimpleLineChart.setYItem(yChart);
                 HashMap<Integer, Integer> pointMap = new HashMap();
@@ -365,6 +378,42 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     Log.d("xItem", currentValue[i]+"");
                 }
                 mSimpleLineChart.setData(pointMap);
+
+
+                break;
+            case "Chart2":
+                Log.d("d", "chart");
+                setContentView(R.layout.chart_dialog);
+                simpleLineChartLinerLayout = findViewById(R.id.simpleLineChartLinerLayout);
+                currentChartRT = findViewById(R.id.currentChartRT);
+
+                currentChartRT.setVisibility(View.VISIBLE);
+                simpleLineChartLinerLayout.setVisibility(View.GONE);
+
+                currentChartRT.setDragEnabled(true);
+                currentChartRT.setScaleEnabled(false);
+
+                ArrayList<Entry> yValues = new ArrayList<>();
+
+                yValues.add(new Entry(0, 20f));
+                yValues.add(new Entry(1, 6f));
+                yValues.add(new Entry(2, 25f));
+                yValues.add(new Entry(3, 6.5f));
+                yValues.add(new Entry(4, 80f));
+                yValues.add(new Entry(5, 6f));
+                yValues.add(new Entry(6, 60f));
+
+                LineDataSet set1 = new LineDataSet(yValues, "新ㄉ表格預覽版");
+
+                set1.setFillAlpha(110);
+                set1.setLineWidth(3f);
+
+
+                ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+                dataSets.add(set1);
+                LineData data = new LineData(dataSets);
+
+                currentChartRT.setData(data);
 
 
                 break;

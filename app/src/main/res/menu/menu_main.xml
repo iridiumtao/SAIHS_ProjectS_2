@@ -19,6 +19,10 @@
         android:id="@+id/action_auto"
         android:title="@string/auto_mode_test"/>
     <item
+        android:id="@+id/action_log"
+        android:checkable="true"
+        android:title="log" />
+    <item
         android:id="@+id/action_dev"
         android:checkable="true"
         android:title="@string/developer_mode" />
