@@ -414,6 +414,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 YAxis leftAxis = currentChartRT.getAxisLeft();
                 leftAxis.removeAllLimitLines();
                 leftAxis.addLimitLine(upperLimit);
+                leftAxis.setAxisMinimum(0f);
                 leftAxis.enableGridDashedLine(10f,10f,0);
                 leftAxis.setDrawLimitLinesBehindData(true);
 

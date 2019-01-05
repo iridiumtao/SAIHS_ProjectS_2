@@ -468,11 +468,25 @@
         android:layout_height="match_parent"
         android:visibility="visible">
 
-        <TextView
-            android:id="@+id/txLog"
+        <HorizontalScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="TextView" />
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/txLog"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:maxLines="128"
+                    android:scrollbars="horizontal"
+                    android:text="     Log: Received data from bluetooth" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
     </FrameLayout>
 
 </LinearLayout>
