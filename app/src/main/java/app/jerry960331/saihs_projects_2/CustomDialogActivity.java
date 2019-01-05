@@ -30,6 +30,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -40,6 +42,7 @@ import org.w3c.dom.Text;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -75,6 +78,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     LinearLayout alarmSet1;
     ArrayList selectedItems = new ArrayList();
     boolean[] checkedItems;
+    int safeCurrentValue;
+    String current;
 
 
     private int timeSet;
@@ -93,6 +98,12 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     String[] xChart = {};
     String[] yChart = {};
     int[] currentValue = {};
+
+    LineChart currentChartRT;
+    ArrayList<Entry> yValues = new ArrayList<>();
+    private Handler getCurrentHandler;
+
+
 
 
     CustomDialogActivity(Activity a) {
@@ -364,7 +375,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 setContentView(R.layout.chart_dialog);
                 SimpleLineChart mSimpleLineChart = (SimpleLineChart) findViewById(R.id.simpleLineChart);
                 LinearLayout simpleLineChartLinerLayout = findViewById(R.id.simpleLineChartLinerLayout);
-                LineChart currentChartRT = findViewById(R.id.currentChartRT);
+
+                currentChartRT = findViewById(R.id.currentChartRT);
 
                 simpleLineChartLinerLayout.setVisibility(View.VISIBLE);
                 currentChartRT.setVisibility(View.GONE);
@@ -393,28 +405,69 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 currentChartRT.setDragEnabled(true);
                 currentChartRT.setScaleEnabled(false);
 
-                ArrayList<Entry> yValues = new ArrayList<>();
+                LimitLine upperLimit = new LimitLine(safeCurrentValue,"安全電流值");
+                upperLimit.setLineWidth(4f);
+                upperLimit.enableDashedLine(10f,10f,10f);
+                upperLimit.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+                upperLimit.setTextSize(15f);
 
-                yValues.add(new Entry(0, 20f));
+                YAxis leftAxis = currentChartRT.getAxisLeft();
+                leftAxis.removeAllLimitLines();
+                leftAxis.addLimitLine(upperLimit);
+                leftAxis.enableGridDashedLine(10f,10f,0);
+                leftAxis.setDrawLimitLinesBehindData(true);
+
+
+
+                yValues.add(new Entry(0, 20f));/*
                 yValues.add(new Entry(1, 6f));
                 yValues.add(new Entry(2, 25f));
                 yValues.add(new Entry(3, 6.5f));
                 yValues.add(new Entry(4, 80f));
-                yValues.add(new Entry(5, 6f));
-                yValues.add(new Entry(6, 60f));
+                yValues.add(new Entry(5, 6f));*/
+                yValues.add(new Entry(60, 60f));
 
                 LineDataSet set1 = new LineDataSet(yValues, "新ㄉ表格預覽版");
 
                 set1.setFillAlpha(110);
                 set1.setLineWidth(3f);
 
-
                 ArrayList<ILineDataSet> dataSets = new ArrayList<>();
                 dataSets.add(set1);
-                LineData data = new LineData(dataSets);
+                final LineData data = new LineData(dataSets);
 
                 currentChartRT.setData(data);
 
+
+
+                final int[] i = {0};
+
+                getCurrentHandler = new Handler(getMainLooper());
+                getCurrentHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Log.d("yValue", String.valueOf(yValues));
+                        i[0] = i[0] +1;
+
+                        LineData data1 = currentChartRT.getData();
+/*
+                        ILineDataSet set = data1.getDataSetByIndex(0);
+                        data1.addEntry(new Entry(set.getEntryCount(), Float.parseFloat(current)),0);*/
+                        if(current == null){
+                            current = "0";
+                        }
+                        yValues.add(new Entry(i[0],(float) (Math.random() * 40)));
+                        data1.notifyDataChanged();
+                        currentChartRT.notifyDataSetChanged();
+                        currentChartRT.moveViewToX(data1.getEntryCount());
+                        //todo fix the problem
+
+                        //Float.parseFloat(current)
+                        getCurrentHandler.postDelayed(this, 1000);
+                        Log.d("i", Arrays.toString(i) +yValues);
+
+                    }
+                }, 10);
 
                 break;
         }
@@ -481,7 +534,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 break;
 
             case "Alarm":
-                mDialogResult.finish("FUCK");
+                mDialogResult.finish("Alarm Finish");
                 mDialogResult.isAlarmOn1(isAlarmOn1);
                 mDialogResult.alarmSetTime1(txAlarmSetTime1.getText().toString());
                 mDialogResult.alarmSetSchedule1("");
@@ -499,6 +552,15 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 break;
 
             case "Chart":
+
+
+                Toast.makeText(getContext(), "Chart dialog finish", Toast.LENGTH_SHORT).show();
+
+                break;
+            case "Chart2":
+                mDialogResult.finish("Chart2 Finish");
+                getCurrentHandler.removeCallbacksAndMessages(null);
+
                 Toast.makeText(getContext(), "Chart dialog finish", Toast.LENGTH_SHORT).show();
 
                 break;

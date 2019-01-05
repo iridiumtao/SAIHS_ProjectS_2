@@ -44,6 +44,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.data.Entry;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -59,6 +61,8 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
+import static android.os.Looper.getMainLooper;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -285,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
                                 currentAv2 = currentSum2 / handlerTick + .0;
                                 currentAv3 = currentSum3 / handlerTick + .0;
                                 currentAv4 = currentSum4 / handlerTick + .0;
+
+
                             } catch (Exception e) {
 
                                 Log.d("e", e + "");
@@ -688,6 +694,62 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
             CustomDialog.functionSelect = "Chart2";
+            CustomDialog.safeCurrentValue = safeCurrentValue;
+
+            final int[] i = {0};
+            final Handler getCurrentHandler = new Handler(getMainLooper());
+            getCurrentHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    i[0] = i[0] +1;
+
+                    //CustomDialog.current = current1;
+
+                    //CustomDialog.yValues.add(new Entry(i[0],Float.parseFloat(current1)));
+
+                    getCurrentHandler.postDelayed(this, 1000);
+
+                }
+            }, 10);
+            CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult(){
+
+                                             @Override
+                                             public void finish(String result) {
+                                                 if(result.equals("Chart2 Finish")){
+                                                     getCurrentHandler.removeCallbacksAndMessages(null);
+                                                 }
+                                             }
+
+                                             @Override
+                                             public void isAlarmOn1(Boolean b) {
+
+                                             }
+
+                                             @Override
+                                             public void alarmSetTime1(String hhmm) {
+
+                                             }
+
+                                             @Override
+                                             public void alarmSetSchedule1(String schedule) {
+
+                                             }
+
+                                             @Override
+                                             public void alarmIntent1(String function) {
+
+                                             }
+
+                                             @Override
+                                             public void selectedItems(ArrayList selectedItems) {
+
+                                             }
+
+                                             @Override
+                                             public void checkedItems(boolean[] checkedItems) {
+
+                                             }
+                                         });
 
             CustomDialog.show();
         }
