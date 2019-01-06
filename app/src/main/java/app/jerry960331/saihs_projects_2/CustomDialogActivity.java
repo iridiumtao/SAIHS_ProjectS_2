@@ -5,41 +5,36 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.text.Layout;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
-import org.w3c.dom.Text;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +42,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import static android.os.Looper.getMainLooper;
 
@@ -99,7 +93,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     String[] yChart = {};
     int[] currentValue = {};
 
-    LineChart currentChartRT;
+    LineChart chart;
     ArrayList<Entry> yValues = new ArrayList<>();
     private Handler getCurrentHandler;
 
@@ -376,10 +370,10 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 SimpleLineChart mSimpleLineChart = (SimpleLineChart) findViewById(R.id.simpleLineChart);
                 LinearLayout simpleLineChartLinerLayout = findViewById(R.id.simpleLineChartLinerLayout);
 
-                currentChartRT = findViewById(R.id.currentChartRT);
+                chart = findViewById(R.id.currentChartRT);
 
                 simpleLineChartLinerLayout.setVisibility(View.VISIBLE);
-                currentChartRT.setVisibility(View.GONE);
+                chart.setVisibility(View.GONE);
 
 
                 mSimpleLineChart.setXItem(xChart);
@@ -397,13 +391,32 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 Log.d("d", "chart");
                 setContentView(R.layout.chart_dialog);
                 simpleLineChartLinerLayout = findViewById(R.id.simpleLineChartLinerLayout);
-                currentChartRT = findViewById(R.id.currentChartRT);
+                chart = findViewById(R.id.currentChartRT);
 
-                currentChartRT.setVisibility(View.VISIBLE);
+                chart.setVisibility(View.VISIBLE);
                 simpleLineChartLinerLayout.setVisibility(View.GONE);
 
-                currentChartRT.setDragEnabled(true);
-                currentChartRT.setScaleEnabled(false);
+                chart.setTouchEnabled(true);
+                chart.setDragEnabled(true);
+                chart.setScaleEnabled(true);
+                chart.setDrawGridBackground(false);
+                chart.setPinchZoom(true);
+
+                LineData data = new LineData();
+
+                chart.setData(data);
+
+                //圖例
+                Legend l = chart.getLegend();
+                l.setForm(Legend.LegendForm.LINE);
+                //l.setTextColor(Color.WHITE);
+
+                XAxis xl = chart.getXAxis();
+                //xl.setTextColor(Color.WHITE);
+                xl.setDrawGridLines(false);
+                xl.setAvoidFirstLastClipping(true);
+                xl.setEnabled(true);
+                //todo xl.setValueFormatter();
 
                 LimitLine upperLimit = new LimitLine(safeCurrentValue,"安全電流值");
                 upperLimit.setLineWidth(4f);
@@ -411,64 +424,68 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 upperLimit.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
                 upperLimit.setTextSize(15f);
 
-                YAxis leftAxis = currentChartRT.getAxisLeft();
-                leftAxis.removeAllLimitLines();
-                leftAxis.addLimitLine(upperLimit);
+                YAxis leftAxis = chart.getAxisLeft();
+                //leftAxis.setTextColor(Color.WHITE);
+                //leftAxis.setAxisMaximum(60f);
                 leftAxis.setAxisMinimum(0f);
-                leftAxis.enableGridDashedLine(10f,10f,0);
                 leftAxis.setDrawLimitLinesBehindData(true);
+                leftAxis.addLimitLine(upperLimit);
+                leftAxis.setDrawGridLines(true);
+
+                YAxis rightAxis = chart.getAxisRight();
+                rightAxis.setEnabled(false);
 
 
 
-                yValues.add(new Entry(0, 20f));/*
-                yValues.add(new Entry(1, 6f));
-                yValues.add(new Entry(2, 25f));
-                yValues.add(new Entry(3, 6.5f));
-                yValues.add(new Entry(4, 80f));
-                yValues.add(new Entry(5, 6f));*/
-                yValues.add(new Entry(60, 60f));
-
-                LineDataSet set1 = new LineDataSet(yValues, "新ㄉ表格預覽版");
-
-                set1.setFillAlpha(110);
-                set1.setLineWidth(3f);
-
-                ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-                dataSets.add(set1);
-                final LineData data = new LineData(dataSets);
-
-                currentChartRT.setData(data);
-
-
-
-                final int[] i = {0};
 
                 getCurrentHandler = new Handler(getMainLooper());
                 getCurrentHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        //Log.d("yValue", String.valueOf(yValues));
-                        i[0] = i[0] +1;
 
-                        LineData data1 = currentChartRT.getData();
-/*
-                        ILineDataSet set = data1.getDataSetByIndex(0);
-                        data1.addEntry(new Entry(set.getEntryCount(), Float.parseFloat(current)),0);*/
-                        if(current == null){
-                            current = "0";
+
+                        LineData data = chart.getData();
+
+                        if (data != null) {
+
+                            ILineDataSet set = data.getDataSetByIndex(0);
+                            // set.addEntry(...); // can be called as well
+
+                            if (set == null) {
+                                set = createSet();
+                                data.addDataSet(set);
+                            }
+
+
+                            data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
+
+                            if(current == null){
+                                current = "0";
+                            }
+                            //data.addEntry(new Entry(set.getEntryCount(), Float.parseFloat(current)), 0);
+
+                            data.notifyDataChanged();
+
+                            // let the chart know it's data has changed
+                            chart.notifyDataSetChanged();
+
+                            // limit the number of visible entries
+                            chart.setVisibleXRangeMaximum(30);
+                            chart.setVisibleXRangeMinimum(10);
+                            // chart.setVisibleYRange(30, AxisDependency.LEFT);
+
+                            // move to the latest entry
+                            chart.moveViewToX(data.getEntryCount());
+
+                            Log.d("i", set.getEntryCount()+"");
+
+                            chart.invalidate();
+                            getCurrentHandler.postDelayed(this, 1000);
                         }
-                        yValues.add(new Entry(i[0],(float) (Math.random() * 40)));
-                        data1.notifyDataChanged();
-                        currentChartRT.notifyDataSetChanged();
-                        currentChartRT.moveViewToX(data1.getEntryCount());
-                        //todo fix the problem
-
-                        //Float.parseFloat(current)
-                        getCurrentHandler.postDelayed(this, 1000);
-                        Log.d("i", Arrays.toString(i) +yValues);
-
                     }
                 }, 10);
+
+
 
                 break;
         }
@@ -476,6 +493,23 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
     }
 
+    private LineDataSet createSet() {
+        Log.d("call", "createSet()");
+        LineDataSet set = new LineDataSet(null, "電流值(開發模式)");
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(Color.rgb(0, 185, 169)); //Color.rgb(0, 185, 169) == colorPrimary
+        set.setCircleColor(Color.rgb(0, 185, 169));
+        set.setCircleHoleColor(Color.WHITE);
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setFillAlpha(65);
+        set.setFillColor(Color.rgb(0, 185, 169));
+        set.setHighLightColor(Color.rgb(244, 117, 117));
+        //set.setValueTextColor(Color.WHITE);
+        set.setValueTextSize(9f);
+        set.setDrawValues(true);
+        return set;
+    }
 
     private ImageView.OnClickListener SetTimer = new ImageView.OnClickListener() {
         @Override

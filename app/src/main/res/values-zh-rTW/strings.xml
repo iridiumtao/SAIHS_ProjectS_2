@@ -57,7 +57,7 @@
     <string name="red">警告</string>
     <string name="please_try_again_after_bt_enable">請於藍芽開啟後再次連線。</string>
     <string name="current_chart">電流表格</string>
-    <string name="chart_description">此表格顯示近期的使用電流。此表格以秒為單位，點擊按鈕後即顯示最新數值。</string>
+    <string name="chart_description">此表格可供顯示近期的使用電流。</string>
     <string name="now_power">目前功率：</string>
     <string name="finish">完成</string>
     <string name="not_set">未設定</string>

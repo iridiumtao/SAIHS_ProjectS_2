@@ -696,19 +696,13 @@ public class MainActivity extends AppCompatActivity {
             CustomDialog.functionSelect = "Chart2";
             CustomDialog.safeCurrentValue = safeCurrentValue;
 
-            final int[] i = {0};
+
             final Handler getCurrentHandler = new Handler(getMainLooper());
             getCurrentHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    i[0] = i[0] +1;
-
-                    //CustomDialog.current = current1;
-
-                    //CustomDialog.yValues.add(new Entry(i[0],Float.parseFloat(current1)));
-
+                    CustomDialog.current = current1;
                     getCurrentHandler.postDelayed(this, 1000);
-
                 }
             }, 10);
             CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult(){
