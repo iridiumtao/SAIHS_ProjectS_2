@@ -21,7 +21,11 @@
     <item
         android:id="@+id/action_log"
         android:checkable="true"
-        android:title="log" />
+        android:title="LOG" />
+    <item
+        android:id="@+id/action_devData"
+        android:checkable="true"
+        android:title="Dev Mode Data" />
     <item
         android:id="@+id/action_dev"
         android:checkable="true"

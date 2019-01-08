@@ -462,11 +462,51 @@
             app:layout_constraintVertical_bias="0.625" />
     </android.support.constraint.ConstraintLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/devLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnLogStart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_auto"
+                android:text="start"
+                android:textColor="@color/colorPrimary" />
+
+            <Button
+                android:id="@+id/btnLogStop"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_auto"
+                android:text="stop"
+                android:textColor="@color/colorPrimary" />
+
+            <Button
+                android:id="@+id/btnLogClear"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="15dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_auto"
+                android:text="Clear"
+                android:textColor="@color/colorPrimary" />
+        </LinearLayout>
 
         <HorizontalScrollView
             android:layout_width="match_parent"
@@ -475,7 +515,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/txLog"
@@ -484,9 +524,10 @@
                     android:maxLines="128"
                     android:scrollbars="horizontal"
                     android:text="     Log: Received data from bluetooth" />
+
             </LinearLayout>
         </HorizontalScrollView>
 
-    </FrameLayout>
+    </LinearLayout>
 
 </LinearLayout>

@@ -576,7 +576,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 mDialogResult.alarmIntent1("");
                 mDialogResult.selectedItems(selectedItems);
                 mDialogResult.checkedItems(checkedItems);
-
+                Log.d("selectedItems", selectedItems+"");
 
                 alarmCal = Calendar.getInstance();
                 alarmCal.add(Calendar.DATE, 1);

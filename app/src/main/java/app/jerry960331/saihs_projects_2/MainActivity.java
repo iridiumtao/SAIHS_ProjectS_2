@@ -2,40 +2,30 @@ package app.jerry960331.saihs_projects_2;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -44,25 +34,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.data.Entry;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Array;
-import java.net.ContentHandlerFactory;
-import java.security.KeyStore;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.TreeMap;
 import java.util.UUID;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.TimeUnit;
-
-import static android.os.Looper.getMainLooper;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -78,12 +55,14 @@ public class MainActivity extends AppCompatActivity {
             swConnectionMethod;
     private Button
             btnConnect,
-            btnSkAuto1, btnSkAuto2, btnSkAuto3, btnSkAuto4;
+            btnSkAuto1, btnSkAuto2, btnSkAuto3, btnSkAuto4,
+            btnLogStart, btnLogStop, btnLogClear;
     private TextView txConnectStat, txLog;
     private ImageView imageConnectStat;
 
     private ProgressDialog progress;
-    private FrameLayout devLayout;
+    private LinearLayout devLayout;
+    private boolean logIsOn = false;
 
     String notificationTitle = "安全警示",
             notificationText = "插座電流狀況異常！請立即前往查看";
@@ -139,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
     boolean[] checkedItems1 = {false, false, false, false, false, false, false, false, false};
 
 
-
     private long timeCountInMilliSeconds;
 
     //color
@@ -158,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
     String sendData = "z";
 
 
-
 //alt+enter 字串抽離
 
     /*
@@ -175,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(R.string.title);
-        getSharedPreferences("test", MODE_PRIVATE);
 
         findViews();
         setOnClickListeners();
@@ -184,7 +160,27 @@ public class MainActivity extends AppCompatActivity {
         devLayout.setVisibility(View.GONE);
         //FunctionSetEnable(false);
 
-        Log.d("RND", Math.random()*180+"");
+        //Log.d("RND", Math.random()*180+"");
+
+        isAlarmOn1 = getSharedPreferences("alarm1", MODE_PRIVATE).getBoolean("isAlarmOn1", false);
+        String schedule1 = getSharedPreferences("alarm1", MODE_PRIVATE).getString("alarmSetSchedule1", "");
+        Log.d("onCreate schedule1", schedule1);
+        if (schedule1 != "" && schedule1 != null) {
+            try {
+                for (int i = 0; i < schedule1.length(); i++) {
+                    Log.d("looping", schedule1.charAt(i) + "");
+
+                    checkedItems1[Integer.parseInt(schedule1.substring(i, i + 1))] = true;
+                    selectedItems1.add(schedule1.substring(i, i + 1));
+                }
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "schedule1資料復原錯誤", Toast.LENGTH_LONG).show();
+                Log.d("schedule1資料復原錯誤", e + "");
+            }
+
+        }
+        alarmSetTime1 = getSharedPreferences("alarm1", MODE_PRIVATE).getString("alarmSetTime1", "");
+
 
         btHandler = new Handler() {
             @Override
@@ -203,7 +199,11 @@ public class MainActivity extends AppCompatActivity {
                         //tvSB.setText(String.value)
                         if (btDataString.charAt(0) == '#') {
                             try {
-                                txLog.setText(btDataString + "\n" + txLog.getText().toString());
+
+                                if (!logIsOn){
+                                    txLog.setText(btDataString + "\n" + txLog.getText().toString());
+                                }
+
                                 PIR = btDataString.substring(1, 2);//偵測到人會收到0
 
                                 //僅於安全電流範圍收值
@@ -318,8 +318,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     private void setOnClickListeners() {
         swSk1.setOnClickListener(SwListener);
         swSk2.setOnClickListener(SwListener);
@@ -342,10 +340,14 @@ public class MainActivity extends AppCompatActivity {
         btnSkChart4.setOnClickListener(SkChartListener4);
 
         swConnectionMethod.setOnClickListener(SwConnectionMethodListener);
+
+        btnLogStart.setOnClickListener(LogStart);
+        btnLogStop.setOnClickListener(LogStop);
+        btnLogClear.setOnClickListener(LogClear);
     }
 
     //ctrl+alt+M
-    private void findViews() {
+     private void findViews() {
         swSk1 = findViewById(R.id.swSk1);
         swSk2 = findViewById(R.id.swSk2);
         swSk3 = findViewById(R.id.swSk3);
@@ -380,7 +382,9 @@ public class MainActivity extends AppCompatActivity {
         txLog = findViewById(R.id.txLog);
 
         devLayout = findViewById(R.id.devLayout);
-
+        btnLogStart = findViewById(R.id.btnLogStart);
+        btnLogStop = findViewById(R.id.btnLogStop);
+        btnLogClear = findViewById(R.id.btnLogClear);
 
     }
 
@@ -626,8 +630,8 @@ public class MainActivity extends AppCompatActivity {
             CustomDialog.checkedItems = checkedItems1;
 
             CustomDialog.show();
-            CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult(){
-                public void finish(String result){
+            CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult() {
+                public void finish(String result) {
                     fuck = result;
                 }
 
@@ -705,45 +709,45 @@ public class MainActivity extends AppCompatActivity {
                     getCurrentHandler.postDelayed(this, 1000);
                 }
             }, 10);
-            CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult(){
+            CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult() {
 
-                                             @Override
-                                             public void finish(String result) {
-                                                 if(result.equals("Chart2 Finish")){
-                                                     getCurrentHandler.removeCallbacksAndMessages(null);
-                                                 }
-                                             }
+                @Override
+                public void finish(String result) {
+                    if (result.equals("Chart2 Finish")) {
+                        getCurrentHandler.removeCallbacksAndMessages(null);
+                    }
+                }
 
-                                             @Override
-                                             public void isAlarmOn1(Boolean b) {
+                @Override
+                public void isAlarmOn1(Boolean b) {
 
-                                             }
+                }
 
-                                             @Override
-                                             public void alarmSetTime1(String hhmm) {
+                @Override
+                public void alarmSetTime1(String hhmm) {
 
-                                             }
+                }
 
-                                             @Override
-                                             public void alarmSetSchedule1(String schedule) {
+                @Override
+                public void alarmSetSchedule1(String schedule) {
 
-                                             }
+                }
 
-                                             @Override
-                                             public void alarmIntent1(String function) {
+                @Override
+                public void alarmIntent1(String function) {
 
-                                             }
+                }
 
-                                             @Override
-                                             public void selectedItems(ArrayList selectedItems) {
+                @Override
+                public void selectedItems(ArrayList selectedItems) {
 
-                                             }
+                }
 
-                                             @Override
-                                             public void checkedItems(boolean[] checkedItems) {
+                @Override
+                public void checkedItems(boolean[] checkedItems) {
 
-                                             }
-                                         });
+                }
+            });
 
             CustomDialog.show();
         }
@@ -1250,8 +1254,24 @@ public class MainActivity extends AppCompatActivity {
         };
     */
 
-
-
+    public Button.OnClickListener LogStart = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            logIsOn = true;
+        }
+    };
+    public Button.OnClickListener LogStop = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            logIsOn = false;
+        }
+    };
+    public Button.OnClickListener LogClear = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            txLog.setText("     Log cleared");
+        }
+    };
 
     public void CustomizedSnackBar(String SnackBarText) {
         snackbar = Snackbar.make(findViewById(android.R.id.content), SnackBarText, Snackbar.LENGTH_SHORT)
@@ -1277,12 +1297,14 @@ public class MainActivity extends AppCompatActivity {
             menu.findItem(R.id.action_notification).setVisible(false);
             menu.findItem(R.id.action_destroy).setVisible(false);
             menu.findItem(R.id.action_log).setVisible(false);
+            menu.findItem(R.id.action_devData).setVisible(false);
         } else {
             menu.findItem(R.id.action_bt).setVisible(true);
             menu.findItem(R.id.action_auto).setVisible(true);
             menu.findItem(R.id.action_notification).setVisible(true);
             menu.findItem(R.id.action_destroy).setVisible(true);
             menu.findItem(R.id.action_log).setVisible(true);
+            menu.findItem(R.id.action_devData).setVisible(true);
 
 
         }
@@ -1349,6 +1371,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_log:
                 item.setChecked(!item.isChecked());
                 devLayout.setVisibility(item.isChecked() ? View.VISIBLE : View.GONE);
+                break;
+            case R.id.action_devData:
+                item.setChecked(!item.isChecked());
+                Toast.makeText(getApplicationContext(),"敬請期待", Toast.LENGTH_SHORT).show();
                 break;
 
         }
@@ -1437,19 +1463,32 @@ public class MainActivity extends AppCompatActivity {
      */
 
 
-
-
     @Override
     protected void onStop() {
         Log.d("MainActivity:", "onStop");
         super.onStop();
-        Log.d("fuck", fuck+"");
+
     }
 
     @Override
     public void onDestroy() {
         Log.d("MainActivity:", "onDestroy");
         super.onDestroy();
+
+        String schedule1 = "";
+        for (int i = 0; i < selectedItems1.size(); i++) {
+            schedule1 += selectedItems1.get(i);
+            Log.d("selected1", selectedItems1.indexOf(i) + "");
+        }
+        Log.d("selectedItems1", schedule1);
+        SharedPreferences pref = getSharedPreferences("alarm1", MODE_PRIVATE);
+        pref.edit()
+                .putBoolean("isAlarmOn1", isAlarmOn1)
+                .putString("alarmSetTime1", alarmSetTime1)
+                .putString("alarmSetSchedule1", schedule1)
+                .apply();
+        Toast.makeText(getApplicationContext(),"已將資料儲存至手機",Toast.LENGTH_SHORT).show();
+
         btHandler.removeCallbacksAndMessages(null);
         Disconnect();
     }
