@@ -14,7 +14,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/button_auto"
-        android:text="  Database chart  >  "
+        android:text="@string/database_chart"
         android:textColor="@color/colorPrimary" />
 
     <TextView
@@ -22,9 +22,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="30dp"
-        android:text="Real-Time Current Chart"
+        android:layout_marginBottom="10dp"
+        android:text="@string/real_time_current_chart"
         android:textColor="@color/black"
         android:textSize="20sp" />
 

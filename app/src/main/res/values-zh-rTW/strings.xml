@@ -61,4 +61,11 @@
     <string name="now_power">目前功率：</string>
     <string name="finish">完成</string>
     <string name="not_set">未設定</string>
+    <string name="title_activity_settings">設定</string>
+    <string name="real_time_current_chart">即時電流表格</string>
+    <string name="database_chart"><![CDATA[雲端圖表 >]]></string>
+    <string name="timer"><![CDATA[倒數計時器 >]]></string>
+    <string name="gotoalarm"><![CDATA[< 定時鬧鐘]]></string>
+    <string name="action">動作</string>
+    <string name="open_off">關 / 開</string>
 </resources>

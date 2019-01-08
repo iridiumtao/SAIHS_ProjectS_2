@@ -164,5 +164,11 @@
     <string name="gotoalarm"><![CDATA[< Alarm]]></string>
     <string name="finish">finish</string>
     <string name="not_set">not set</string>
+    <string name="real_time_current_chart">Real-Time Current Chart</string>
+    <string name="timer"><![CDATA[Timer >]]></string>
+    <string name="database_chart"><![CDATA[Database chart >]]></string>
+    <string name="action">Action</string>
+    <string name="open_off">OPEN / OFF</string>
+    <string name="safe_current_value">安全電流值</string>
 
 </resources>
