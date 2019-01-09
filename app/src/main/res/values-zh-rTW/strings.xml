@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">綠能雲端插座</string>
+    <string name="app_name">綠能插座</string>
     <string name="action_settings">設定</string>
     <string name="action_help">幫助</string>
     <string name="ON">開</string>
@@ -35,7 +35,7 @@
     <string name="connect">連線</string>
     <string name="not_connected">未連線</string>
     <string name="bluetooth">藍牙</string>
-    <string name="title">綠能雲端插座</string>
+    <string name="title">綠能插座</string>
     <string name="current_description_good">該插座目前電流狀況良好，連線裝置並未使用過多電力。注意，若此電流值異常增加，檢查該連線設備。</string>
     <string name="current_description_off">該插座目前已關閉。請點擊插座開關以檢視電流狀況。</string>
     <string name="current_status">電流狀況</string>
@@ -68,4 +68,5 @@
     <string name="gotoalarm"><![CDATA[< 定時鬧鐘]]></string>
     <string name="action">動作</string>
     <string name="open_off">關 / 開</string>
+    <string name="safe_current_value">安全電流值</string>
 </resources>

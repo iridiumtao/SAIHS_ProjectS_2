@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                         if (btDataString.charAt(0) == '#') {
                             try {
 
-                                if (!logIsOn){
+                                if (logIsOn){
                                     txLog.setText(btDataString + "\n" + txLog.getText().toString());
                                 }
 

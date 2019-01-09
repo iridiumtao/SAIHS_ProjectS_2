@@ -247,8 +247,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                                 data.addDataSet(set);
                             }
 
-                            data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
-                            //data.addEntry(new Entry(set.getEntryCount(), Float.parseFloat(current)), 0);
+                            //data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
+                            data.addEntry(new Entry(set.getEntryCount(), Float.parseFloat(current)), 0);
 
                             if (current == null) {
                                 current = "0";

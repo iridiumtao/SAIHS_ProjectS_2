@@ -169,6 +169,6 @@
     <string name="database_chart"><![CDATA[Database chart >]]></string>
     <string name="action">Action</string>
     <string name="open_off">OPEN / OFF</string>
-    <string name="safe_current_value">安全電流值</string>
+    <string name="safe_current_value">safe current value</string>
 
 </resources>
