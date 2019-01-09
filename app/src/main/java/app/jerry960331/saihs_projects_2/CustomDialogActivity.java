@@ -83,14 +83,12 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     //倒數計時器
     Button btnGotoAlarm , btnTimerSocket1, btnTimerSocket2, btnTimerSocket3, btnTimerSocket4;
     EditText editTextHour, editTextMinute, editTextSecond;
-    ImageButton btnStartStop;
+    ImageButton btnStartStop, btnReset;
     Switch swTimer;
     private int timeSet;
     private long timeCountInMilliSeconds = 1 * 60000;
     private ProgressBar progressBarCircle;
-    private ImageView imageViewReset;
-    private ImageView imageViewStartStop;
-    private boolean timerOn1 = false, timerOn2 = false, timerOn3 = false, timerOn4 = false;
+    private boolean timerS1 = false, timerS2 = false, timerS3 = false, timerS4 = false;
 
     Long remainTime = (long) 0;
 
@@ -156,8 +154,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     txCurrentStat.setText(R.string.red);
                     txCurrentDescription.setText(R.string.current_description_red);
                     imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
-
-
                 } else {
                     txCurrentStat.setText(R.string.socket_off);
                     txCurrentDescription.setText(R.string.current_description_off);
@@ -462,24 +458,72 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
             }
         });
 
+        //todo =============================================Timer
         btnGotoTimer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setContentView(R.layout.alarm_timer);
-                progressBarCircle = findViewById(R.id.progressBarCircle);
-                imageViewReset = findViewById(R.id.imageViewReset);
-                imageViewStartStop = findViewById(R.id.btnStartStop);
-                imageViewStartStop.setOnClickListener(SetTimer);
-
+                swTimer = findViewById(R.id.swTimer);
+                btnReset = findViewById(R.id.btnReset);
                 btnGotoAlarm = findViewById(R.id.btnGotoAlarm);
+                btnStartStop = findViewById(R.id.btnStartStop);
+                editTextHour = findViewById(R.id.editTextHour);
+                editTextMinute = findViewById(R.id.editTextMinute);
+                editTextSecond = findViewById(R.id.editTextSecond);
+                btnTimerSocket1 = findViewById(R.id.btnTimerSocket1);
+                btnTimerSocket2 = findViewById(R.id.btnTimerSocket2);
+                btnTimerSocket3 = findViewById(R.id.btnTimerSocket3);
+                btnTimerSocket4 = findViewById(R.id.btnTimerSocket4);
+                progressBarCircle = findViewById(R.id.progressBarCircle);
+
                 btnGotoAlarm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         clockHandler.removeCallbacksAndMessages(null);
                         AlarmDialog();
+                    }
+                });
+
+                btnTimerSocket1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (timerS1){
+                            btnTimerSocket1.setBackground(getContext().getDrawable(R.drawable.button_auto));
+                            btnTimerSocket1.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
+                            timerS1 = false;
+                        }else {
+                            btnTimerSocket1.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
+                            btnTimerSocket1.setTextColor(getContext().getResources().getColor(R.color.white));
+                            timerS1 = true;
+                        }
+                    }
+                });
+                btnTimerSocket2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
                     }
                 });
+                btnTimerSocket3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+                btnTimerSocket4.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+
+
+
+
+
+
+
+
 
 
             }
@@ -510,40 +554,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         return set;
     }
 
-    private ImageView.OnClickListener SetTimer = new ImageView.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (!editTextMinute.getText().toString().isEmpty()) {
-                timeSet = Integer.parseInt(editTextMinute.getText().toString().trim());
-            }
-            timeCountInMilliSeconds = timeSet * 60 * 1000;
 
-
-            switch (socketSelect) {
-                case 1:
-                    if (!timerOn1) {
-                        setProgressBarValues();
-                        imageViewReset.setVisibility(View.VISIBLE);
-                        imageViewStartStop.setImageResource(R.drawable.icon_stop);
-                        editTextMinute.setEnabled(false);
-                        //main.DialogTimer.start();
-                        timerOn1 = true;
-                    } else {
-                        imageViewReset.setVisibility(View.GONE);
-                        imageViewStartStop.setImageResource(R.drawable.icon_start);
-                        editTextMinute.setEnabled(true);
-                        timerOn1 = false;
-                    }
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-            }
-        }
-    };
 
 
     private void setProgressBarValues() {
