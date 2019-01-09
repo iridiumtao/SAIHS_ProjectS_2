@@ -57,6 +57,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     boolean isSWOn;
     TextView txCurrentStat, txCurrentNow, txPowerNow, txCurrentAve, txCurrentDescription;
     ImageView imageCurrentStat;
+    boolean devModeValue = false;
 
     //鬧鐘
     Button btnGotoTimer;
@@ -487,7 +488,13 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
     private LineDataSet createSet() {
         Log.d("call", "createSet()");
-        LineDataSet set = new LineDataSet(null, "電流值(開發模式)");
+        LineDataSet set;
+        if (devModeValue){
+            set = new LineDataSet(null, "電流值(開發模式)");
+
+        }else {
+            set = new LineDataSet(null, "電流值");
+        }
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(Color.rgb(0, 185, 169)); //Color.rgb(0, 185, 169) == colorPrimary
         set.setCircleColor(Color.rgb(0, 185, 169));

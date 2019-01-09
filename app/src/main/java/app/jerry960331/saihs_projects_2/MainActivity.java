@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     boolean AutoOn4 = false;
     boolean unsafeCurrent1 = false, unsafeCurrent3 = false;
     boolean devMode = false;
+    boolean devModeValue = false;
     boolean AutoTimerIsOn = false;
     boolean AutoTimerRepeatNOPE = false;
     String PIR;
@@ -210,6 +211,12 @@ public class MainActivity extends AppCompatActivity {
                                 if (!unsafeCurrent1) {
                                     current1 = btDataString.substring(3, 8);
                                 }
+                                /*
+                                if (devModeValue) {
+                                    current1 =  (int) (Math.random() * 100)+"";
+                                    Log.d("devModeValue", current1);
+                                }*/
+
                                 //若值超過設定電流上限
                                 if (Integer.parseInt(btDataString.substring(3, 8)) > safeCurrentValue) {
                                     makeOreoNotification();
@@ -279,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                TxTest.setText(BT_comm);
+
                                 currentSum1 += Integer.parseInt(current1);
                                 currentSum2 += Integer.parseInt(current2);
                                 currentSum3 += Integer.parseInt(current3);
@@ -699,6 +706,7 @@ public class MainActivity extends AppCompatActivity {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
             CustomDialog.functionSelect = "Chart2";
             CustomDialog.safeCurrentValue = safeCurrentValue;
+            CustomDialog.devModeValue = devModeValue;
 
 
             final Handler getCurrentHandler = new Handler(getMainLooper());
@@ -1374,7 +1382,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action_devData:
                 item.setChecked(!item.isChecked());
-                Toast.makeText(getApplicationContext(),"敬請期待", Toast.LENGTH_SHORT).show();
+                devModeValue = item.isChecked();
                 break;
 
         }
