@@ -34,7 +34,7 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <!-- register receiver for alarm-->
-        <receiver android:name="app.jerry960331.saihs_projects_2.AlarmReceiver" android:process=".alarm"></receiver>
+        <receiver android:name=".AlarmReceiver" android:process=".alarm"></receiver>
     </application>
 
 </manifest>

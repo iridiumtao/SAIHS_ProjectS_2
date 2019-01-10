@@ -2,6 +2,7 @@ package app.jerry960331.saihs_projects_2;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -76,7 +77,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     ArrayList selectedItems = new ArrayList();
     boolean[] checkedItems;
     private Handler clockHandler;
-
+    Calendar cal = Calendar.getInstance();
     int safeCurrentValue;
     String current;
 
@@ -335,7 +336,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         alarmSet1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Calendar c = Calendar.getInstance();
+
                 int hour = Integer.parseInt(txAlarmSetTime1.getText().toString().substring(0, 2));
                 int minute = Integer.parseInt(txAlarmSetTime1.getText().toString().substring(3));
 
@@ -343,6 +344,10 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         txAlarmSetTime1.setText(String.format("%02d:%02d", hourOfDay, minute, Locale.getDefault()));
+                        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        cal.set(Calendar.MINUTE,minute);
+                        cal.set(Calendar.SECOND,0);
+
                     }
                 }, hour, minute, true);
 
@@ -388,6 +393,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             for (int i = 0; i < checkedItems.length; i++) {
                                 if (checkedItems[i]) {
                                     s += date[i] + "、";
+                                    cal.set(Calendar.DAY_OF_WEEK, i);
+
                                 }
                             }
                             s = s.substring(0, s.length() - 1);
@@ -530,6 +537,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         });
     }
 
+
+
     private LineDataSet createSet() {
         Log.d("call", "createSet()");
         LineDataSet set;
@@ -581,6 +590,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 mDialogResult.alarmIntent1("");
                 mDialogResult.selectedItems(selectedItems);
                 mDialogResult.checkedItems(checkedItems);
+                mDialogResult.callStartAlarm(cal);
                 Log.d("selectedItems", selectedItems + "");
 
                 alarmCal = Calendar.getInstance();
@@ -629,6 +639,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         void selectedItems(ArrayList selectedItems);
 
         void checkedItems(boolean[] checkedItems);
+
+        void callStartAlarm(Calendar cal);
     }
 
     @Override

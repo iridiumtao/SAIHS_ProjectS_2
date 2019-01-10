@@ -2,12 +2,15 @@ package app.jerry960331.saihs_projects_2;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,6 +42,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.UUID;
 
 
@@ -671,6 +675,11 @@ public class MainActivity extends AppCompatActivity {
                 public void checkedItems(boolean[] checkedItems) {
                     checkedItems1 = checkedItems;
                 }
+
+                @Override
+                public void callStartAlarm(Calendar cal) {
+                    startAlarm(cal);
+                }
             });
 
 
@@ -753,6 +762,11 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void checkedItems(boolean[] checkedItems) {
+
+                }
+
+                @Override
+                public void callStartAlarm(Calendar cal) {
 
                 }
             });
@@ -1190,6 +1204,27 @@ public class MainActivity extends AppCompatActivity {
             btnSkAuto4.setTextColor(getResources().getColor(R.color.colorPrimary));
             //swSk4.setEnabled(true);
         }
+    }
+
+    private void startAlarm(Calendar calendar){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 , intent, 0);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+        System.out.println(calendar.get(Calendar.DAY_OF_WEEK));
+        System.out.println(calendar.get(Calendar.MINUTE));
+        System.out.println(calendar.get(Calendar.HOUR));
+        System.out.println(calendar.get(Calendar.DATE));
+        System.out.println(calendar.get(Calendar.MONTH));
+        System.out.println(calendar.get(Calendar.YEAR));
+    }
+
+    private void cancelAlarm(Calendar c){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 , intent, 0);
+        alarmManager.cancel(pendingIntent);
     }
 
     /*
