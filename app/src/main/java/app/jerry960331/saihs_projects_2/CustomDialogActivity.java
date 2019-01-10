@@ -393,8 +393,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             for (int i = 0; i < checkedItems.length; i++) {
                                 if (checkedItems[i]) {
                                     s += date[i] + "、";
-                                    cal.set(Calendar.DAY_OF_WEEK, i);
-
                                 }
                             }
                             s = s.substring(0, s.length() - 1);
@@ -590,7 +588,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 mDialogResult.alarmIntent1("");
                 mDialogResult.selectedItems(selectedItems);
                 mDialogResult.checkedItems(checkedItems);
-                mDialogResult.callStartAlarm(cal);
+                if(isAlarmOn1){
+                    mDialogResult.callStartAlarm(cal);
+                }else {
+                   mDialogResult.callStartAlarm(null);
+                }
                 Log.d("selectedItems", selectedItems + "");
 
                 alarmCal = Calendar.getInstance();

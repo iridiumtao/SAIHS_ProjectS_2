@@ -43,6 +43,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.UUID;
 
 
@@ -141,6 +142,8 @@ public class MainActivity extends AppCompatActivity {
     String sendData = "z";
 
 
+
+
 //alt+enter 字串抽離
 
     /*
@@ -223,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 //若值超過設定電流上限
                                 if (Integer.parseInt(btDataString.substring(3, 8)) > safeCurrentValue) {
-                                    makeOreoNotification();
+                                    makeOreoNotification("Warning","安全警示");
                                     unsafeCurrent1 = true;
                                 }
                                 current2 = btDataString.substring(9, 14);
@@ -231,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                                     current3 = btDataString.substring(15, 20);
                                 }
                                 if (Integer.parseInt(btDataString.substring(15, 20)) > safeCurrentValue) {
-                                    makeOreoNotification();
+                                    makeOreoNotification("Warning","安全警示");
                                     unsafeCurrent3 = true;
                                 }
                                 current4 = btDataString.substring(21, 26);
@@ -678,7 +681,13 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void callStartAlarm(Calendar cal) {
-                    startAlarm(cal);
+                    if(cal != null){
+                        startAlarm(cal);
+                    }else {
+                        Log.d("DialogReturnVal", "Alarm canceled ");
+                        cancelAlarm(cal);
+                    }
+
                 }
             });
 
@@ -1207,20 +1216,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startAlarm(Calendar calendar){
+        Calendar nowCal = Calendar.getInstance(TimeZone.getDefault());
+
+        /*
+        calendar.set(Calendar.MONTH, nowCal.get(Calendar.MONTH));
+        calendar.set(Calendar.YEAR, nowCal.get(Calendar.YEAR));
+        calendar.set(Calendar.DATE, nowCal.get(Calendar.DATE));*/
+
+        /*if (calendar.before(Calendar.getInstance())){
+            calendar.add(Calendar.DATE,1);
+        }*/
+
+
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        // 10sec
+        calendar.add(Calendar.SECOND, 10);
+
+
+
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 , intent, 0);
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
-        System.out.println(calendar.get(Calendar.DAY_OF_WEEK));
-        System.out.println(calendar.get(Calendar.MINUTE));
-        System.out.println(calendar.get(Calendar.HOUR));
-        System.out.println(calendar.get(Calendar.DATE));
-        System.out.println(calendar.get(Calendar.MONTH));
+
         System.out.println(calendar.get(Calendar.YEAR));
+        System.out.print(calendar.get(Calendar.MONTH));//+1
+        System.out.print(calendar.get(Calendar.DAY_OF_WEEK));//+1
+        System.out.print(calendar.get(Calendar.DATE));
+        System.out.print(calendar.get(Calendar.HOUR));
+        System.out.print(calendar.get(Calendar.MINUTE));
+
     }
 
-    private void cancelAlarm(Calendar c){
+    private void cancelAlarm(Calendar cal){
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 , intent, 0);
@@ -1391,7 +1420,7 @@ public class MainActivity extends AppCompatActivity {
                         .show();
                 break;
             case R.id.action_notification:
-                makeOreoNotification();
+                makeOreoNotification("Warning","安全警示");
                 break;
             case R.id.action_auto:
                 if (AutoOn1 || AutoOn2 || AutoOn3 || AutoOn4) {
@@ -1424,24 +1453,41 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void makeOreoNotification() {
+    void makeOreoNotification(String channelId,String channelName) {
         final int NOTIFICATION_ID = 8;
-        String channelId = "love";
-        String channelName = "安全警示";
+
         NotificationManager manager = getNotificationManager(channelId, channelName);
 
-        //產生通知
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.icon_notification_home2)
-                        .setContentTitle(notificationTitle)
-                        .setContentText(notificationText)
-                        .setColor(getResources().getColor(R.color.colorPrimary))
-                        .setPriority(2)
-                        .setWhen(System.currentTimeMillis())
-                        .setChannelId(channelId);  //設定頻道ID
-        //送出通知
-        manager.notify(1, builder.build());
+        if (channelId.equals("Warning")){
+            //產生通知
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.icon_notification_home2)
+                            .setContentTitle(notificationTitle)
+                            .setContentText(notificationText)
+                            .setColor(getResources().getColor(R.color.colorPrimary))
+                            .setPriority(2)
+                            .setWhen(System.currentTimeMillis())
+                            .setChannelId(channelId);  //設定頻道ID
+            //送出通知
+            manager.notify(1, builder.build());
+
+        }else if(channelId.equals("test")){
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.icon_notification_home2)
+                            .setContentTitle("Alarm")
+                            .setContentText("test")
+                            .setColor(getResources().getColor(R.color.colorPrimary))
+                            .setPriority(2)
+                            .setWhen(System.currentTimeMillis())
+                            .setChannelId(channelId);  //設定頻道ID
+            //送出通知
+            manager.notify(1, builder.build());
+        }else {
+            Toast.makeText(this, "NOTIFICATION ERROR", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @NonNull
