@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-
-    <!-- 預設時 -->
+<ripple
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/colorPrimaryDark">
+<!-- 預設時 -->
     <item android:color="@color/colorPrimary">
         <shape android:shape="rectangle"  >
             <corners android:radius="2dip" />
@@ -10,7 +10,7 @@
             <gradient android:angle="-90" android:startColor="#0300b9a9" android:endColor="#0300b9a9"  />
         </shape>
     </item>
-</selector>
+</ripple>
 
     <!--#03dac5-->
     <!--#00fff7-->
