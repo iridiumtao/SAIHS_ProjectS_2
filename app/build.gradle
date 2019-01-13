@@ -6,8 +6,8 @@ android {
         applicationId "app.jerry960331.saihs_projects_2"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 65
-        versionName "65a"
+        versionCode 67
+        versionName "67b"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -365,7 +365,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 datePickDialog.setNeutralButton("不重複", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //TODO 按下「不重複」之後隱藏目前Dialog(或只隱藏date ListView)，顯示下一個時間點及一個時間(點擊後開啟DatePicker)
+                        txAlarmSetSchedule1.setText("不重複");
                     }
                 });
                 datePickDialog.setMultiChoiceItems(date, checkedItems, new OnMultiChoiceClickListener() {
@@ -600,7 +600,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 //todo 呼叫broadcast執行鬧鐘
 
                 clockHandler.removeCallbacksAndMessages(null);
-                Toast.makeText(getContext(), "Alarm dialog finish", Toast.LENGTH_SHORT).show();
+
+                //改在MainActivity中顯示
+                //Toast.makeText(getContext(), "Alarm dialog finish", Toast.LENGTH_SHORT).show();
 
                 break;
 

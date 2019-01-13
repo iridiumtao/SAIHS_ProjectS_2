@@ -14,6 +14,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -683,8 +686,10 @@ public class MainActivity extends AppCompatActivity {
                 public void callStartAlarm(Calendar cal) {
                     if(cal != null){
                         startAlarm(cal);
+
                     }else {
                         Log.d("DialogReturnVal", "Alarm canceled ");
+                        Toast.makeText(MainActivity.this, "未設置鬧鐘", Toast.LENGTH_SHORT).show();
                         cancelAlarm(cal);
                     }
 
@@ -1223,14 +1228,15 @@ public class MainActivity extends AppCompatActivity {
         calendar.set(Calendar.YEAR, nowCal.get(Calendar.YEAR));
         calendar.set(Calendar.DATE, nowCal.get(Calendar.DATE));*/
 
-        /*if (calendar.before(Calendar.getInstance())){
+        if (calendar.before(Calendar.getInstance())){
             calendar.add(Calendar.DATE,1);
-        }*/
+        }
 
 
+        /*
         calendar.setTimeInMillis(System.currentTimeMillis());
         // 10sec
-        calendar.add(Calendar.SECOND, 10);
+        calendar.add(Calendar.SECOND, 10);*/
 
 
 
@@ -1240,12 +1246,19 @@ public class MainActivity extends AppCompatActivity {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
 
-        System.out.println(calendar.get(Calendar.YEAR));
-        System.out.print(calendar.get(Calendar.MONTH));//+1
-        System.out.print(calendar.get(Calendar.DAY_OF_WEEK));//+1
-        System.out.print(calendar.get(Calendar.DATE));
-        System.out.print(calendar.get(Calendar.HOUR));
-        System.out.print(calendar.get(Calendar.MINUTE));
+        Toast.makeText(this, "下一個鬧鐘已被設在" +
+                calendar.get(Calendar.YEAR) + "年" +
+                calendar.get(Calendar.MONTH)+1 + "月" +
+                calendar.get(Calendar.DATE) + "日 " +
+                calendar.get(Calendar.HOUR) + ":" +
+                calendar.get(Calendar.MINUTE), Toast.LENGTH_SHORT).show();
+
+        System.out.println("year:" + calendar.get(Calendar.YEAR));
+        System.out.println("month:" + calendar.get(Calendar.MONTH));//+1
+        System.out.println("week:" + calendar.get(Calendar.DAY_OF_WEEK));//+1
+        System.out.println("date:" + calendar.get(Calendar.DATE));
+        System.out.println("hour:" + calendar.get(Calendar.HOUR));
+        System.out.println("minute:" + calendar.get(Calendar.MINUTE));
 
     }
 
@@ -1330,6 +1343,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             logIsOn = true;
+
+
+            //this will sound the alarm tone
+            //this will sound the alarm once, if you wish to
+            //raise alarm in loop continuously then use MediaPlayer and setLooping(true)
+            Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), alarmUri);
+            ringtone.play();
         }
     };
     public Button.OnClickListener LogStop = new Button.OnClickListener(){

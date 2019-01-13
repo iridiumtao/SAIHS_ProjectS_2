@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/colorPrimaryDark">
-<!-- 預設時 -->
-    <item android:color="@color/colorPrimary">
+    android:color="#5DD4CA">
+
+    <item
+        android:color="@color/white">
         <shape android:shape="rectangle"  >
             <corners android:radius="2dip" />
             <stroke android:width="1dip" android:color="#00b9a9" />
-            <gradient android:angle="-90" android:startColor="#0300b9a9" android:endColor="#0300b9a9"  />
+            <gradient android:angle="-90" android:startColor="#FCFFFF" android:endColor="#FCFFFF"  />
         </shape>
     </item>
+
+
+
 </ripple>
 
     <!--#03dac5-->
