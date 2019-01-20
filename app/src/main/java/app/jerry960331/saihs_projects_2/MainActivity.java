@@ -32,7 +32,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -172,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
         //FunctionSetEnable(false);
 
         //Log.d("RND", Math.random()*180+"");
+
 
         isAlarmOn1 = getSharedPreferences("alarm1", MODE_PRIVATE).getBoolean("isAlarmOn1", false);
         String schedule1 = getSharedPreferences("alarm1", MODE_PRIVATE).getString("alarmSetSchedule1", "");
@@ -563,6 +563,16 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.currentNow = Integer.parseInt(current1);
                 CustomDialog.currentAve = currentAv1;
                 CustomDialog.show();
+
+                final Handler getCurrentHandler = new Handler(getMainLooper());
+                getCurrentHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CustomDialog.currentNow = Integer.parseInt(current1);
+                        getCurrentHandler.postDelayed(this, 1000);
+                    }
+                }, 10);
+
             }
 
 
@@ -647,7 +657,7 @@ public class MainActivity extends AppCompatActivity {
             CustomDialog.checkedItems = checkedItems1;
 
             CustomDialog.show();
-            CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult() {
+            CustomDialog.setAlarmDialogResult(new CustomDialogActivity.OnAlarmDialogResult() {
                 public void finish(String result) {
                     fuck = result;
                 }
@@ -731,7 +741,6 @@ public class MainActivity extends AppCompatActivity {
             CustomDialog.safeCurrentValue = safeCurrentValue;
             CustomDialog.devModeValue = devModeValue;
 
-
             final Handler getCurrentHandler = new Handler(getMainLooper());
             getCurrentHandler.postDelayed(new Runnable() {
                 @Override
@@ -740,48 +749,13 @@ public class MainActivity extends AppCompatActivity {
                     getCurrentHandler.postDelayed(this, 1000);
                 }
             }, 10);
-            CustomDialog.setDialogResult(new CustomDialogActivity.OnMyDialogResult() {
 
+            CustomDialog.setChartDialogResult(new CustomDialogActivity.OnChartDialogResult() {
                 @Override
                 public void finish(String result) {
                     if (result.equals("Chart2 Finish")) {
                         getCurrentHandler.removeCallbacksAndMessages(null);
                     }
-                }
-
-                @Override
-                public void isAlarmOn1(Boolean b) {
-
-                }
-
-                @Override
-                public void alarmSetTime1(String hhmm) {
-
-                }
-
-                @Override
-                public void alarmSetSchedule1(String schedule) {
-
-                }
-
-                @Override
-                public void alarmIntent1(String function) {
-
-                }
-
-                @Override
-                public void selectedItems(ArrayList selectedItems) {
-
-                }
-
-                @Override
-                public void checkedItems(boolean[] checkedItems) {
-
-                }
-
-                @Override
-                public void callStartAlarm(Calendar cal) {
-
                 }
             });
 
@@ -792,24 +766,28 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-            final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
-            CustomDialog.functionSelect = "Chart";
-            String[] xItem = {"1", "2", "3", "4", "5", "6", "7"};
-            String[] yItem = {Integer.parseInt(current2) + 2 + "mA", Integer.parseInt(current2) + 1 + "mA",
-                    Integer.parseInt(current2) + "mA", Integer.parseInt(current2) - 1 + "mA", Integer.parseInt(current2) - 2 + "mA"};
-            int[] currentValue = new int[xItem.length];
-            CustomDialog.xChart = xItem;
-            CustomDialog.yChart = yItem;
-            if (Integer.parseInt(current2) == 0) {
-                for (int i = 0; i < xItem.length; i++) {
-                    currentValue[i] = 2;
+            CustomDialog.functionSelect = "Chart2";
+            CustomDialog.safeCurrentValue = safeCurrentValue;
+            CustomDialog.devModeValue = devModeValue;
+
+            final Handler getCurrentHandler = new Handler(getMainLooper());
+            getCurrentHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    CustomDialog.current = current2;
+                    getCurrentHandler.postDelayed(this, 1000);
                 }
-            } else {
-                for (int i = 0; i < xItem.length; i++) {
-                    currentValue[i] = (int) (Math.random() * 5);
+            }, 10);
+
+            CustomDialog.setChartDialogResult(new CustomDialogActivity.OnChartDialogResult() {
+                @Override
+                public void finish(String result) {
+                    if (result.equals("Chart2 Finish")) {
+                        getCurrentHandler.removeCallbacksAndMessages(null);
+                    }
                 }
-            }
-            CustomDialog.currentValue = currentValue;
+            });
+
             CustomDialog.show();
         }
     };
@@ -817,24 +795,28 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-            final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
-            CustomDialog.functionSelect = "Chart";
-            String[] xItem = {"1", "2", "3", "4", "5", "6", "7"};
-            String[] yItem = {Integer.parseInt(current3) + 2 + "mA", Integer.parseInt(current3) + 1 + "mA",
-                    Integer.parseInt(current3) + "mA", Integer.parseInt(current3) - 1 + "mA", Integer.parseInt(current3) - 2 + "mA"};
-            int[] currentValue = new int[xItem.length];
-            CustomDialog.xChart = xItem;
-            CustomDialog.yChart = yItem;
-            if (Integer.parseInt(current3) == 0) {
-                for (int i = 0; i < xItem.length; i++) {
-                    currentValue[i] = 2;
+            CustomDialog.functionSelect = "Chart2";
+            CustomDialog.safeCurrentValue = safeCurrentValue;
+            CustomDialog.devModeValue = devModeValue;
+
+            final Handler getCurrentHandler = new Handler(getMainLooper());
+            getCurrentHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    CustomDialog.current = current3;
+                    getCurrentHandler.postDelayed(this, 1000);
                 }
-            } else {
-                for (int i = 0; i < xItem.length; i++) {
-                    currentValue[i] = (int) (Math.random() * 5);
+            }, 10);
+
+            CustomDialog.setChartDialogResult(new CustomDialogActivity.OnChartDialogResult() {
+                @Override
+                public void finish(String result) {
+                    if (result.equals("Chart2 Finish")) {
+                        getCurrentHandler.removeCallbacksAndMessages(null);
+                    }
                 }
-            }
-            CustomDialog.currentValue = currentValue;
+            });
+
             CustomDialog.show();
         }
     };
@@ -842,24 +824,28 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-            final SimpleLineChart ChartVal = new SimpleLineChart(MainActivity.this);
-            CustomDialog.functionSelect = "Chart";
-            String[] xItem = {"1", "2", "3", "4", "5", "6", "7"};
-            String[] yItem = {Integer.parseInt(current4) + 2 + "mA", Integer.parseInt(current4) + 1 + "mA",
-                    Integer.parseInt(current4) + "mA", Integer.parseInt(current4) - 1 + "mA", Integer.parseInt(current4) - 2 + "mA"};
-            int[] currentValue = new int[xItem.length];
-            CustomDialog.xChart = xItem;
-            CustomDialog.yChart = yItem;
-            if (Integer.parseInt(current4) == 0) {
-                for (int i = 0; i < xItem.length; i++) {
-                    currentValue[i] = 2;
+            CustomDialog.functionSelect = "Chart2";
+            CustomDialog.safeCurrentValue = safeCurrentValue;
+            CustomDialog.devModeValue = devModeValue;
+
+            final Handler getCurrentHandler = new Handler(getMainLooper());
+            getCurrentHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    CustomDialog.current = current4;
+                    getCurrentHandler.postDelayed(this, 1000);
                 }
-            } else {
-                for (int i = 0; i < xItem.length; i++) {
-                    currentValue[i] = (int) (Math.random() * 5);
+            }, 10);
+
+            CustomDialog.setChartDialogResult(new CustomDialogActivity.OnChartDialogResult() {
+                @Override
+                public void finish(String result) {
+                    if (result.equals("Chart2 Finish")) {
+                        getCurrentHandler.removeCallbacksAndMessages(null);
+                    }
                 }
-            }
-            CustomDialog.currentValue = currentValue;
+            });
+
             CustomDialog.show();
         }
     };
@@ -968,6 +954,7 @@ public class MainActivity extends AppCompatActivity {
         //if (connectionMethod == "Bluetooth") {
 
         setBluetoothEnable(true);
+        //todo 藍牙裝置選擇界面或自動搜尋
         final String address = "98:D3:33:81:25:60"; //HC05的address
         final String name = "SBLUE";
 

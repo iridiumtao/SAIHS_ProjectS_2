@@ -2,15 +2,12 @@ package app.jerry960331.saihs_projects_2;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -72,7 +69,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     boolean isAlarmOn1;
     String alarmSetTime1 = "";
     private Calendar alarmCal;
-    private OnMyDialogResult mDialogResult; //回傳鬧鐘資料
+    private OnAlarmDialogResult alarmDialogResult; //回傳鬧鐘資料
+    private OnChartDialogResult chartDialogResult;
     LinearLayout alarmSet1;
     ArrayList selectedItems = new ArrayList();
     boolean[] checkedItems;
@@ -231,6 +229,14 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 YAxis rightAxis = chart.getAxisRight();
                 rightAxis.setEnabled(false);
 
+                if (current == null || current == ""){
+                    current = "0";
+                }
+
+                if (Integer.parseInt(current) > safeCurrentValue){ //停止繪製表格
+                    break;
+                }
+
                 getCurrentHandler = new Handler(getMainLooper());
                 getCurrentHandler.postDelayed(new Runnable() {
                     @Override
@@ -245,8 +251,12 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                                 data.addDataSet(set);
                             }
 
-                            //data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
-                            data.addEntry(new Entry(set.getEntryCount(), Float.parseFloat(current)), 0);
+                            if (devModeValue){
+                                data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
+                            }else {
+                                data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(current)), 0);
+                            }
+
 
                             if (current == null) {
                                 current = "0";
@@ -506,23 +516,59 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 btnTimerSocket2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        if (timerS2){
+                            btnTimerSocket2.setBackground(getContext().getDrawable(R.drawable.button_auto));
+                            btnTimerSocket2.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
+                            timerS2 = false;
+                        }else {
+                            btnTimerSocket2.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
+                            btnTimerSocket2.setTextColor(getContext().getResources().getColor(R.color.white));
+                            timerS2 = true;
+                        }
                     }
                 });
                 btnTimerSocket3.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        if (timerS3){
+                            btnTimerSocket3.setBackground(getContext().getDrawable(R.drawable.button_auto));
+                            btnTimerSocket3.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
+                            timerS3 = false;
+                        }else {
+                            btnTimerSocket3.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
+                            btnTimerSocket3.setTextColor(getContext().getResources().getColor(R.color.white));
+                            timerS3 = true;
+                        }
                     }
                 });
                 btnTimerSocket4.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        if (timerS4){
+                            btnTimerSocket4.setBackground(getContext().getDrawable(R.drawable.button_auto));
+                            btnTimerSocket4.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
+                            timerS4 = false;
+                        }else {
+                            btnTimerSocket4.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
+                            btnTimerSocket4.setTextColor(getContext().getResources().getColor(R.color.white));
+                            timerS4 = true;
+                        }
                     }
                 });
 
+                btnStartStop.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        
+                    }
+                });
 
+                btnReset.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
 
 
 
@@ -581,17 +627,17 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 break;
 
             case "Alarm":
-                mDialogResult.finish("Alarm Finish");
-                mDialogResult.isAlarmOn1(isAlarmOn1);
-                mDialogResult.alarmSetTime1(txAlarmSetTime1.getText().toString());
-                mDialogResult.alarmSetSchedule1("");
-                mDialogResult.alarmIntent1("");
-                mDialogResult.selectedItems(selectedItems);
-                mDialogResult.checkedItems(checkedItems);
+                alarmDialogResult.finish("Alarm Finish");
+                alarmDialogResult.isAlarmOn1(isAlarmOn1);
+                alarmDialogResult.alarmSetTime1(txAlarmSetTime1.getText().toString());
+                alarmDialogResult.alarmSetSchedule1("");//沒有
+                alarmDialogResult.alarmIntent1("");//todo
+                alarmDialogResult.selectedItems(selectedItems);
+                alarmDialogResult.checkedItems(checkedItems);
                 if(isAlarmOn1){
-                    mDialogResult.callStartAlarm(cal);
+                    alarmDialogResult.callStartAlarm(cal);
                 }else {
-                   mDialogResult.callStartAlarm(null);
+                   alarmDialogResult.callStartAlarm(null);
                 }
                 Log.d("selectedItems", selectedItems + "");
 
@@ -601,19 +647,17 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
                 clockHandler.removeCallbacksAndMessages(null);
 
-                //改在MainActivity中顯示
-                //Toast.makeText(getContext(), "Alarm dialog finish", Toast.LENGTH_SHORT).show();
 
                 break;
 
             case "Chart":
-
+                //廢止
 
                 Toast.makeText(getContext(), "Chart dialog finish", Toast.LENGTH_SHORT).show();
 
                 break;
             case "Chart2":
-                mDialogResult.finish("Chart2 Finish");
+                chartDialogResult.finish("Chart2 Finish");
                 getCurrentHandler.removeCallbacksAndMessages(null);
 
                 Toast.makeText(getContext(), "Chart dialog finish", Toast.LENGTH_SHORT).show();
@@ -625,11 +669,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
     }
 
-    void setDialogResult(OnMyDialogResult dialogResult) {
-        mDialogResult = dialogResult;
+    void setAlarmDialogResult(OnAlarmDialogResult dialogResult) {
+        alarmDialogResult = dialogResult;
     }
 
-    public interface OnMyDialogResult {
+    public interface OnAlarmDialogResult {
         void finish(String result);
 
         void isAlarmOn1(Boolean b);
@@ -645,6 +689,15 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         void checkedItems(boolean[] checkedItems);
 
         void callStartAlarm(Calendar cal);
+    }
+
+
+    void setChartDialogResult(OnChartDialogResult dialogResult) {
+        chartDialogResult = dialogResult;
+    }
+
+    public interface OnChartDialogResult {
+        void finish(String result);
     }
 
     @Override
