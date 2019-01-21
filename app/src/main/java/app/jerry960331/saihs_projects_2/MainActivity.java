@@ -107,15 +107,8 @@ public class MainActivity extends AppCompatActivity {
     String PIR;
     int safeCurrentValue = 3000;
     String current1 = "0", current2 = "0", current3 = "0", current4 = "0";
-    Integer currentSum1 = 60, currentSum2 = 60, currentSum3 = 60, currentSum4 = 60;
     Double currentAv1 = 0.0, currentAv2 = 0.0, currentAv3 = 0.0, currentAv4 = 0.0;
-    Integer handlerTick = 0;//計算電流平均用
     String chipAutoOn1 = "0", chipAutoOn2 = "0", chipAutoOn3 = "0", chipAutoOn4 = "0";
-    //x軸=x軸 y軸=y軸
-    Integer[][] receivedCurrent = new Integer[7][4];
-    Integer[] sortCurrent = new Integer[7];
-    int xLength = 0, yLength = 3;
-    String fuck = "0";
 
     //鬧鐘回傳
     boolean isAlarmOn1 = false;
@@ -148,11 +141,6 @@ public class MainActivity extends AppCompatActivity {
 
 //alt+enter 字串抽離
 
-    /*
-    MainActivity(Activity a){
-        //super(a);
-        c = a;
-    }*/
 
     @SuppressLint("HandlerLeak")
     @Override
@@ -221,11 +209,6 @@ public class MainActivity extends AppCompatActivity {
                                 if (!unsafeCurrent1) {
                                     current1 = btDataString.substring(3, 8);
                                 }
-                                /*
-                                if (devModeValue) {
-                                    current1 =  (int) (Math.random() * 100)+"";
-                                    Log.d("devModeValue", current1);
-                                }*/
 
                                 //若值超過設定電流上限
                                 if (Integer.parseInt(btDataString.substring(3, 8)) > safeCurrentValue) {
@@ -295,21 +278,7 @@ public class MainActivity extends AppCompatActivity {
                                         btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
                                     }
                                 }
-
-
-                                currentSum1 += Integer.parseInt(current1);
-                                currentSum2 += Integer.parseInt(current2);
-                                currentSum3 += Integer.parseInt(current3);
-                                currentSum4 += Integer.parseInt(current4);
-                                handlerTick++;
-                                currentAv1 = currentSum1 / handlerTick + .0;
-                                currentAv2 = currentSum2 / handlerTick + .0;
-                                currentAv3 = currentSum3 / handlerTick + .0;
-                                currentAv4 = currentSum4 / handlerTick + .0;
-
-
                             } catch (Exception e) {
-
                                 Log.d("e", e + "");
                             }
 
@@ -347,9 +316,9 @@ public class MainActivity extends AppCompatActivity {
         btnSkStat4.setOnClickListener(SkStatListener4);
 
         btnSkAlarm1.setOnClickListener(SkAlarmListener1);
-        btnSkAlarm2.setOnClickListener(SkAlarmListener2);
-        btnSkAlarm3.setOnClickListener(SkAlarmListener3);
-        btnSkAlarm4.setOnClickListener(SkAlarmListener4);
+        btnSkAlarm2.setOnClickListener(SkAlarmListener1);
+        btnSkAlarm3.setOnClickListener(SkAlarmListener1);
+        btnSkAlarm4.setOnClickListener(SkAlarmListener1);
 
         btnSkChart1.setOnClickListener(SkChartListener1);
         btnSkChart2.setOnClickListener(SkChartListener2);
@@ -560,7 +529,7 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 1;
                 CustomDialog.isSWOn = true;
-                CustomDialog.currentNow = Integer.parseInt(current1);
+                //CustomDialog.currentNow = Integer.parseInt(current1);
                 CustomDialog.currentAve = currentAv1;
                 CustomDialog.show();
 
@@ -659,7 +628,7 @@ public class MainActivity extends AppCompatActivity {
             CustomDialog.show();
             CustomDialog.setAlarmDialogResult(new CustomDialogActivity.OnAlarmDialogResult() {
                 public void finish(String result) {
-                    fuck = result;
+
                 }
 
                 @Override
@@ -709,6 +678,9 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+
+    //鬧鐘實際上是開啟同一個頁面，未來考慮分離出來，減少版面占用
+    /*
     private Button.OnClickListener SkAlarmListener2 = new Button.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -729,7 +701,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
-    };
+    };*/
 
 
     //表格OnClick

@@ -56,6 +56,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     TextView txCurrentStat, txCurrentNow, txPowerNow, txCurrentAve, txCurrentDescription;
     ImageView imageCurrentStat;
     boolean devModeValue = false;
+    private Handler statHandler;
+    ArrayList currentSumArrayList = new ArrayList<Double>();
 
     //鬧鐘
     Button btnGotoTimer;
@@ -120,9 +122,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
                 setContentView(R.layout.current_dialog);
 
-                //final MainActivity MainActivity = new MainActivity(getOwnerActivity());
-                //MainActivity.fuck = 45;
-
                 txCurrentStat = findViewById(R.id.txCurrentStat);
                 txCurrentNow = findViewById(R.id.txCurrentNow);
                 txCurrentAve = findViewById(R.id.txCurrentAve);
@@ -130,34 +129,56 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 imageCurrentStat = findViewById(R.id.imageCurrentStat);
                 txPowerNow = findViewById(R.id.txPowerNow);
 
+                final int[] tick = {0};
+                tick[0] = 0;
 
-                txCurrentStat.setText(currentStat);
-                txCurrentNow.setText(currentNow + " mA");
-                txCurrentAve.setText(currentAve + " mA");
-                txPowerNow.setText(currentNow * 0.11 + " W");
+                statHandler = new Handler(getMainLooper());
+                statHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tick[0]++;
+
+                        txCurrentStat.setText(currentStat);
+                        txCurrentNow.setText(currentNow + " mA");
+
+                        currentSumArrayList.add(currentNow);
+                        double sum = 0;
+                        for(int i = 1; i < currentSumArrayList.size(); i++) {
+                            sum += (Double) currentSumArrayList.get(i);
+                        }
+                        txCurrentAve.setText(sum / tick[0] + "mA");
 
 
-                if (currentNow == 0) {
-                    txCurrentStat.setText(R.string.socket_off);
-                    txCurrentDescription.setText(R.string.current_description_off);
-                    imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
-                } else if (currentNow > 0 && currentNow < 3000) {
-                    txCurrentStat.setText(R.string.good);
-                    txCurrentDescription.setText(R.string.current_description_good);
-                    imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
-                    //}else if (currentNow > 8000 && currentNow < 12000) {
-                    //  txCurrentStat.setText(R.string.orange);
-                    //  txCurrentDescription.setText(R.string.current_description_orange);
-                    //  imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
-                } else if (currentNow > 3000) {
-                    txCurrentStat.setText(R.string.red);
-                    txCurrentDescription.setText(R.string.current_description_red);
-                    imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
-                } else {
-                    txCurrentStat.setText(R.string.socket_off);
-                    txCurrentDescription.setText(R.string.current_description_off);
-                    imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
-                }
+                        txPowerNow.setText(currentNow * 0.11 + " W");
+
+
+                        if (currentNow == 0) {
+                            txCurrentStat.setText(R.string.socket_off);
+                            txCurrentDescription.setText(R.string.current_description_off);
+                            imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
+                        } else if (currentNow > 0 && currentNow < 3000) {
+                            txCurrentStat.setText(R.string.good);
+                            txCurrentDescription.setText(R.string.current_description_good);
+                            imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
+                            //}else if (currentNow > 8000 && currentNow < 12000) {
+                            //  txCurrentStat.setText(R.string.orange);
+                            //  txCurrentDescription.setText(R.string.current_description_orange);
+                            //  imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
+                        } else if (currentNow > 3000) {
+                            txCurrentStat.setText(R.string.red);
+                            txCurrentDescription.setText(R.string.current_description_red);
+                            imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
+                        } else {
+                            txCurrentStat.setText(R.string.socket_off);
+                            txCurrentDescription.setText(R.string.current_description_off);
+                            imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
+                        }
+
+
+                        statHandler.postDelayed(this, 1000);
+                    }
+                }, 10);
+
                 break;
             case "Alarm": //todo================================================================
                 AlarmDialog();
@@ -233,9 +254,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     current = "0";
                 }
 
-                if (Integer.parseInt(current) > safeCurrentValue){ //停止繪製表格
-                    break;
-                }
+
 
                 getCurrentHandler = new Handler(getMainLooper());
                 getCurrentHandler.postDelayed(new Runnable() {
@@ -251,10 +270,12 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                                 data.addDataSet(set);
                             }
 
-                            if (devModeValue){
-                                data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
-                            }else {
-                                data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(current)), 0);
+                            if (Integer.parseInt(current) <= safeCurrentValue){ //停止繪製表格
+                                if (devModeValue){
+                                    data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
+                                }else {
+                                    data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(current)), 0);
+                                }
                             }
 
 
@@ -569,19 +590,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
                     }
                 });
-
-
-
-
-
-
-
-
             }
         });
     }
-
-
 
     private LineDataSet createSet() {
         Log.d("call", "createSet()");
