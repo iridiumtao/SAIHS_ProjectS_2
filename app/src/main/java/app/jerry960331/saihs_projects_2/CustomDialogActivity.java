@@ -94,13 +94,10 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     Long remainTime = (long) 0;
 
 
-    String[] xChart = {};
-    String[] yChart = {};
-    int[] currentValue = {};
-
+    //表格
     LineChart chart;
-    ArrayList<Entry> yValues = new ArrayList<>();
     private Handler getCurrentHandler;
+    Boolean currentNotSafe = false;
 
 
     CustomDialogActivity(Activity a) {
@@ -180,50 +177,21 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 }, 10);
 
                 break;
-            case "Alarm": //todo================================================================
+            case "Alarm": //=============================== Alarm =================================
                 AlarmDialog();
-                break;
-
-            case "Chart":
-                Log.d("d", "chart");
-                setContentView(R.layout.chart_dialog);
-                SimpleLineChart mSimpleLineChart = (SimpleLineChart) findViewById(R.id.simpleLineChart);
-                LinearLayout simpleLineChartLinerLayout = findViewById(R.id.simpleLineChartLinerLayout);
-
-                chart = findViewById(R.id.currentChartRT);
-
-                simpleLineChartLinerLayout.setVisibility(View.VISIBLE);
-                chart.setVisibility(View.GONE);
-
-
-                mSimpleLineChart.setXItem(xChart);
-                mSimpleLineChart.setYItem(yChart);
-                HashMap<Integer, Integer> pointMap = new HashMap();
-                for (int i = 0; i < xChart.length; i++) {
-                    pointMap.put(i, currentValue[i]);
-                    Log.d("xItem", currentValue[i] + "");
-                }
-                mSimpleLineChart.setData(pointMap);
-
                 break;
 
             case "Chart2":
                 Log.d("d", "chart");
                 setContentView(R.layout.chart_dialog);
-                simpleLineChartLinerLayout = findViewById(R.id.simpleLineChartLinerLayout);
                 chart = findViewById(R.id.currentChartRT);
-
                 chart.setVisibility(View.VISIBLE);
-                simpleLineChartLinerLayout.setVisibility(View.GONE);
-
                 chart.setTouchEnabled(true);
                 chart.setDragEnabled(true);
                 chart.setScaleEnabled(true);
                 chart.setDrawGridBackground(false);
                 chart.setPinchZoom(true);
-
                 LineData data = new LineData();
-
                 chart.setData(data);
 
                 //圖例
@@ -253,14 +221,10 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 if (current == null || current == ""){
                     current = "0";
                 }
-
-
-
                 getCurrentHandler = new Handler(getMainLooper());
                 getCurrentHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
                         LineData data = chart.getData();
                         if (data != null) {
                             ILineDataSet set = data.getDataSetByIndex(0);
@@ -269,34 +233,34 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                                 set = createSet();
                                 data.addDataSet(set);
                             }
-
-                            if (Integer.parseInt(current) <= safeCurrentValue){ //停止繪製表格
-                                if (devModeValue){
-                                    data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
-                                }else {
-                                    data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(current)), 0);
-                                }
-                            }
-
-
                             if (current == null) {
                                 current = "0";
                             }
-                            data.notifyDataChanged();
-                            chart.notifyDataSetChanged();
-                            chart.setVisibleXRangeMaximum(30);
-                            chart.setVisibleXRangeMinimum(10);
-                            chart.moveViewToX(data.getEntryCount());
-                            Log.d("i", set.getEntryCount() + "");
-                            chart.invalidate();
+                            if (!currentNotSafe) {
+                                if (devModeValue) {
+                                    data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
+                                } else {
+                                    data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(current)), 0);
+                                }
+                                data.notifyDataChanged();
+                                chart.notifyDataSetChanged();
+                                chart.setVisibleXRangeMaximum(30);
+                                chart.setVisibleXRangeMinimum(10);
+                                chart.moveViewToX(data.getEntryCount());
+                                Log.d("i", set.getEntryCount() + "");
+                                chart.invalidate();
+                            }
+
+                            if (Integer.parseInt(current) >= safeCurrentValue){ //停止繪製表格
+                                currentNotSafe = true;
+                            }
+
                             getCurrentHandler.postDelayed(this, 1000);
                         }
                     }
                 }, 10);
                 break;
         }
-
-
     }
 
     private void AlarmDialog() {
@@ -658,13 +622,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
                 clockHandler.removeCallbacksAndMessages(null);
 
-
-                break;
-
-            case "Chart":
-                //廢止
-
-                Toast.makeText(getContext(), "Chart dialog finish", Toast.LENGTH_SHORT).show();
 
                 break;
             case "Chart2":

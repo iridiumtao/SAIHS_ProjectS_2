@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,18 +19,38 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         Log.d("ss", "onReceive: ");// not working
 
-        //this will sound the alarm tone
-        //this will sound the alarm once, if you wish to
-        //raise alarm in loop continuously then use MediaPlayer and setLooping(true)
-        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
+        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Ringtone ringtone = RingtoneManager.getRingtone(context, alarmUri);
         ringtone.play();
 
-        intent = new Intent(context, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        Bundle bundle = intent.getExtras();
+        boolean[] socket;
         String purpose;
+
+        try {
+
+            socket = bundle.getBooleanArray("socketFromMain");
+            purpose = bundle.getString("purposeFromMain");
+
+            Intent mainIntent = new Intent(context, MainActivity.class);
+            mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+
+            Bundle mainBundle = new Bundle();
+            mainBundle.putBooleanArray("socket", socket);
+            mainBundle.putString("purpose",purpose);
+
+            mainIntent.putExtras(mainBundle);
+            context.startActivity(mainIntent);
+
+
+
+        }catch (Exception e){
+            Toast.makeText(context, e+"", Toast.LENGTH_LONG).show();
+            Log.d("onReceive: ", e+"");
+        }
     }
 
 

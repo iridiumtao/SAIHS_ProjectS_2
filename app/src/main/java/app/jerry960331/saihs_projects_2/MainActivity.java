@@ -117,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
     String alarmIntent1 = "";
     ArrayList selectedItems1 = new ArrayList();
     boolean[] checkedItems1 = {false, false, false, false, false, false, false, false, false};
+    boolean[] alarmSocketSelect = {false, false, false, false};
+    String alarmPurpose;
 
 
     private long timeCountInMilliSeconds;
@@ -160,6 +162,19 @@ public class MainActivity extends AppCompatActivity {
 
         //Log.d("RND", Math.random()*180+"");
 
+        int startedFromIntent = 0;
+        try{
+            Bundle bundle = getIntent().getExtras();
+            alarmSocketSelect = bundle.getBooleanArray("socket");
+            alarmPurpose = bundle.getString("purpose");
+            Toast.makeText(this, "Intent from Broadcast", Toast.LENGTH_SHORT).show();
+            Connect(1);
+            startedFromIntent = 1;
+        }catch (Exception e){
+
+            Log.d("MainActivity", e +"");
+        }
+
 
         isAlarmOn1 = getSharedPreferences("alarm1", MODE_PRIVATE).getBoolean("isAlarmOn1", false);
         String schedule1 = getSharedPreferences("alarm1", MODE_PRIVATE).getString("alarmSetSchedule1", "");
@@ -181,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         alarmSetTime1 = getSharedPreferences("alarm1", MODE_PRIVATE).getString("alarmSetTime1", "");
 
 
+        final int finalStartedFromIntent = startedFromIntent;
         btHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -291,7 +307,11 @@ public class MainActivity extends AppCompatActivity {
                         if (msg.arg1 == 1) {
                             Toast.makeText(getApplicationContext(), R.string.connected_successfully, Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(getApplicationContext(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
+                            if (finalStartedFromIntent == 1){
+                                Toast.makeText(getApplicationContext(), "連線失敗\n鬧鐘所設定的資料無法傳送至插座", Toast.LENGTH_SHORT).show();
+                            }else {
+                                Toast.makeText(getApplicationContext(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
+                            }
                             imageConnectStat.setVisibility(View.VISIBLE);
                             txConnectStat.setText(R.string.failed);
                         }
@@ -326,6 +346,7 @@ public class MainActivity extends AppCompatActivity {
         btnSkChart4.setOnClickListener(SkChartListener4);
 
         swConnectionMethod.setOnClickListener(SwConnectionMethodListener);
+        btnConnect.setOnClickListener(btnConnectListener);
 
         btnLogStart.setOnClickListener(LogStart);
         btnLogStop.setOnClickListener(LogStop);
@@ -674,35 +695,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
-
-
         }
     };
-
-    //鬧鐘實際上是開啟同一個頁面，未來考慮分離出來，減少版面占用
-    /*
-    private Button.OnClickListener SkAlarmListener2 = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-
-        }
-    };
-    private Button.OnClickListener SkAlarmListener3 = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-
-        }
-    };
-    private Button.OnClickListener SkAlarmListener4 = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-
-        }
-    };*/
-
 
     //表格OnClick
     private Button.OnClickListener SkChartListener1 = new Button.OnClickListener() {
@@ -918,7 +912,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //連線按鈕 OnClick
-    public void Connect(View v) {
+    private Button.OnClickListener btnConnectListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Connect(0);
+        }
+    };
+
+    public void Connect(final int i) {
         //btnConnect.setVisibility(View.INVISIBLE);
         //txConnectStat.setVisibility(View.INVISIBLE);
         //imageConnectStat.setVisibility(View.INVISIBLE);
@@ -983,6 +984,40 @@ public class MainActivity extends AppCompatActivity {
                     //藍牙連接成功
                     btnConnect.setVisibility(View.INVISIBLE);
                     btConnectedThread.write("z"); //成功後傳值
+                    if (i == 1){
+
+                        if (alarmPurpose.equals("TURN_ON")) {
+
+                            if (alarmSocketSelect[0]) {
+                                btConnectedThread.write("a");
+                            }
+                            if (alarmSocketSelect[1]) {
+                                btConnectedThread.write("c");
+                            }
+                            if (alarmSocketSelect[2]) {
+                                btConnectedThread.write("e");
+                            }
+                            if (alarmSocketSelect[3]) {
+                                btConnectedThread.write("g");
+                            }
+                        }else if (alarmPurpose.equals("TURN_OFF")){
+                            if (alarmSocketSelect[0]) {
+                                btConnectedThread.write("b");
+                            }
+                            if (alarmSocketSelect[1]) {
+                                btConnectedThread.write("d");
+                            }
+                            if (alarmSocketSelect[2]) {
+                                btConnectedThread.write("f");
+                            }
+                            if (alarmSocketSelect[3]) {
+                                btConnectedThread.write("h");
+                            }
+                        }
+
+                    }
+
+
                     isBTConnected = true;
                     txConnectStat.setVisibility(View.INVISIBLE);
                     //imageConnectStat.setVisibility(View.INVISIBLE);
@@ -1198,9 +1233,13 @@ public class MainActivity extends AppCompatActivity {
         calendar.add(Calendar.SECOND, 10);*/
 
 
-
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putBooleanArray("socketFromMain", alarmSocketSelect);
+        bundle.putString("purposeFromMain", alarmPurpose);
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 , intent, 0);
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
