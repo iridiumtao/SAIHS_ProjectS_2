@@ -32,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private Switch
             swSk1, swSk2, swSk3, swSk4,
             swConnectionMethod;
+    private EditText txSocket1, txSocket2, txSocket3, txSocket4;
     private Button
             btnConnect,
             btnSkAuto1, btnSkAuto2, btnSkAuto3, btnSkAuto4,
@@ -164,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
         //FunctionSetEnable(false);
 
         //Log.d("RND", Math.random()*180+"");
-
 
         int startedFromIntent = 0;
         try{
@@ -333,6 +334,13 @@ public class MainActivity extends AppCompatActivity {
         swSk3.setOnClickListener(SwListener);
         swSk4.setOnClickListener(SwListener);
 
+
+        /*txSocket1.setOnLongClickListener(txChangeListener);
+        txSocket2.setOnLongClickListener(txChangeListener);
+        txSocket3.setOnLongClickListener(txChangeListener);
+        txSocket4.setOnLongClickListener(txChangeListener);*/
+
+
         btnSkStat1.setOnClickListener(SkStatListener1);
         btnSkStat2.setOnClickListener(SkStatListener2);
         btnSkStat3.setOnClickListener(SkStatListener3);
@@ -363,6 +371,11 @@ public class MainActivity extends AppCompatActivity {
         swSk3 = findViewById(R.id.swSk3);
         swSk4 = findViewById(R.id.swSk4);
         swConnectionMethod = findViewById(R.id.swConnectionMethod);
+
+        txSocket1 = findViewById(R.id.txSocket1);
+         txSocket2 = findViewById(R.id.txSocket2);
+         txSocket3 = findViewById(R.id.txSocket3);
+         txSocket4 = findViewById(R.id.txSocket4);
 
         btnConnect = findViewById(R.id.btnConnect);
         txConnectStat = findViewById(R.id.txConnectStat);

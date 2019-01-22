@@ -147,7 +147,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                         currentSumArrayList.add(currentNow);
                         double sum = 0;
                         for(int i = 1; i < currentSumArrayList.size(); i++) {
-                            sum += (Double) currentSumArrayList.get(i);
+                            sum += Double.parseDouble(currentSumArrayList.get(i).toString());
                         }
                         txCurrentAve.setText(sum / tick[0] + "mA");
 

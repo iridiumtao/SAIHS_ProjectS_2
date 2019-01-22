@@ -11,7 +11,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <ImageView
             android:id="@+id/imageView"
@@ -464,9 +465,9 @@
             android:ems="8"
             android:gravity="right"
             android:hint="@string/socket_1"
-            android:inputType="text"
             android:text="@string/socket_1"
             android:textSize="12sp"
+            android:focusable="false"
             app:layout_constraintBottom_toBottomOf="@+id/swSk1"
             app:layout_constraintEnd_toStartOf="@+id/swSk1"
             app:layout_constraintHorizontal_bias="1.0"
@@ -486,6 +487,7 @@
             android:inputType="text"
             android:text="@string/socket_3"
             android:textSize="12sp"
+            android:focusable="false"
             app:layout_constraintBottom_toBottomOf="@+id/swSk3"
             app:layout_constraintEnd_toStartOf="@+id/swSk3"
             app:layout_constraintHorizontal_bias="1.0"
@@ -505,6 +507,7 @@
             android:inputType="text"
             android:text="@string/socket_2"
             android:textSize="12sp"
+            android:focusable="false"
             app:layout_constraintBottom_toBottomOf="@+id/swSk2"
             app:layout_constraintEnd_toStartOf="@+id/swSk2"
             app:layout_constraintHorizontal_bias="1.0"
@@ -524,6 +527,7 @@
             android:inputType="text"
             android:text="@string/socket_4"
             android:textSize="12sp"
+            android:focusable="false"
             app:layout_constraintBottom_toBottomOf="@+id/swSk4"
             app:layout_constraintEnd_toStartOf="@+id/swSk4"
             app:layout_constraintHorizontal_bias="1.0"
