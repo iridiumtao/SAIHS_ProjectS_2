@@ -39,6 +39,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,6 +50,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.UUID;
+
+import static android.os.Looper.getMainLooper;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -118,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList selectedItems1 = new ArrayList();
     boolean[] checkedItems1 = {false, false, false, false, false, false, false, false, false};
     boolean[] alarmSocketSelect = {false, false, false, false};
-    String alarmPurpose;
+    String alarmPurpose = "";
 
 
     private long timeCountInMilliSeconds;
@@ -137,8 +142,6 @@ public class MainActivity extends AppCompatActivity {
     TextView TxTest;
     String test = "";
     String sendData = "z";
-
-
 
 
 //alt+enter 字串抽離
@@ -161,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
         //FunctionSetEnable(false);
 
         //Log.d("RND", Math.random()*180+"");
+
 
         int startedFromIntent = 0;
         try{
@@ -245,7 +249,6 @@ public class MainActivity extends AppCompatActivity {
                                 chipAutoOn2 = btDataString.substring(29, 30);
                                 chipAutoOn3 = btDataString.substring(31, 32);
                                 chipAutoOn4 = btDataString.substring(33, 34);
-                                Log.d("current3", current3);
 
 
                                 if (Integer.parseInt(current1) > safeCurrentValue) {
@@ -669,7 +672,12 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void alarmIntent1(String function) {
-                    alarmIntent1 = function;
+                    alarmPurpose = function;
+                }
+
+                @Override
+                public void alarmSocketSelected(boolean[] alarmSocketSelected) {
+                    alarmSocketSelect =  alarmSocketSelected;
                 }
 
                 @Override
@@ -984,9 +992,10 @@ public class MainActivity extends AppCompatActivity {
                     //藍牙連接成功
                     btnConnect.setVisibility(View.INVISIBLE);
                     btConnectedThread.write("z"); //成功後傳值
+
                     if (i == 1){
 
-                        if (alarmPurpose.equals("TURN_ON")) {
+                        /*if (alarmPurpose.equals("TURN_ON")) {
 
                             if (alarmSocketSelect[0]) {
                                 btConnectedThread.write("a");
@@ -1014,7 +1023,7 @@ public class MainActivity extends AppCompatActivity {
                                 btConnectedThread.write("h");
                             }
                         }
-
+*/
                     }
 
 

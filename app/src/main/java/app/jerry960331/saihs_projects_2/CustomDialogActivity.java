@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -38,7 +39,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 import static android.os.Looper.getMainLooper;
@@ -80,12 +80,18 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     Calendar cal = Calendar.getInstance();
     int safeCurrentValue;
     String current;
+    private Button btnAlarmSocket1, btnAlarmSocket2, btnAlarmSocket3, btnAlarmSocket4;
+    private boolean alarmS1 = false, alarmS2 = false, alarmS3 = false, alarmS4 = false;
+    private Switch swAlarm;
+    String alarmPurpose;
+    boolean[] alarmSocketSelect = {false, false, false, false};
+
 
     //倒數計時器
-    Button btnGotoAlarm , btnTimerSocket1, btnTimerSocket2, btnTimerSocket3, btnTimerSocket4;
-    EditText editTextHour, editTextMinute, editTextSecond;
-    ImageButton btnStartStop, btnReset;
-    Switch swTimer;
+    private Button btnGotoAlarm , btnTimerSocket1, btnTimerSocket2, btnTimerSocket3, btnTimerSocket4;
+    private EditText editTextHour, editTextMinute, editTextSecond;
+    private ImageButton btnStartStop, btnReset;
+    private Switch swTimer;
     private int timeSet;
     private long timeCountInMilliSeconds = 1 * 60000;
     private ProgressBar progressBarCircle;
@@ -276,7 +282,13 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         txAlarmIntent1 = findViewById(R.id.txAlarmIntent1);
         fabAlarm = findViewById(R.id.fabAlarm);
         alarmSet1 = findViewById(R.id.alarmSet1);
+        btnAlarmSocket1 = findViewById(R.id.btnAlarmSocket1);
+        btnAlarmSocket2 = findViewById(R.id.btnAlarmSocket2);
+        btnAlarmSocket3 = findViewById(R.id.btnAlarmSocket3);
+        btnAlarmSocket4 = findViewById(R.id.btnAlarmSocket4);
+        swAlarm = findViewById(R.id.swAlarm);
         txAlarmSetSchedule1.setSelected(true);
+
 
         clockHandler = new Handler(getMainLooper());
         clockHandler.postDelayed(new Runnable() {
@@ -427,12 +439,77 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
             }
         });
 
-        txAlarmIntent1.setOnClickListener(new View.OnClickListener() {
+
+        swAlarm.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                //todo
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                TxIntentChange();
             }
         });
+
+        btnAlarmSocket1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (alarmS1){
+                    btnAlarmSocket1.setBackground(getContext().getDrawable(R.drawable.button_auto));
+                    btnAlarmSocket1.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
+                    alarmS1 = false;
+                }else {
+                    btnAlarmSocket1.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
+                    btnAlarmSocket1.setTextColor(getContext().getResources().getColor(R.color.white));
+                    alarmS1 = true;
+                }
+                TxIntentChange();
+            }
+        });
+        btnAlarmSocket2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (alarmS2){
+                    btnAlarmSocket2.setBackground(getContext().getDrawable(R.drawable.button_auto));
+                    btnAlarmSocket2.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
+                    alarmS2 = false;
+                }else {
+                    btnAlarmSocket2.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
+                    btnAlarmSocket2.setTextColor(getContext().getResources().getColor(R.color.white));
+                    alarmS2 = true;
+                }
+                TxIntentChange();
+            }
+        });
+        btnAlarmSocket3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (alarmS3){
+                    btnAlarmSocket3.setBackground(getContext().getDrawable(R.drawable.button_auto));
+                    btnAlarmSocket3.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
+                    alarmS3 = false;
+                }else {
+                    btnAlarmSocket3.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
+                    btnAlarmSocket3.setTextColor(getContext().getResources().getColor(R.color.white));
+                    alarmS3 = true;
+                }
+                TxIntentChange();
+            }
+        });
+        btnAlarmSocket4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (alarmS4){
+                    btnAlarmSocket4.setBackground(getContext().getDrawable(R.drawable.button_auto));
+                    btnAlarmSocket4.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
+                    alarmS4 = false;
+                }else {
+                    btnAlarmSocket4.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
+                    btnAlarmSocket4.setTextColor(getContext().getResources().getColor(R.color.white));
+                    alarmS4 = true;
+                }
+                TxIntentChange();
+            }
+        });
+
+
+
 
         btnAlarmIsOn1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -496,6 +573,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             btnTimerSocket1.setTextColor(getContext().getResources().getColor(R.color.white));
                             timerS1 = true;
                         }
+
                     }
                 });
                 btnTimerSocket2.setOnClickListener(new View.OnClickListener() {
@@ -510,6 +588,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             btnTimerSocket2.setTextColor(getContext().getResources().getColor(R.color.white));
                             timerS2 = true;
                         }
+
                     }
                 });
                 btnTimerSocket3.setOnClickListener(new View.OnClickListener() {
@@ -524,6 +603,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             btnTimerSocket3.setTextColor(getContext().getResources().getColor(R.color.white));
                             timerS3 = true;
                         }
+
                     }
                 });
                 btnTimerSocket4.setOnClickListener(new View.OnClickListener() {
@@ -556,6 +636,43 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 });
             }
         });
+    }
+
+    private void TxIntentChange(){
+        String s = "";
+        if (swAlarm.isChecked()){
+            txAlarmIntent1.setText("開啟插座:");
+            alarmPurpose = "TURN_ON";
+        }else {
+            txAlarmIntent1.setText("關閉插座:");
+            alarmPurpose = "TURN_OFF";
+        }
+        for (int i = 0; i < 4; i ++){
+            alarmSocketSelect[i] = false;
+        }
+
+        if (alarmS1){
+            s += "1,";
+            alarmSocketSelect[0] = true;
+        }
+        if (alarmS2){
+            s += "2,";
+            alarmSocketSelect[1] = true;
+        }
+        if (alarmS3){
+            s += "3,";
+            alarmSocketSelect[2] = true;
+        }
+        if (alarmS4){
+            s += "4,";
+            alarmSocketSelect[3] = true;
+        }
+
+
+        txAlarmIntent1.setText(txAlarmIntent1.getText() + s);
+        txAlarmIntent1.setText(txAlarmIntent1.getText().subSequence(0,txAlarmIntent1.getText().length()-1));
+
+
     }
 
     private LineDataSet createSet() {
@@ -606,7 +723,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 alarmDialogResult.isAlarmOn1(isAlarmOn1);
                 alarmDialogResult.alarmSetTime1(txAlarmSetTime1.getText().toString());
                 alarmDialogResult.alarmSetSchedule1("");//沒有
-                alarmDialogResult.alarmIntent1("");//todo
+                alarmDialogResult.alarmIntent1(alarmPurpose);
+                alarmDialogResult.alarmSocketSelected(alarmSocketSelect);
                 alarmDialogResult.selectedItems(selectedItems);
                 alarmDialogResult.checkedItems(checkedItems);
                 if(isAlarmOn1){
@@ -651,6 +769,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         void alarmSetSchedule1(String schedule);
 
         void alarmIntent1(String function);
+
+        void alarmSocketSelected(boolean[] alarmSocketSelected);
 
         void selectedItems(ArrayList selectedItems);
 
