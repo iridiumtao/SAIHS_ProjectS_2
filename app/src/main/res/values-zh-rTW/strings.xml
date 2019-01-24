@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">綠能插座</string>
+    <string name="app_name">綠能雲端插座</string>
     <string name="action_settings">設定</string>
     <string name="action_help">幫助</string>
     <string name="ON">開</string>

@@ -15,7 +15,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context, "鬧鐘響", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "鬧鐘響" + MainActivity.active, Toast.LENGTH_LONG).show();
 
         Log.d("ss", "onReceive: ");// not working
 
@@ -24,33 +24,41 @@ public class AlarmReceiver extends BroadcastReceiver {
         Ringtone ringtone = RingtoneManager.getRingtone(context, alarmUri);
         ringtone.play();
 
-
-        Bundle bundle = intent.getExtras();
-        boolean[] socket;
-        String purpose;
-
         try {
-
+            Bundle bundle = intent.getExtras();
+            boolean[] socket;
+            String purpose;
             socket = bundle.getBooleanArray("socketFromMain");
             purpose = bundle.getString("purposeFromMain");
 
-            Intent mainIntent = new Intent(context, MainActivity.class);
-            mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
+            Intent intent2 = new Intent("Socket_Action");
 
-            Bundle mainBundle = new Bundle();
-            mainBundle.putBooleanArray("socket", socket);
-            mainBundle.putString("purpose",purpose);
+            Bundle mainBundle2 = new Bundle();
+            mainBundle2.putBooleanArray("socket", socket);
+            mainBundle2.putString("purpose", purpose);
 
-            mainIntent.putExtras(mainBundle);
-            context.startActivity(mainIntent);
+            intent2.putExtras(mainBundle2);
+            context.sendBroadcast(intent2);
 
+                /*
 
+                Intent mainIntent = new Intent(context, MainActivity.class);
+                mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        }catch (Exception e){
-            Toast.makeText(context, e+"", Toast.LENGTH_LONG).show();
-            Log.d("onReceive: ", e+"");
+                Bundle mainBundle = new Bundle();
+                mainBundle.putBooleanArray("socket", socket);
+                mainBundle.putString("purpose", purpose);
+
+                mainIntent.putExtras(mainBundle);
+                context.startActivity(mainIntent);*/
+
+        } catch (Exception e) {
+            Toast.makeText(context, "onReceive\n" + e + "", Toast.LENGTH_LONG).show();
+            Log.d("onReceive: ", e + "");
         }
+
+
     }
 
 

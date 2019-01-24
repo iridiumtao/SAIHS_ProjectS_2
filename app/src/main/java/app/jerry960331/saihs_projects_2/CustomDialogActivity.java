@@ -730,7 +730,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 if(isAlarmOn1){
                     alarmDialogResult.callStartAlarm(cal);
                 }else {
-                   alarmDialogResult.callStartAlarm(null);
+                    alarmDialogResult.callCancelAlarm(cal);
                 }
                 Log.d("selectedItems", selectedItems + "");
 
@@ -777,6 +777,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         void checkedItems(boolean[] checkedItems);
 
         void callStartAlarm(Calendar cal);
+
+        void callCancelAlarm(Calendar cal);
     }
 
 

@@ -3,6 +3,7 @@ package app.jerry960331.saihs_projects_2;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.ExpandableListActivity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,9 +11,11 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -57,6 +60,8 @@ import static android.os.Looper.getMainLooper;
 
 public class MainActivity extends AppCompatActivity {
     Activity c;
+    private final static String TAG = "MainActivity";
+    static boolean active = false;
 
     //介面
     private ImageButton
@@ -167,17 +172,20 @@ public class MainActivity extends AppCompatActivity {
 
         //Log.d("RND", Math.random()*180+"");
 
+
+        registerReceiver(broadcastReceiver, new IntentFilter("Socket_Action"));
+
         int startedFromIntent = 0;
-        try{
+        try {
             Bundle bundle = getIntent().getExtras();
             alarmSocketSelect = bundle.getBooleanArray("socket");
             alarmPurpose = bundle.getString("purpose");
             Toast.makeText(this, "Intent from Broadcast", Toast.LENGTH_SHORT).show();
             Connect(1);
             startedFromIntent = 1;
-        }catch (Exception e){
+        } catch (Exception e) {
 
-            Log.d("MainActivity", e +"");
+            Log.d("MainActivity", e + "");
         }
 
 
@@ -220,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
                         if (btDataString.charAt(0) == '#') {
                             try {
 
-                                if (logIsOn){
+                                if (logIsOn) {
                                     txLog.setText(btDataString + "\n" + txLog.getText().toString());
                                 }
 
@@ -233,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 //若值超過設定電流上限
                                 if (Integer.parseInt(btDataString.substring(3, 8)) > safeCurrentValue) {
-                                    makeOreoNotification("Warning","安全警示");
+                                    makeOreoNotification("Warning", "安全警示");
                                     unsafeCurrent1 = true;
                                 }
                                 current2 = btDataString.substring(9, 14);
@@ -241,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                                     current3 = btDataString.substring(15, 20);
                                 }
                                 if (Integer.parseInt(btDataString.substring(15, 20)) > safeCurrentValue) {
-                                    makeOreoNotification("Warning","安全警示");
+                                    makeOreoNotification("Warning", "安全警示");
                                     unsafeCurrent3 = true;
                                 }
                                 current4 = btDataString.substring(21, 26);
@@ -298,6 +306,37 @@ public class MainActivity extends AppCompatActivity {
                                         btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
                                     }
                                 }
+
+
+                                if (Integer.parseInt(current1) == 0) {
+                                    btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
+                                } else if (Integer.parseInt(current1) > 0 && Integer.parseInt(current1) < 3000) {
+                                    btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
+                                } else if (Integer.parseInt(current1) > 3000) {
+                                    btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
+                                }
+                                if (Integer.parseInt(current2) == 0) {
+                                    btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
+                                } else if (Integer.parseInt(current2) > 0 && Integer.parseInt(current2) < 3000) {
+                                    btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
+                                } else if (Integer.parseInt(current2) > 3000) {
+                                    btnSkStat2.setImageResource(R.drawable.dot_red_48dp);
+                                }
+                                if (Integer.parseInt(current3) == 0) {
+                                    btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
+                                } else if (Integer.parseInt(current3) > 0 && Integer.parseInt(current3) < 3000) {
+                                    btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
+                                } else if (Integer.parseInt(current3) > 3000) {
+                                    btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
+                                }
+                                if (Integer.parseInt(current4) == 0) {
+                                    btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
+                                } else if (Integer.parseInt(current4) > 0 && Integer.parseInt(current4) < 3000) {
+                                    btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
+                                } else if (Integer.parseInt(current4) > 3000) {
+                                    btnSkStat4.setImageResource(R.drawable.dot_red_48dp);
+                                }
+
                             } catch (Exception e) {
                                 Log.d("e", e + "");
                             }
@@ -311,9 +350,9 @@ public class MainActivity extends AppCompatActivity {
                         if (msg.arg1 == 1) {
                             Toast.makeText(getApplicationContext(), R.string.connected_successfully, Toast.LENGTH_SHORT).show();
                         } else {
-                            if (finalStartedFromIntent == 1){
+                            if (finalStartedFromIntent == 1) {
                                 Toast.makeText(getApplicationContext(), "連線失敗\n鬧鐘所設定的資料無法傳送至插座", Toast.LENGTH_SHORT).show();
-                            }else {
+                            } else {
                                 Toast.makeText(getApplicationContext(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
                             }
                             imageConnectStat.setVisibility(View.VISIBLE);
@@ -326,6 +365,84 @@ public class MainActivity extends AppCompatActivity {
             }
         };
     }
+
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // internet lost alert dialog method call from here...
+
+            Toast.makeText(MainActivity.this, "Received from alarm successfully", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "Received from Alarm");
+
+            try {
+                Bundle bundle = getIntent().getExtras();
+                if (bundle.getBooleanArray("socket") != null) {
+                    alarmSocketSelect = bundle.getBooleanArray("socket");
+                }
+                alarmPurpose = bundle.getString("purpose");
+            }catch (Exception e){
+                Toast.makeText(MainActivity.this, "資料傳送失敗\n"+e, Toast.LENGTH_LONG).show();
+            }
+            autoSocketAction();
+
+        }
+    };
+
+
+    private void autoSocketAction(){
+
+        final int[] j = {0};
+
+        if (!isBTConnected){
+            Connect(1);
+            return;
+        }
+
+        Toast.makeText(MainActivity.this, "正在傳送動作訊號", Toast.LENGTH_LONG).show();
+
+        final Handler handler = new Handler(getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (alarmPurpose.equals("TURN_ON")) {
+                    if (alarmSocketSelect[j[0]] && j[0] == 0) {
+                        btConnectedThread.write("a");
+                    }
+                    if (alarmSocketSelect[j[0]] && j[0] == 1) {
+                        btConnectedThread.write("c");
+                    }
+                    if (alarmSocketSelect[j[0]] && j[0] == 2) {
+                        btConnectedThread.write("e");
+                    }
+                    if (alarmSocketSelect[j[0]] && j[0] == 3) {
+                        btConnectedThread.write("g");
+                    }
+                } else if (alarmPurpose.equals("TURN_OFF")) {
+                    if (alarmSocketSelect[j[0]] && j[0] == 0) {
+                        btConnectedThread.write("b");
+                    }
+                    if (alarmSocketSelect[j[0]] && j[0] == 1) {
+                        btConnectedThread.write("d");
+                    }
+                    if (alarmSocketSelect[j[0]] && j[0] == 2) {
+                        btConnectedThread.write("f");
+                    }
+                    if (alarmSocketSelect[j[0]] && j[0] == 3) {
+                        btConnectedThread.write("h");
+                    }
+                }
+                j[0]++;
+
+                if (j[0] == 5) {
+                    handler.removeCallbacksAndMessages(null);
+                }
+            }
+
+        }, 1000);
+
+    }
+
 
 
     private void setOnClickListeners() {
@@ -365,7 +482,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //ctrl+alt+M
-     private void findViews() {
+    private void findViews() {
         swSk1 = findViewById(R.id.swSk1);
         swSk2 = findViewById(R.id.swSk2);
         swSk3 = findViewById(R.id.swSk3);
@@ -373,9 +490,9 @@ public class MainActivity extends AppCompatActivity {
         swConnectionMethod = findViewById(R.id.swConnectionMethod);
 
         txSocket1 = findViewById(R.id.txSocket1);
-         txSocket2 = findViewById(R.id.txSocket2);
-         txSocket3 = findViewById(R.id.txSocket3);
-         txSocket4 = findViewById(R.id.txSocket4);
+        txSocket2 = findViewById(R.id.txSocket2);
+        txSocket3 = findViewById(R.id.txSocket3);
+        txSocket4 = findViewById(R.id.txSocket4);
 
         btnConnect = findViewById(R.id.btnConnect);
         txConnectStat = findViewById(R.id.txConnectStat);
@@ -659,7 +776,9 @@ public class MainActivity extends AppCompatActivity {
             CustomDialog.socketSelect = 1;
             CustomDialog.isAlarmOn1 = isAlarmOn1;
             CustomDialog.alarmSetTime1 = alarmSetTime1;
+            CustomDialog.alarmPurpose = alarmPurpose;
             CustomDialog.selectedItems = selectedItems1;
+            CustomDialog.alarmSocketSelect = alarmSocketSelect;
             CustomDialog.checkedItems = checkedItems1;
 
             CustomDialog.show();
@@ -690,7 +809,7 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void alarmSocketSelected(boolean[] alarmSocketSelected) {
-                    alarmSocketSelect =  alarmSocketSelected;
+                    alarmSocketSelect = alarmSocketSelected;
                 }
 
                 @Override
@@ -705,15 +824,14 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void callStartAlarm(Calendar cal) {
-                    if(cal != null){
-                        startAlarm(cal);
+                    startAlarm(cal);
+                }
 
-                    }else {
-                        Log.d("DialogReturnVal", "Alarm canceled ");
-                        Toast.makeText(MainActivity.this, "未設置鬧鐘", Toast.LENGTH_SHORT).show();
-                        cancelAlarm(cal);
-                    }
-
+                @Override
+                public void callCancelAlarm(Calendar cal) {
+                    Log.d("DialogReturnVal", "Alarm canceled ");
+                    Toast.makeText(MainActivity.this, "未設置鬧鐘", Toast.LENGTH_SHORT).show();
+                    cancelAlarm(cal);
                 }
             });
         }
@@ -958,6 +1076,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        if (isBTConnected) {
+
+            return;
+        }
+
         //todo progressDialog
         Toast.makeText(getApplicationContext(), R.string.connecting_with_dots, Toast.LENGTH_SHORT).show();
         txConnectStat.setText(R.string.connecting_with_dots);
@@ -1006,45 +1129,17 @@ public class MainActivity extends AppCompatActivity {
                     btnConnect.setVisibility(View.INVISIBLE);
                     btConnectedThread.write("z"); //成功後傳值
 
-                    if (i == 1){
-
-                        /*if (alarmPurpose.equals("TURN_ON")) {
-
-                            if (alarmSocketSelect[0]) {
-                                btConnectedThread.write("a");
-                            }
-                            if (alarmSocketSelect[1]) {
-                                btConnectedThread.write("c");
-                            }
-                            if (alarmSocketSelect[2]) {
-                                btConnectedThread.write("e");
-                            }
-                            if (alarmSocketSelect[3]) {
-                                btConnectedThread.write("g");
-                            }
-                        }else if (alarmPurpose.equals("TURN_OFF")){
-                            if (alarmSocketSelect[0]) {
-                                btConnectedThread.write("b");
-                            }
-                            if (alarmSocketSelect[1]) {
-                                btConnectedThread.write("d");
-                            }
-                            if (alarmSocketSelect[2]) {
-                                btConnectedThread.write("f");
-                            }
-                            if (alarmSocketSelect[3]) {
-                                btConnectedThread.write("h");
-                            }
-                        }
-*/
-                    }
-
 
                     isBTConnected = true;
                     txConnectStat.setVisibility(View.INVISIBLE);
                     //imageConnectStat.setVisibility(View.INVISIBLE);
 
                     //FunctionSetEnable(true);
+
+
+                    if (i == 1){
+                        autoSocketAction();
+                    }
 
                 }
             }
@@ -1077,6 +1172,7 @@ public class MainActivity extends AppCompatActivity {
         btnSkAuto3.setEnabled(b);
         btnSkAuto4.setEnabled(b);
     }
+
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws
             IOException {
@@ -1236,23 +1332,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void startAlarm(Calendar calendar){
+    private void startAlarm(Calendar calendar) {
         Calendar nowCal = Calendar.getInstance(TimeZone.getDefault());
 
-        /*
-        calendar.set(Calendar.MONTH, nowCal.get(Calendar.MONTH));
-        calendar.set(Calendar.YEAR, nowCal.get(Calendar.YEAR));
-        calendar.set(Calendar.DATE, nowCal.get(Calendar.DATE));*/
 
-        if (calendar.before(Calendar.getInstance())){
-            calendar.add(Calendar.DATE,1);
+        if (calendar.before(Calendar.getInstance())) {
+            calendar.add(Calendar.DATE, 1);
         }
 
 
-        /*
+        //just for test
         calendar.setTimeInMillis(System.currentTimeMillis());
         // 10sec
-        calendar.add(Calendar.SECOND, 10);*/
+        calendar.add(Calendar.SECOND, 10);
 
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -1261,17 +1353,19 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putBooleanArray("socketFromMain", alarmSocketSelect);
         bundle.putString("purposeFromMain", alarmPurpose);
+        intent.putExtras(bundle);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 , intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
 
         Toast.makeText(this, "下一個鬧鐘已被設在" +
                 calendar.get(Calendar.YEAR) + "年" +
-                calendar.get(Calendar.MONTH)+1 + "月" +
+                calendar.get(Calendar.MONTH) + 1 + "月" +
                 calendar.get(Calendar.DATE) + "日 " +
                 calendar.get(Calendar.HOUR) + ":" +
-                calendar.get(Calendar.MINUTE), Toast.LENGTH_SHORT).show();
+                calendar.get(Calendar.MINUTE) + ":" +
+                calendar.get(Calendar.SECOND), Toast.LENGTH_SHORT).show();
 
         System.out.println("year:" + calendar.get(Calendar.YEAR));
         System.out.println("month:" + calendar.get(Calendar.MONTH));//+1
@@ -1282,10 +1376,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void cancelAlarm(Calendar cal){
+    private void cancelAlarm(Calendar cal) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1 , intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
         alarmManager.cancel(pendingIntent);
     }
 
@@ -1359,7 +1453,7 @@ public class MainActivity extends AppCompatActivity {
         };
     */
 
-    public Button.OnClickListener LogStart = new Button.OnClickListener(){
+    public Button.OnClickListener LogStart = new Button.OnClickListener() {
         @Override
         public void onClick(View v) {
             logIsOn = true;
@@ -1373,13 +1467,13 @@ public class MainActivity extends AppCompatActivity {
             ringtone.play();
         }
     };
-    public Button.OnClickListener LogStop = new Button.OnClickListener(){
+    public Button.OnClickListener LogStop = new Button.OnClickListener() {
         @Override
         public void onClick(View v) {
             logIsOn = false;
         }
     };
-    public Button.OnClickListener LogClear = new Button.OnClickListener(){
+    public Button.OnClickListener LogClear = new Button.OnClickListener() {
         @Override
         public void onClick(View v) {
             txLog.setText("     Log cleared");
@@ -1461,7 +1555,7 @@ public class MainActivity extends AppCompatActivity {
                         .show();
                 break;
             case R.id.action_notification:
-                makeOreoNotification("Warning","安全警示");
+                makeOreoNotification("Warning", "安全警示");
                 break;
             case R.id.action_auto:
                 if (AutoOn1 || AutoOn2 || AutoOn3 || AutoOn4) {
@@ -1494,12 +1588,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    void makeOreoNotification(String channelId,String channelName) {
+    void makeOreoNotification(String channelId, String channelName) {
         final int NOTIFICATION_ID = 8;
 
         NotificationManager manager = getNotificationManager(channelId, channelName);
 
-        if (channelId.equals("Warning")){
+        if (channelId.equals("Warning")) {
             //產生通知
             NotificationCompat.Builder builder =
                     new NotificationCompat.Builder(this)
@@ -1513,7 +1607,7 @@ public class MainActivity extends AppCompatActivity {
             //送出通知
             manager.notify(1, builder.build());
 
-        }else if(channelId.equals("test")){
+        } else if (channelId.equals("test")) {
             NotificationCompat.Builder builder =
                     new NotificationCompat.Builder(this)
                             .setSmallIcon(R.drawable.icon_notification_home2)
@@ -1525,7 +1619,7 @@ public class MainActivity extends AppCompatActivity {
                             .setChannelId(channelId);  //設定頻道ID
             //送出通知
             manager.notify(1, builder.build());
-        }else {
+        } else {
             Toast.makeText(this, "NOTIFICATION ERROR", Toast.LENGTH_SHORT).show();
         }
 
@@ -1580,6 +1674,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         Log.d("MainActivity:", "onStart");
+        active = true;
         super.onStart();
     }
 
@@ -1596,14 +1691,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         Log.d("MainActivity:", "onStop");
-        super.onStop();
-
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.d("MainActivity:", "onDestroy");
-        super.onDestroy();
+        active = false;
 
         String schedule1 = "";
         for (int i = 0; i < selectedItems1.size(); i++) {
@@ -1617,10 +1705,20 @@ public class MainActivity extends AppCompatActivity {
                 .putString("alarmSetTime1", alarmSetTime1)
                 .putString("alarmSetSchedule1", schedule1)
                 .apply();
-        Toast.makeText(getApplicationContext(),"已將資料儲存至手機",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "已將資料儲存至手機", Toast.LENGTH_SHORT).show();
+        unregisterReceiver(broadcastReceiver);
 
         btHandler.removeCallbacksAndMessages(null);
         Disconnect();
+        super.onStop();
+
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d("MainActivity:", "onDestroy");
+        super.onDestroy();
+
     }
 }
 
