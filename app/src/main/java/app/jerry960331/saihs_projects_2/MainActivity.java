@@ -45,6 +45,11 @@ import android.widget.Toast;
 
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +57,8 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -171,6 +178,11 @@ public class MainActivity extends AppCompatActivity {
         //FunctionSetEnable(false);
 
         //Log.d("RND", Math.random()*180+"");
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("command");
+        myRef.setValue("Hello, World!");
+                //"Hello, World!"
 
 
         registerReceiver(broadcastReceiver, new IntentFilter("Socket_Action"));
@@ -1383,81 +1395,38 @@ public class MainActivity extends AppCompatActivity {
         alarmManager.cancel(pendingIntent);
     }
 
-    /*
-        //倒數計時器
-        CountDownTimer TimeCountDown  = new CountDownTimer(10000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                AutoTimerIsOn = true;
-                long i = millisUntilFinished;
-                String b;
-                while (i > 60000)
-                {
-                    i = i - 60000;
-                }
-                if (i < 10000){ b = "0"; }else {b = "";}
-                if(AutoOn1){btnSkAuto1.setText(millisUntilFinished/60000 + ":" + b +i/1000);}
-                else {btnSkAuto1.setText("AUTO");}
-                if(AutoOn2){btnSkAuto2.setText(millisUntilFinished/60000 + ":" + b +i/1000);}
-                else {btnSkAuto2.setText("AUTO");}
-                if(AutoOn3){btnSkAuto3.setText(millisUntilFinished/60000 + ":" + b +i/1000);}
-                else {btnSkAuto3.setText("AUTO");}
-                if(AutoOn4){btnSkAuto4.setText(millisUntilFinished/60000 + ":" + b +i/1000);}
-                else {btnSkAuto4.setText("AUTO");}
-                if (!AutoOn1 && !AutoOn2 && !AutoOn3 && !AutoOn4){
-                    TimeCountDown.cancel();
-                    AutoTimerIsOn = false;
-                }
-            }
-
-            @Override
-            public void onFinish() {
-                AutoTimerIsOn = false;
-                CustomizedSnackBar("時間到");
-                AutoTimerRepeatNOPE = true;
-                if(AutoOn1){
-                    btnSkAuto1.setText("AUTO");
-                    swSk1.setChecked(false);
-                    btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
-                    if (btConnectedThread != null){
-                        btConnectedThread.write("b");
-                    }
-
-                }
-                if(AutoOn2){
-                    btnSkAuto2.setText("AUTO");
-                    swSk2.setChecked(false);
-                    btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
-                    if (btConnectedThread != null){
-                        btConnectedThread.write("d");
-                    }
-                }
-                if(AutoOn3){
-                    btnSkAuto3.setText("AUTO");
-                    swSk3.setChecked(false);
-                    btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
-                    if (btConnectedThread != null){
-                        btConnectedThread.write("f");
-                    }
-                }
-                if(AutoOn4){
-                    btnSkAuto4.setText("AUTO");
-                    swSk4.setChecked(false);
-                    btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
-                    if (btConnectedThread != null){
-                        btConnectedThread.write("h");
-                    }
-                }
-
-            }
-        };
-    */
-
     public Button.OnClickListener LogStart = new Button.OnClickListener() {
         @Override
         public void onClick(View v) {
             logIsOn = true;
 
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("sw4mA");
+            Map<String, Object> data = new HashMap<>();
+            data.put("command","Hello, World!");
+            myRef.updateChildren(data);
+
+            /*myRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // This method is called once with the initial value and again
+                    // whenever data at this location is updated.
+
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    for (Map.Entry<String, Object> entry : map.entrySet()){
+                        String key = entry.getKey();
+                        String value = entry.getValue().toString();
+                        Log.d(TAG, key+"; Value is: " + value);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });*/
 
             //this will sound the alarm tone
             //this will sound the alarm once, if you wish to
@@ -1678,16 +1647,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    /**
-     * //noinspection SimplifiableIfStatement
-     * if (id == R.id.action_settings) {
-     * Intent intent = new Intent(this, SettingsActivity.class);
-     * startActivity(intent);
-     * return true;
-     * }
-     */
-
-
     @Override
     protected void onStop() {
         Log.d("MainActivity:", "onStop");
@@ -1705,7 +1664,7 @@ public class MainActivity extends AppCompatActivity {
                 .putString("alarmSetTime1", alarmSetTime1)
                 .putString("alarmSetSchedule1", schedule1)
                 .apply();
-        //Toast.makeText(getApplicationContext(), "已將資料儲存至手機", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "已將資料儲存至手機", Toast.LENGTH_SHORT).show();
         unregisterReceiver(broadcastReceiver);
 
         btHandler.removeCallbacksAndMessages(null);

@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "143478142968-5aundm0gq3j8erq004133pmgaohsu1rp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.jerry960331.saihs_projects_2",
+            "certificate_hash": "b06a79c753125845ce1c0d668250a9732f5efbc8"
+          }
+        },
+        {
           "client_id": "143478142968-roci4mud58v087nqtkhhe44s4tlmns4i.apps.googleusercontent.com",
           "client_type": 3
         }
