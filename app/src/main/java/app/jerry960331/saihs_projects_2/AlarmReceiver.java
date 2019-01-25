@@ -24,7 +24,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Ringtone ringtone = RingtoneManager.getRingtone(context, alarmUri);
         ringtone.play();
 
-        try {
+       /* try {
             Bundle bundle = intent.getExtras();
             boolean[] socket;
             String purpose;
@@ -41,7 +41,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             intent2.putExtras(mainBundle2);
             context.sendBroadcast(intent2);
 
-                /*
+                *//*
 
                 Intent mainIntent = new Intent(context, MainActivity.class);
                 mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -51,12 +51,12 @@ public class AlarmReceiver extends BroadcastReceiver {
                 mainBundle.putString("purpose", purpose);
 
                 mainIntent.putExtras(mainBundle);
-                context.startActivity(mainIntent);*/
+                context.startActivity(mainIntent);*//*
 
         } catch (Exception e) {
             Toast.makeText(context, "onReceive\n" + e + "", Toast.LENGTH_LONG).show();
             Log.d("onReceive: ", e + "");
-        }
+        }*/
 
 
     }

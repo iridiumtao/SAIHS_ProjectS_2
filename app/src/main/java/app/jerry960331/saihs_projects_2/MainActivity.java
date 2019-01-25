@@ -3,7 +3,6 @@ package app.jerry960331.saihs_projects_2;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.ExpandableListActivity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -43,13 +42,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,8 +55,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
-
-import static android.os.Looper.getMainLooper;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -129,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
     Double currentAv1 = 0.0, currentAv2 = 0.0, currentAv3 = 0.0, currentAv4 = 0.0;
     String chipAutoOn1 = "0", chipAutoOn2 = "0", chipAutoOn3 = "0", chipAutoOn4 = "0";
 
+    //Firebase
+    FirebaseDatabase firebase;
+    DatabaseReference firebaseCommand;
+
     //鬧鐘回傳
     boolean isAlarmOn1 = false;
     String alarmSetTime1 = "";
@@ -179,10 +175,9 @@ public class MainActivity extends AppCompatActivity {
 
         //Log.d("RND", Math.random()*180+"");
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("command");
-        myRef.setValue("Hello, World!");
-                //"Hello, World!"
+
+        firebaseCommand("z");
+        //"z" means "Hello, World!" talk to Arduino
 
 
         registerReceiver(broadcastReceiver, new IntentFilter("Socket_Action"));
@@ -239,13 +234,11 @@ public class MainActivity extends AppCompatActivity {
                         //tvSB.setText(String.value)
                         if (btDataString.charAt(0) == '#') {
                             try {
-
                                 if (logIsOn) {
                                     txLog.setText(btDataString + "\n" + txLog.getText().toString());
                                 }
 
                                 PIR = btDataString.substring(1, 2);//偵測到人會收到0
-
                                 //僅於安全電流範圍收值
                                 if (!unsafeCurrent1) {
                                     current1 = btDataString.substring(3, 8);
@@ -271,7 +264,6 @@ public class MainActivity extends AppCompatActivity {
                                 chipAutoOn3 = btDataString.substring(31, 32);
                                 chipAutoOn4 = btDataString.substring(33, 34);
 
-
                                 if (Integer.parseInt(current1) > safeCurrentValue) {
                                     btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
                                     unsafeCurrent1 = true;
@@ -280,45 +272,6 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
                                     unsafeCurrent3 = true;
                                 }
-
-
-                                if (Integer.parseInt(chipAutoOn1) == 1) {
-                                    if (Integer.parseInt(PIR) == 0) {
-                                        swSk1.setChecked(true);
-                                        btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
-                                    } else {
-                                        swSk1.setChecked(false);
-                                        btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
-                                    }
-                                }
-                                if (Integer.parseInt(chipAutoOn2) == 1) {
-                                    if (Integer.parseInt(PIR) == 0) {
-                                        swSk2.setChecked(true);
-                                        btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
-                                    } else {
-                                        swSk2.setChecked(false);
-                                        btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
-                                    }
-                                }
-                                if (Integer.parseInt(chipAutoOn3) == 1) {
-                                    if (Integer.parseInt(PIR) == 0) {
-                                        swSk3.setChecked(true);
-                                        btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
-                                    } else {
-                                        swSk3.setChecked(false);
-                                        btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
-                                    }
-                                }
-                                if (Integer.parseInt(chipAutoOn4) == 1) {
-                                    if (Integer.parseInt(PIR) == 0) {
-                                        swSk4.setChecked(true);
-                                        btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
-                                    } else {
-                                        swSk4.setChecked(false);
-                                        btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
-                                    }
-                                }
-
 
                                 if (Integer.parseInt(current1) == 0) {
                                     btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
@@ -349,10 +302,46 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkStat4.setImageResource(R.drawable.dot_red_48dp);
                                 }
 
+                                if (Integer.parseInt(chipAutoOn1) == 1) {
+                                    if (Integer.parseInt(PIR) == 0) {
+                                        swSk1.setChecked(true);
+                                        btnSkStat1.setImageResource(R.drawable.dot_blue_48dp);
+                                    } else {
+                                        swSk1.setChecked(false);
+                                        btnSkStat1.setImageResource(R.drawable.dot_blue_48dp);
+                                    }
+                                }
+                                if (Integer.parseInt(chipAutoOn2) == 1) {
+                                    if (Integer.parseInt(PIR) == 0) {
+                                        swSk2.setChecked(true);
+                                        btnSkStat2.setImageResource(R.drawable.dot_blue_48dp);
+                                    } else {
+                                        swSk2.setChecked(false);
+                                        btnSkStat2.setImageResource(R.drawable.dot_blue_48dp);
+                                    }
+                                }
+                                if (Integer.parseInt(chipAutoOn3) == 1) {
+                                    if (Integer.parseInt(PIR) == 0) {
+                                        swSk3.setChecked(true);
+                                        btnSkStat3.setImageResource(R.drawable.dot_blue_48dp);
+                                    } else {
+                                        swSk3.setChecked(false);
+                                        btnSkStat3.setImageResource(R.drawable.dot_blue_48dp);
+                                    }
+                                }
+                                if (Integer.parseInt(chipAutoOn4) == 1) {
+                                    if (Integer.parseInt(PIR) == 0) {
+                                        swSk4.setChecked(true);
+                                        btnSkStat4.setImageResource(R.drawable.dot_blue_48dp);
+                                    } else {
+                                        swSk4.setChecked(false);
+                                        btnSkStat4.setImageResource(R.drawable.dot_blue_48dp);
+                                    }
+                                }
+
                             } catch (Exception e) {
                                 Log.d("e", e + "");
                             }
-
                         }
                         btDataString.delete(0, btDataString.length());
                     }
@@ -378,6 +367,12 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
+    private void firebaseCommand(Object command) {
+        firebase = FirebaseDatabase.getInstance();
+        firebaseCommand = firebase.getReference("command");
+        firebaseCommand.setValue(command);
+    }
+
 
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -393,8 +388,8 @@ public class MainActivity extends AppCompatActivity {
                     alarmSocketSelect = bundle.getBooleanArray("socket");
                 }
                 alarmPurpose = bundle.getString("purpose");
-            }catch (Exception e){
-                Toast.makeText(MainActivity.this, "資料傳送失敗\n"+e, Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                Toast.makeText(MainActivity.this, "資料傳送失敗\n" + e, Toast.LENGTH_LONG).show();
             }
             autoSocketAction();
 
@@ -402,11 +397,11 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    private void autoSocketAction(){
+    private void autoSocketAction() {
 
         final int[] j = {0};
 
-        if (!isBTConnected){
+        if (!isBTConnected) {
             Connect(1);
             return;
         }
@@ -454,7 +449,6 @@ public class MainActivity extends AppCompatActivity {
         }, 1000);
 
     }
-
 
 
     private void setOnClickListeners() {
@@ -574,13 +568,13 @@ public class MainActivity extends AppCompatActivity {
                                         i = 1;
                                         IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "a";
-                                        WiFi_comm = "11W";
+                                        firebaseCommand("a");
                                     } else {
                                         btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
                                         i = 1;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "b";
-                                        WiFi_comm = "10W";
+                                        firebaseCommand("b");
                                         unsafeCurrent1 = false;
                                     }
                                     break;
@@ -595,13 +589,13 @@ public class MainActivity extends AppCompatActivity {
                                         i = 2;
                                         IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "c";
-                                        WiFi_comm = "21W";
+                                        firebaseCommand("c");
                                     } else {
                                         btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
                                         i = 2;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "d";
-                                        WiFi_comm = "20W";
+                                        firebaseCommand("d");
                                     }
                                     break;
                                 case R.id.swSk3:
@@ -615,13 +609,13 @@ public class MainActivity extends AppCompatActivity {
                                         IO = getResources().getString(R.string.turnOn);
                                         i = 3;
                                         BT_comm = "e";
-                                        WiFi_comm = "31W";
+                                        firebaseCommand("e");
                                     } else {
                                         btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
                                         i = 3;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "f";
-                                        WiFi_comm = "30W";
+                                        firebaseCommand("f");
                                         unsafeCurrent3 = false;
                                     }
                                     break;
@@ -636,13 +630,13 @@ public class MainActivity extends AppCompatActivity {
                                         i = 4;
                                         IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "g";
-                                        WiFi_comm = "41W";
+                                        firebaseCommand("g");
                                     } else {
                                         btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
                                         i = 4;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "h";
-                                        WiFi_comm = "40W";
+                                        firebaseCommand("h");
                                     }
                                     break;
                             }
@@ -1075,91 +1069,95 @@ public class MainActivity extends AppCompatActivity {
         //txConnectStat.setVisibility(View.INVISIBLE);
         //imageConnectStat.setVisibility(View.INVISIBLE);
 
-        //if (connectionMethod == "Bluetooth") {
+        if (connectionMethod.equals("Bluetooth")) {
 
-        setBluetoothEnable(true);
-        //todo 藍牙裝置選擇界面或自動搜尋
-        final String address = "98:D3:33:81:25:60"; //HC05的address
-        final String name = "SBLUE";
+            setBluetoothEnable(true);
+            //todo 藍牙裝置選擇界面或自動搜尋
+            final String address = "98:D3:33:81:25:60"; //HC05的address
+            final String name = "SBLUE";
 
-        if (!btAdapter.isEnabled()) {
-            Toast.makeText(getBaseContext(), R.string.please_try_again_after_bt_enable,
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
+            if (!btAdapter.isEnabled()) {
+                Toast.makeText(getBaseContext(), R.string.please_try_again_after_bt_enable,
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
 
-        if (isBTConnected) {
+            if (isBTConnected) {
 
-            return;
-        }
+                return;
+            }
 
-        //todo progressDialog
-        Toast.makeText(getApplicationContext(), R.string.connecting_with_dots, Toast.LENGTH_SHORT).show();
-        txConnectStat.setText(R.string.connecting_with_dots);
-        imageConnectStat.setVisibility(View.INVISIBLE);
+            //todo progressDialog
+            Toast.makeText(getApplicationContext(), R.string.connecting_with_dots, Toast.LENGTH_SHORT).show();
+            txConnectStat.setText(R.string.connecting_with_dots);
+            imageConnectStat.setVisibility(View.INVISIBLE);
 
-        // Spawn a new thread to avoid blocking the GUI one
-        new Thread() {
-            public void run() {
-                boolean fail = false;
-                //取得裝置MAC找到連接的藍芽裝置
-                BluetoothDevice device = btAdapter.getRemoteDevice(address);
-                try {
-                    btSocket = createBluetoothSocket(device);
-                    //建立藍芽socket
-                } catch (IOException e) {
-                    fail = true;
-                    Toast.makeText(getBaseContext(), "Socket creation failed",
-                            Toast.LENGTH_SHORT).show();
-                }
-
-
-                try {
-                    btSocket.connect(); //建立藍芽連線
-                } catch (IOException e) {
+            // Spawn a new thread to avoid blocking the GUI one
+            new Thread() {
+                public void run() {
+                    boolean fail = false;
+                    //取得裝置MAC找到連接的藍芽裝置
+                    BluetoothDevice device = btAdapter.getRemoteDevice(address);
                     try {
+                        btSocket = createBluetoothSocket(device);
+                        //建立藍芽socket
+                    } catch (IOException e) {
                         fail = true;
-                        btSocket.close(); //關閉socket
-                        //開啟執行緒 顯示訊息
-                        btHandler.obtainMessage(CONNECTING_STATUS, -1, -1)
-                                .sendToTarget();
-                    } catch (IOException e2) {
-                        //insert code to deal with this
                         Toast.makeText(getBaseContext(), "Socket creation failed",
                                 Toast.LENGTH_SHORT).show();
                     }
-                }
-                if (!fail) {
-                    //開啟執行緒用於傳輸及接收資料
-                    btConnectedThread = new MainActivity.ConnectedThread(btSocket);
-                    btConnectedThread.start();
-                    //開啟新執行緒顯示連接裝置名稱
-                    btHandler.obtainMessage(CONNECTING_STATUS, 1, -1, name)
-                            .sendToTarget();
-
-                    //藍牙連接成功
-                    btnConnect.setVisibility(View.INVISIBLE);
-                    btConnectedThread.write("z"); //成功後傳值
 
 
-                    isBTConnected = true;
-                    txConnectStat.setVisibility(View.INVISIBLE);
-                    //imageConnectStat.setVisibility(View.INVISIBLE);
-
-                    //FunctionSetEnable(true);
-
-
-                    if (i == 1){
-                        autoSocketAction();
+                    try {
+                        btSocket.connect(); //建立藍芽連線
+                    } catch (IOException e) {
+                        try {
+                            fail = true;
+                            btSocket.close(); //關閉socket
+                            //開啟執行緒 顯示訊息
+                            btHandler.obtainMessage(CONNECTING_STATUS, -1, -1)
+                                    .sendToTarget();
+                        } catch (IOException e2) {
+                            //insert code to deal with this
+                            Toast.makeText(getBaseContext(), "Socket creation failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
+                    if (!fail) {
+                        //開啟執行緒用於傳輸及接收資料
+                        btConnectedThread = new MainActivity.ConnectedThread(btSocket);
+                        btConnectedThread.start();
+                        //開啟新執行緒顯示連接裝置名稱
+                        btHandler.obtainMessage(CONNECTING_STATUS, 1, -1, name)
+                                .sendToTarget();
 
+                        //藍牙連接成功
+                        btnConnect.setVisibility(View.INVISIBLE);
+                        btConnectedThread.write("z"); //成功後傳值
+
+
+                        isBTConnected = true;
+                        txConnectStat.setVisibility(View.INVISIBLE);
+                        //imageConnectStat.setVisibility(View.INVISIBLE);
+
+                        //FunctionSetEnable(true);
+
+
+                        if (i == 1) {
+                            autoSocketAction();
+                        }
+
+                    }
                 }
-            }
-        }.start();
-        //} else if (connectionMethod == "Wi-Fi") {
-        //    Toast.makeText(getBaseContext(), "Unavailable",
-        //            Toast.LENGTH_LONG).show();
-        //}
+            }.start();
+        } else if (connectionMethod.equals("Wi-Fi")) {
+            Toast.makeText(getBaseContext(), "Unavailable",
+                    Toast.LENGTH_LONG).show();
+
+
+
+
+        }
     }
 
     private void FunctionSetEnable(boolean b) {
@@ -1282,11 +1280,16 @@ public class MainActivity extends AppCompatActivity {
             if (btConnectedThread != null) {
                 btConnectedThread.write("i");
             }
+            firebaseCommand("i");
         } else {
             AutoOn1 = false;
             btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
             //swSk1.setEnabled(true);
+            if (btConnectedThread != null) {
+                btConnectedThread.write("m");
+            }
+            firebaseCommand("m");
         }
     }
 
@@ -1300,11 +1303,16 @@ public class MainActivity extends AppCompatActivity {
             if (btConnectedThread != null) {
                 btConnectedThread.write("j");
             }
+            firebaseCommand("j");
         } else {
             AutoOn2 = false;
             btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto2.setTextColor(getResources().getColor(R.color.colorPrimary));
             //swSk2.setEnabled(true);
+            if (btConnectedThread != null) {
+                btConnectedThread.write("n");
+            }
+            firebaseCommand("n");
         }
     }
 
@@ -1318,11 +1326,16 @@ public class MainActivity extends AppCompatActivity {
             if (btConnectedThread != null) {
                 btConnectedThread.write("k");
             }
+            firebaseCommand("k");
         } else {
             AutoOn3 = false;
             btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto3.setTextColor(getResources().getColor(R.color.colorPrimary));
             //swSk3.setEnabled(true);
+            if (btConnectedThread != null) {
+                btConnectedThread.write("o");
+            }
+            firebaseCommand("o");
         }
     }
 
@@ -1336,11 +1349,16 @@ public class MainActivity extends AppCompatActivity {
             if (btConnectedThread != null) {
                 btConnectedThread.write("l");
             }
+            firebaseCommand("l");
         } else {
             AutoOn4 = false;
             btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto));
             btnSkAuto4.setTextColor(getResources().getColor(R.color.colorPrimary));
             //swSk4.setEnabled(true);
+            if (btConnectedThread != null) {
+                btConnectedThread.write("p");
+            }
+            firebaseCommand("p");
         }
     }
 
@@ -1403,7 +1421,7 @@ public class MainActivity extends AppCompatActivity {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("sw4mA");
             Map<String, Object> data = new HashMap<>();
-            data.put("command","Hello, World!");
+            data.put("command", "Hello, World!");
             myRef.updateChildren(data);
 
             /*myRef.addValueEventListener(new ValueEventListener() {
@@ -1665,10 +1683,7 @@ public class MainActivity extends AppCompatActivity {
                 .putString("alarmSetSchedule1", schedule1)
                 .apply();
         Toast.makeText(getApplicationContext(), "已將資料儲存至手機", Toast.LENGTH_SHORT).show();
-        unregisterReceiver(broadcastReceiver);
 
-        btHandler.removeCallbacksAndMessages(null);
-        Disconnect();
         super.onStop();
 
     }
@@ -1676,6 +1691,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         Log.d("MainActivity:", "onDestroy");
+        unregisterReceiver(broadcastReceiver); //from broadcast receiver while MainActivity is running
+        btHandler.removeCallbacksAndMessages(null);
+        Disconnect(); //BT disconnect
         super.onDestroy();
 
     }
