@@ -53,31 +53,31 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     int powerNow;
     Double currentAve;
     boolean isSWOn;
-    TextView txCurrentStat, txCurrentNow, txPowerNow, txCurrentAve, txCurrentDescription;
-    ImageView imageCurrentStat;
+    private TextView txCurrentStat, txCurrentNow, txPowerNow, txCurrentAve, txCurrentDescription;
+    private ImageView imageCurrentStat;
     boolean devModeValue = false;
-    private Handler statHandler;
-    ArrayList currentSumArrayList = new ArrayList<Double>();
+    Handler statHandler;
+    private ArrayList currentSumArrayList = new ArrayList<Double>();
 
     //鬧鐘
-    Button btnGotoTimer;
-    TextView txNowTime;
-    TextView txNowDate;
-    ImageButton btnAlarmIsOn1;
-    TextView txAlarmSetSchedule1;
-    TextView txAlarmSetTime1;
-    TextView txAlarmIntent1;
-    FloatingActionButton fabAlarm;
+    private Button btnGotoTimer;
+    private TextView txNowTime;
+    private TextView txNowDate;
+    private ImageButton btnAlarmIsOn1;
+    private TextView txAlarmSetSchedule1;
+    private TextView txAlarmSetTime1;
+    private TextView txAlarmIntent1;
+    private FloatingActionButton fabAlarm;
     boolean isAlarmOn1;
     String alarmSetTime1 = "";
     private Calendar alarmCal;
     private OnAlarmDialogResult alarmDialogResult; //回傳鬧鐘資料
     private OnChartDialogResult chartDialogResult;
-    LinearLayout alarmSet1;
+    private LinearLayout alarmSet1;
     ArrayList selectedItems = new ArrayList();
     boolean[] checkedItems;
-    private Handler clockHandler;
-    Calendar cal = Calendar.getInstance();
+    Handler clockHandler;
+    private Calendar cal = Calendar.getInstance();
     int safeCurrentValue;
     String current;
     private Button btnAlarmSocket1, btnAlarmSocket2, btnAlarmSocket3, btnAlarmSocket4;
@@ -101,9 +101,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
 
     //表格
-    LineChart chart;
-    private Handler getCurrentHandler;
-    Boolean currentNotSafe = false;
+    private LineChart chart;
+    Handler getCurrentHandler;
+    private Boolean currentNotSafe = false;
 
 
     CustomDialogActivity(Activity a) {
@@ -197,6 +197,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 chart.setScaleEnabled(true);
                 chart.setDrawGridBackground(false);
                 chart.setPinchZoom(true);
+                chart.getDescription().setEnabled(false);
                 LineData data = new LineData();
                 chart.setData(data);
 
@@ -233,7 +234,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     public void run() {
                         LineData data = chart.getData();
                         if (data != null) {
-                            ILineDataSet set = data.getDataSetByIndex(0);
+                            ILineDataSet set, AvSet;
+                            set = data.getDataSetByIndex(0);
+                            AvSet = data.getDataSetByIndex(1);
                             // set.addEntry(...); // can be called as well
                             if (set == null) {
                                 set = createSet();
@@ -738,13 +741,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 alarmCal.add(Calendar.DATE, 1);
                 //todo 呼叫broadcast執行鬧鐘
 
-                clockHandler.removeCallbacksAndMessages(null);
-
-
                 break;
             case "Chart2":
                 chartDialogResult.finish("Chart2 Finish");
-                getCurrentHandler.removeCallbacksAndMessages(null);
 
                 Toast.makeText(getContext(), "Chart dialog finish", Toast.LENGTH_SHORT).show();
 
