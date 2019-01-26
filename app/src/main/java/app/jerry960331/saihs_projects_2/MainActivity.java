@@ -51,6 +51,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -263,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
                                 chipAutoOn2 = btDataString.substring(29, 30);
                                 chipAutoOn3 = btDataString.substring(31, 32);
                                 chipAutoOn4 = btDataString.substring(33, 34);
+                                //35 37 39 41
 
                                 if (Integer.parseInt(current1) > safeCurrentValue) {
                                     btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
@@ -273,30 +275,30 @@ public class MainActivity extends AppCompatActivity {
                                     unsafeCurrent3 = true;
                                 }
 
-                                if (Integer.parseInt(current1) == 0) {
+                                if (Integer.parseInt(btDataString.substring(35, 36)) == 0) {
                                     btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
-                                } else if (Integer.parseInt(current1) > 0 && Integer.parseInt(current1) < 3000) {
+                                } else if (Integer.parseInt(btDataString.substring(35, 36)) == 1 && Integer.parseInt(current1) < 3000) {
                                     btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
                                 } else if (Integer.parseInt(current1) > 3000) {
                                     btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
                                 }
-                                if (Integer.parseInt(current2) == 0) {
+                                if (Integer.parseInt(btDataString.substring(37, 38)) == 0) {
                                     btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
-                                } else if (Integer.parseInt(current2) > 0 && Integer.parseInt(current2) < 3000) {
+                                } else if (Integer.parseInt(btDataString.substring(37, 38)) == 1 && Integer.parseInt(current2) < 3000) {
                                     btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
                                 } else if (Integer.parseInt(current2) > 3000) {
                                     btnSkStat2.setImageResource(R.drawable.dot_red_48dp);
                                 }
-                                if (Integer.parseInt(current3) == 0) {
+                                if (Integer.parseInt(btDataString.substring(39, 40)) == 0) {
                                     btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
-                                } else if (Integer.parseInt(current3) > 0 && Integer.parseInt(current3) < 3000) {
+                                } else if (Integer.parseInt(btDataString.substring(39, 40)) == 1 && Integer.parseInt(current3) < 3000) {
                                     btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
                                 } else if (Integer.parseInt(current3) > 3000) {
                                     btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
                                 }
-                                if (Integer.parseInt(current4) == 0) {
+                                if (Integer.parseInt(btDataString.substring(41, 42)) == 0) {
                                     btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
-                                } else if (Integer.parseInt(current4) > 0 && Integer.parseInt(current4) < 3000) {
+                                } else if (Integer.parseInt(btDataString.substring(41, 42)) == 1 && Integer.parseInt(current4) < 3000) {
                                     btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
                                 } else if (Integer.parseInt(current4) > 3000) {
                                     btnSkStat4.setImageResource(R.drawable.dot_red_48dp);
@@ -338,6 +340,14 @@ public class MainActivity extends AppCompatActivity {
                                         btnSkStat4.setImageResource(R.drawable.dot_blue_48dp);
                                     }
                                 }
+
+
+                                firebase = FirebaseDatabase.getInstance();
+                                DatabaseReference myRef = firebase.getReference("test_user1").child("data_");
+                                Map<String, Object> data = new HashMap<>();
+                                Date currentTime = Calendar.getInstance().getTime();
+                                data.put(currentTime.toString(), btDataString);
+                                myRef.updateChildren(data);
 
                             } catch (Exception e) {
                                 Log.d("e", e + "");
@@ -1418,11 +1428,13 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             logIsOn = true;
 
+
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("sw4mA");
             Map<String, Object> data = new HashMap<>();
             data.put("command", "Hello, World!");
             myRef.updateChildren(data);
+
 
             /*myRef.addValueEventListener(new ValueEventListener() {
                 @Override

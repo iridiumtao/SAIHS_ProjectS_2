@@ -89,7 +89,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
 
     //倒數計時器
-    private Button btnGotoAlarm , btnTimerSocket1, btnTimerSocket2, btnTimerSocket3, btnTimerSocket4;
+    private Button btnGotoAlarm, btnTimerSocket1, btnTimerSocket2, btnTimerSocket3, btnTimerSocket4;
     private EditText editTextHour, editTextMinute, editTextSecond;
     private ImageButton btnStartStop, btnReset;
     private Switch swTimer;
@@ -105,6 +105,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     private LineChart chart;
     Handler getCurrentHandler;
     private Boolean currentNotSafe = false;
+    private TextView txChartAvCurrent;
 
 
     CustomDialogActivity(Activity a) {
@@ -122,7 +123,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         //sectionPageAdapter = new SectionPageAdapter;
 
 
-
         switch (functionSelect) {
             case "Stat":
 
@@ -136,54 +136,52 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 txPowerNow = findViewById(R.id.txPowerNow);
 
                 final int[] tick = {0};
-                if (statHandler.getLooper() == null) {
-                    statHandler = new Handler(getMainLooper());
-                    statHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            tick[0]++;
+                statHandler = new Handler(getMainLooper());
+                statHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tick[0]++;
 
-                            txCurrentStat.setText(currentStat);
-                            txCurrentNow.setText(currentNow + " mA");
+                        txCurrentStat.setText(currentStat);
+                        txCurrentNow.setText(currentNow + " mA");
 
-                            currentSumArrayList.add(currentNow);
-                            double sum = 0;
-                            for (int i = 1; i < currentSumArrayList.size(); i++) {
-                                sum += Double.parseDouble(currentSumArrayList.get(i).toString());
-                            }
-                            txCurrentAve.setText(sum / tick[0] + "mA");
-
-
-                            txPowerNow.setText(currentNow * 0.11 + " W");
-
-
-                            if (currentNow == 0) {
-                                txCurrentStat.setText(R.string.socket_off);
-                                txCurrentDescription.setText(R.string.current_description_off);
-                                imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
-                            } else if (currentNow > 0 && currentNow < 3000) {
-                                txCurrentStat.setText(R.string.good);
-                                txCurrentDescription.setText(R.string.current_description_good);
-                                imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
-                                //}else if (currentNow > 8000 && currentNow < 12000) {
-                                //  txCurrentStat.setText(R.string.orange);
-                                //  txCurrentDescription.setText(R.string.current_description_orange);
-                                //  imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
-                            } else if (currentNow > 3000) {
-                                txCurrentStat.setText(R.string.red);
-                                txCurrentDescription.setText(R.string.current_description_red);
-                                imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
-                            } else {
-                                txCurrentStat.setText(R.string.socket_off);
-                                txCurrentDescription.setText(R.string.current_description_off);
-                                imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
-                            }
-
-
-                            statHandler.postDelayed(this, 1000);
+                        currentSumArrayList.add(currentNow);
+                        double sum = 0;
+                        for (int i = 1; i < currentSumArrayList.size(); i++) {
+                            sum += Double.parseDouble(currentSumArrayList.get(i).toString());
                         }
-                    }, 10);
-                }
+                        txCurrentAve.setText(sum / tick[0] + "mA");
+
+
+                        txPowerNow.setText(currentNow * 0.11 + " W");
+
+
+                        if (currentNow == 0) {
+                            txCurrentStat.setText(R.string.socket_off);
+                            txCurrentDescription.setText(R.string.current_description_off);
+                            imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
+                        } else if (currentNow > 0 && currentNow < 3000) {
+                            txCurrentStat.setText(R.string.good);
+                            txCurrentDescription.setText(R.string.current_description_good);
+                            imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
+                            //}else if (currentNow > 8000 && currentNow < 12000) {
+                            //  txCurrentStat.setText(R.string.orange);
+                            //  txCurrentDescription.setText(R.string.current_description_orange);
+                            //  imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
+                        } else if (currentNow > 3000) {
+                            txCurrentStat.setText(R.string.red);
+                            txCurrentDescription.setText(R.string.current_description_red);
+                            imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
+                        } else {
+                            txCurrentStat.setText(R.string.socket_off);
+                            txCurrentDescription.setText(R.string.current_description_off);
+                            imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
+                        }
+
+
+                        statHandler.postDelayed(this, 1000);
+                    }
+                }, 10);
 
 
                 break;
@@ -194,6 +192,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
             case "Chart2":
                 Log.d("d", "chart");
                 setContentView(R.layout.chart_dialog);
+                txChartAvCurrent = findViewById(R.id.txChartAvCurrent);
                 chart = findViewById(R.id.currentChartRT);
                 chart.setVisibility(View.VISIBLE);
                 chart.setTouchEnabled(true);
@@ -229,67 +228,68 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 YAxis rightAxis = chart.getAxisRight();
                 rightAxis.setEnabled(false);
 
-                if (current == null || current == ""){
+                if (current == null || current == "") {
                     current = "0";
                 }
 
                 final int[] tick2 = {0};
-                if (getCurrentHandler.getLooper() == null) {
-                    getCurrentHandler = new Handler(getMainLooper());
-                    getCurrentHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            tick2[0] ++;
-                            LineData data, avData;
-                            data = chart.getData();
-                            avData = chart.getData();
-                            if (data != null) {
-                                ILineDataSet set, avSet;
-                                set = data.getDataSetByIndex(0);
-                                avSet = data.getDataSetByIndex(1);
-                                // set.addEntry(...); // can be called as well
-                                if (set == null) {
-                                    set = createSet();
-                                    data.addDataSet(set);
-                                    avSet = createAvSet();
-                                    avData.addDataSet(avSet);
-                                }
-                                if (current == null) {
-                                    current = "0";
-                                }
-
-                                currentSumArrayList.add(Integer.parseInt(current));
-                                float sum = 0;
-                                for (int i = 1; i < currentSumArrayList.size(); i++) {
-                                    sum += (Float) (currentSumArrayList.get(i));
-                                }
-                                float convertNum = (float) Math.rint((sum / tick2[0]) * 100 ) / 100;
-
-                                if (!currentNotSafe) {
-                                    if (devModeValue) {
-                                        data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
-                                    } else {
-                                        data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(current)), 0);
-                                        avData.addEntry(new Entry(set.getEntryCount(), sum / convertNum),0);
-                                    }
-                                    data.notifyDataChanged();
-                                    chart.notifyDataSetChanged();
-                                    chart.setVisibleXRangeMaximum(30);
-                                    chart.setVisibleXRangeMinimum(10);
-                                    chart.moveViewToX(data.getEntryCount());
-                                    Log.d("i", set.getEntryCount() + "");
-                                    chart.invalidate();
-                                }
-
-                                if (Integer.parseInt(current) >= safeCurrentValue) { //停止繪製表格
-                                    currentNotSafe = true;
-                                }
-
-                                getCurrentHandler.postDelayed(this, 1000);
+                getCurrentHandler = new Handler(getMainLooper());
+                getCurrentHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tick2[0]++;
+                        LineData data, avData;
+                        data = chart.getData();
+                        avData = chart.getData();
+                        if (data != null) {
+                            ILineDataSet set, avSet;
+                            set = data.getDataSetByIndex(0);
+                            avSet = data.getDataSetByIndex(1);
+                            // set.addEntry(...); // can be called as well
+                            if (set == null) {
+                                set = createSet();
+                                data.addDataSet(set);
+                                //avSet = createAvSet();
+                                //avData.addDataSet(avSet);
                             }
+                            if (current == null) {
+                                current = "0";
+                            }
+
+                            currentSumArrayList.add(Integer.parseInt(current));
+                            float sum = 0;
+                            for (int i = 1; i < currentSumArrayList.size(); i++) {
+                                sum += Float.parseFloat((currentSumArrayList.get(i)).toString());
+                            }
+                            float convertNum = (float) Math.rint((sum / tick2[0]) * 100) / 100;
+
+                            if (!currentNotSafe) {
+                                if (devModeValue) {
+                                    data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
+                                } else {
+                                    data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(current)), 0);
+                                    //avData.addEntry(new Entry(set.getEntryCount(), sum / convertNum), 0);
+                                }
+                                txChartAvCurrent.setText("平均電流：" + convertNum + "mA");
+
+                                data.notifyDataChanged();
+                                chart.notifyDataSetChanged();
+                                chart.setVisibleXRangeMaximum(30);
+                                chart.setVisibleXRangeMinimum(10);
+                                chart.moveViewToX(data.getEntryCount());
+                                Log.d("i", set.getEntryCount() + "");
+                                chart.invalidate();
+                            }
+
+                            if (Integer.parseInt(current) >= safeCurrentValue) { //停止繪製表格
+                                currentNotSafe = true;
+                            }
+
+                            getCurrentHandler.postDelayed(this, 1000);
                         }
-                    }, 10);
-                }
+                    }
+                }, 10);
+
                 break;
         }
     }
@@ -377,8 +377,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         txAlarmSetTime1.setText(String.format("%02d:%02d", hourOfDay, minute, Locale.getDefault()));
                         cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                        cal.set(Calendar.MINUTE,minute);
-                        cal.set(Calendar.SECOND,0);
+                        cal.set(Calendar.MINUTE, minute);
+                        cal.set(Calendar.SECOND, 0);
 
                     }
                 }, hour, minute, true);
@@ -475,11 +475,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         btnAlarmSocket1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (alarmS1){
+                if (alarmS1) {
                     btnAlarmSocket1.setBackground(getContext().getDrawable(R.drawable.button_auto));
                     btnAlarmSocket1.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
                     alarmS1 = false;
-                }else {
+                } else {
                     btnAlarmSocket1.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
                     btnAlarmSocket1.setTextColor(getContext().getResources().getColor(R.color.white));
                     alarmS1 = true;
@@ -490,11 +490,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         btnAlarmSocket2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (alarmS2){
+                if (alarmS2) {
                     btnAlarmSocket2.setBackground(getContext().getDrawable(R.drawable.button_auto));
                     btnAlarmSocket2.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
                     alarmS2 = false;
-                }else {
+                } else {
                     btnAlarmSocket2.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
                     btnAlarmSocket2.setTextColor(getContext().getResources().getColor(R.color.white));
                     alarmS2 = true;
@@ -505,11 +505,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         btnAlarmSocket3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (alarmS3){
+                if (alarmS3) {
                     btnAlarmSocket3.setBackground(getContext().getDrawable(R.drawable.button_auto));
                     btnAlarmSocket3.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
                     alarmS3 = false;
-                }else {
+                } else {
                     btnAlarmSocket3.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
                     btnAlarmSocket3.setTextColor(getContext().getResources().getColor(R.color.white));
                     alarmS3 = true;
@@ -520,11 +520,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         btnAlarmSocket4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (alarmS4){
+                if (alarmS4) {
                     btnAlarmSocket4.setBackground(getContext().getDrawable(R.drawable.button_auto));
                     btnAlarmSocket4.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
                     alarmS4 = false;
-                }else {
+                } else {
                     btnAlarmSocket4.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
                     btnAlarmSocket4.setTextColor(getContext().getResources().getColor(R.color.white));
                     alarmS4 = true;
@@ -532,8 +532,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 TxIntentChange();
             }
         });
-
-
 
 
         btnAlarmIsOn1.setOnClickListener(new View.OnClickListener() {
@@ -589,11 +587,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 btnTimerSocket1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (timerS1){
+                        if (timerS1) {
                             btnTimerSocket1.setBackground(getContext().getDrawable(R.drawable.button_auto));
                             btnTimerSocket1.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
                             timerS1 = false;
-                        }else {
+                        } else {
                             btnTimerSocket1.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
                             btnTimerSocket1.setTextColor(getContext().getResources().getColor(R.color.white));
                             timerS1 = true;
@@ -604,11 +602,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 btnTimerSocket2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (timerS2){
+                        if (timerS2) {
                             btnTimerSocket2.setBackground(getContext().getDrawable(R.drawable.button_auto));
                             btnTimerSocket2.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
                             timerS2 = false;
-                        }else {
+                        } else {
                             btnTimerSocket2.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
                             btnTimerSocket2.setTextColor(getContext().getResources().getColor(R.color.white));
                             timerS2 = true;
@@ -619,11 +617,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 btnTimerSocket3.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (timerS3){
+                        if (timerS3) {
                             btnTimerSocket3.setBackground(getContext().getDrawable(R.drawable.button_auto));
                             btnTimerSocket3.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
                             timerS3 = false;
-                        }else {
+                        } else {
                             btnTimerSocket3.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
                             btnTimerSocket3.setTextColor(getContext().getResources().getColor(R.color.white));
                             timerS3 = true;
@@ -634,11 +632,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 btnTimerSocket4.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (timerS4){
+                        if (timerS4) {
                             btnTimerSocket4.setBackground(getContext().getDrawable(R.drawable.button_auto));
                             btnTimerSocket4.setTextColor(getContext().getResources().getColor(R.color.colorPrimary));
                             timerS4 = false;
-                        }else {
+                        } else {
                             btnTimerSocket4.setBackground(getContext().getDrawable(R.drawable.button_auto_on));
                             btnTimerSocket4.setTextColor(getContext().getResources().getColor(R.color.white));
                             timerS4 = true;
@@ -649,7 +647,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 btnStartStop.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        
+
                     }
                 });
 
@@ -663,39 +661,39 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         });
     }
 
-    private void TxIntentChange(){
+    private void TxIntentChange() {
         String s = "";
-        if (swAlarm.isChecked()){
+        if (swAlarm.isChecked()) {
             txAlarmIntent1.setText("開啟插座:");
             alarmPurpose = "TURN_ON";
-        }else {
+        } else {
             txAlarmIntent1.setText("關閉插座:");
             alarmPurpose = "TURN_OFF";
         }
-        for (int i = 0; i < 4; i ++){
+        for (int i = 0; i < 4; i++) {
             alarmSocketSelect[i] = false;
         }
 
-        if (alarmS1){
+        if (alarmS1) {
             s += "1,";
             alarmSocketSelect[0] = true;
         }
-        if (alarmS2){
+        if (alarmS2) {
             s += "2,";
             alarmSocketSelect[1] = true;
         }
-        if (alarmS3){
+        if (alarmS3) {
             s += "3,";
             alarmSocketSelect[2] = true;
         }
-        if (alarmS4){
+        if (alarmS4) {
             s += "4,";
             alarmSocketSelect[3] = true;
         }
 
 
         txAlarmIntent1.setText(txAlarmIntent1.getText() + s);
-        txAlarmIntent1.setText(txAlarmIntent1.getText().subSequence(0,txAlarmIntent1.getText().length()-1));
+        txAlarmIntent1.setText(txAlarmIntent1.getText().subSequence(0, txAlarmIntent1.getText().length() - 1));
 
 
     }
@@ -703,10 +701,10 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     private LineDataSet createSet() {
         Log.d("call", "createSet()");
         LineDataSet set;
-        if (devModeValue){
+        if (devModeValue) {
             set = new LineDataSet(null, "電流值(開發模式)");
 
-        }else {
+        } else {
             set = new LineDataSet(null, "電流值");
         }
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -723,25 +721,25 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         set.setDrawValues(true);
         return set;
     }
+
     private LineDataSet createAvSet() {
         Log.d("call", "createSet()");
         LineDataSet set;
         set = new LineDataSet(null, "平均值");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(Color.rgb(167,255,235)); //Color.rgb(0, 185, 169) == colorPrimary
+        set.setColor(Color.rgb(167, 255, 235)); //Color.rgb(0, 185, 169) == colorPrimary
         //set.setCircleColor(Color.rgb(0, 185, 169));
         //set.setCircleHoleColor(Color.WHITE);
         set.setLineWidth(2f);
         set.setCircleRadius(4f);
         set.setFillAlpha(65);
-        set.setFillColor(Color.rgb(167,255,235));
+        set.setFillColor(Color.rgb(167, 255, 235));
         set.setHighLightColor(Color.rgb(244, 117, 117));
         //set.setValueTextColor(Color.WHITE);
         set.setValueTextSize(9f);
         set.setDrawValues(true);
         return set;
     }
-
 
 
     private void setProgressBarValues() {
@@ -770,15 +768,16 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 alarmDialogResult.alarmSocketSelected(alarmSocketSelect);
                 alarmDialogResult.selectedItems(selectedItems);
                 alarmDialogResult.checkedItems(checkedItems);
-                if(isAlarmOn1){
+                if (isAlarmOn1) {
                     alarmDialogResult.callStartAlarm(cal);
-                }else {
+                } else {
                     alarmDialogResult.callCancelAlarm(cal);
                 }
                 Log.d("selectedItems", selectedItems + "");
 
-                if (clockHandler.getLooper() != null) {
+                try {
                     clockHandler.removeCallbacksAndMessages(null);
+                } catch (Exception ignore) {
                 }
                 alarmCal = Calendar.getInstance();
                 alarmCal.add(Calendar.DATE, 1);
