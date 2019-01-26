@@ -59,6 +59,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     Handler statHandler;
     private ArrayList currentSumArrayList = new ArrayList<Double>();
 
+
     //鬧鐘
     private Button btnGotoTimer;
     private TextView txNowTime;
@@ -120,6 +121,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //sectionPageAdapter = new SectionPageAdapter;
 
+
+
         switch (functionSelect) {
             case "Stat":
 
@@ -133,54 +136,55 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 txPowerNow = findViewById(R.id.txPowerNow);
 
                 final int[] tick = {0};
-                tick[0] = 0;
+                if (statHandler.getLooper() == null) {
+                    statHandler = new Handler(getMainLooper());
+                    statHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            tick[0]++;
 
-                statHandler = new Handler(getMainLooper());
-                statHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        tick[0]++;
+                            txCurrentStat.setText(currentStat);
+                            txCurrentNow.setText(currentNow + " mA");
 
-                        txCurrentStat.setText(currentStat);
-                        txCurrentNow.setText(currentNow + " mA");
+                            currentSumArrayList.add(currentNow);
+                            double sum = 0;
+                            for (int i = 1; i < currentSumArrayList.size(); i++) {
+                                sum += Double.parseDouble(currentSumArrayList.get(i).toString());
+                            }
+                            txCurrentAve.setText(sum / tick[0] + "mA");
 
-                        currentSumArrayList.add(currentNow);
-                        double sum = 0;
-                        for(int i = 1; i < currentSumArrayList.size(); i++) {
-                            sum += Double.parseDouble(currentSumArrayList.get(i).toString());
+
+                            txPowerNow.setText(currentNow * 0.11 + " W");
+
+
+                            if (currentNow == 0) {
+                                txCurrentStat.setText(R.string.socket_off);
+                                txCurrentDescription.setText(R.string.current_description_off);
+                                imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
+                            } else if (currentNow > 0 && currentNow < 3000) {
+                                txCurrentStat.setText(R.string.good);
+                                txCurrentDescription.setText(R.string.current_description_good);
+                                imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
+                                //}else if (currentNow > 8000 && currentNow < 12000) {
+                                //  txCurrentStat.setText(R.string.orange);
+                                //  txCurrentDescription.setText(R.string.current_description_orange);
+                                //  imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
+                            } else if (currentNow > 3000) {
+                                txCurrentStat.setText(R.string.red);
+                                txCurrentDescription.setText(R.string.current_description_red);
+                                imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
+                            } else {
+                                txCurrentStat.setText(R.string.socket_off);
+                                txCurrentDescription.setText(R.string.current_description_off);
+                                imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
+                            }
+
+
+                            statHandler.postDelayed(this, 1000);
                         }
-                        txCurrentAve.setText(sum / tick[0] + "mA");
+                    }, 10);
+                }
 
-
-                        txPowerNow.setText(currentNow * 0.11 + " W");
-
-
-                        if (currentNow == 0) {
-                            txCurrentStat.setText(R.string.socket_off);
-                            txCurrentDescription.setText(R.string.current_description_off);
-                            imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
-                        } else if (currentNow > 0 && currentNow < 3000) {
-                            txCurrentStat.setText(R.string.good);
-                            txCurrentDescription.setText(R.string.current_description_good);
-                            imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
-                            //}else if (currentNow > 8000 && currentNow < 12000) {
-                            //  txCurrentStat.setText(R.string.orange);
-                            //  txCurrentDescription.setText(R.string.current_description_orange);
-                            //  imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
-                        } else if (currentNow > 3000) {
-                            txCurrentStat.setText(R.string.red);
-                            txCurrentDescription.setText(R.string.current_description_red);
-                            imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
-                        } else {
-                            txCurrentStat.setText(R.string.socket_off);
-                            txCurrentDescription.setText(R.string.current_description_off);
-                            imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
-                        }
-
-
-                        statHandler.postDelayed(this, 1000);
-                    }
-                }, 10);
 
                 break;
             case "Alarm": //=============================== Alarm =================================
@@ -228,46 +232,64 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 if (current == null || current == ""){
                     current = "0";
                 }
-                getCurrentHandler = new Handler(getMainLooper());
-                getCurrentHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        LineData data = chart.getData();
-                        if (data != null) {
-                            ILineDataSet set, AvSet;
-                            set = data.getDataSetByIndex(0);
-                            AvSet = data.getDataSetByIndex(1);
-                            // set.addEntry(...); // can be called as well
-                            if (set == null) {
-                                set = createSet();
-                                data.addDataSet(set);
-                            }
-                            if (current == null) {
-                                current = "0";
-                            }
-                            if (!currentNotSafe) {
-                                if (devModeValue) {
-                                    data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
-                                } else {
-                                    data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(current)), 0);
+
+                final int[] tick2 = {0};
+                if (getCurrentHandler.getLooper() == null) {
+                    getCurrentHandler = new Handler(getMainLooper());
+                    getCurrentHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            tick2[0] ++;
+                            LineData data, avData;
+                            data = chart.getData();
+                            avData = chart.getData();
+                            if (data != null) {
+                                ILineDataSet set, avSet;
+                                set = data.getDataSetByIndex(0);
+                                avSet = data.getDataSetByIndex(1);
+                                // set.addEntry(...); // can be called as well
+                                if (set == null) {
+                                    set = createSet();
+                                    data.addDataSet(set);
+                                    avSet = createAvSet();
+                                    avData.addDataSet(avSet);
                                 }
-                                data.notifyDataChanged();
-                                chart.notifyDataSetChanged();
-                                chart.setVisibleXRangeMaximum(30);
-                                chart.setVisibleXRangeMinimum(10);
-                                chart.moveViewToX(data.getEntryCount());
-                                Log.d("i", set.getEntryCount() + "");
-                                chart.invalidate();
-                            }
+                                if (current == null) {
+                                    current = "0";
+                                }
 
-                            if (Integer.parseInt(current) >= safeCurrentValue){ //停止繪製表格
-                                currentNotSafe = true;
-                            }
+                                currentSumArrayList.add(Integer.parseInt(current));
+                                float sum = 0;
+                                for (int i = 1; i < currentSumArrayList.size(); i++) {
+                                    sum += (Float) (currentSumArrayList.get(i));
+                                }
+                                float convertNum = (float) Math.rint((sum / tick2[0]) * 100 ) / 100;
 
-                            getCurrentHandler.postDelayed(this, 1000);
+                                if (!currentNotSafe) {
+                                    if (devModeValue) {
+                                        data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
+                                    } else {
+                                        data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(current)), 0);
+                                        avData.addEntry(new Entry(set.getEntryCount(), sum / convertNum),0);
+                                    }
+                                    data.notifyDataChanged();
+                                    chart.notifyDataSetChanged();
+                                    chart.setVisibleXRangeMaximum(30);
+                                    chart.setVisibleXRangeMinimum(10);
+                                    chart.moveViewToX(data.getEntryCount());
+                                    Log.d("i", set.getEntryCount() + "");
+                                    chart.invalidate();
+                                }
+
+                                if (Integer.parseInt(current) >= safeCurrentValue) { //停止繪製表格
+                                    currentNotSafe = true;
+                                }
+
+                                getCurrentHandler.postDelayed(this, 1000);
+                            }
                         }
-                    }
-                }, 10);
+                    }, 10);
+                }
                 break;
         }
     }
@@ -701,7 +723,24 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         set.setDrawValues(true);
         return set;
     }
-
+    private LineDataSet createAvSet() {
+        Log.d("call", "createSet()");
+        LineDataSet set;
+        set = new LineDataSet(null, "平均值");
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(Color.rgb(167,255,235)); //Color.rgb(0, 185, 169) == colorPrimary
+        //set.setCircleColor(Color.rgb(0, 185, 169));
+        //set.setCircleHoleColor(Color.WHITE);
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setFillAlpha(65);
+        set.setFillColor(Color.rgb(167,255,235));
+        set.setHighLightColor(Color.rgb(244, 117, 117));
+        //set.setValueTextColor(Color.WHITE);
+        set.setValueTextSize(9f);
+        set.setDrawValues(true);
+        return set;
+    }
 
 
 
@@ -719,6 +758,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         switch (functionSelect) {
             case "Stat":
                 Toast.makeText(getContext(), "Stat dialog finish", Toast.LENGTH_SHORT).show();
+                statHandler.removeCallbacksAndMessages(null);
                 break;
 
             case "Alarm":
@@ -737,6 +777,9 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 }
                 Log.d("selectedItems", selectedItems + "");
 
+                if (clockHandler.getLooper() != null) {
+                    clockHandler.removeCallbacksAndMessages(null);
+                }
                 alarmCal = Calendar.getInstance();
                 alarmCal.add(Calendar.DATE, 1);
                 //todo 呼叫broadcast執行鬧鐘
@@ -744,7 +787,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 break;
             case "Chart2":
                 chartDialogResult.finish("Chart2 Finish");
-
+                getCurrentHandler.removeCallbacksAndMessages(null);
                 Toast.makeText(getContext(), "Chart dialog finish", Toast.LENGTH_SHORT).show();
 
                 break;

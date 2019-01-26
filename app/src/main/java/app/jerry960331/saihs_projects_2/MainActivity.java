@@ -1695,10 +1695,6 @@ public class MainActivity extends AppCompatActivity {
         btHandler.removeCallbacksAndMessages(null);
         Disconnect(); //BT disconnect
 
-        CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-        CustomDialog.getCurrentHandler.removeCallbacksAndMessages(null);
-        CustomDialog.clockHandler.removeCallbacksAndMessages(null);
-        CustomDialog.statHandler.removeCallbacksAndMessages(null);
 
         super.onDestroy();
 
