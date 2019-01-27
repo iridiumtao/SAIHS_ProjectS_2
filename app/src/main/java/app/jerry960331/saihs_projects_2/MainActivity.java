@@ -235,12 +235,13 @@ public class MainActivity extends AppCompatActivity {
                         //tvSB.setText(String.value)
                         if (btDataString.charAt(0) == '#') {
                             try {
+                                btDataString.setLength(43);
+
                                 if (logIsOn) {
                                     txLog.setText(btDataString + "\n" + txLog.getText().toString());
                                 }
-
-                                btDataString.setLength(43);
                                 PIR = btDataString.substring(1, 2);//偵測到人會收到0
+
                                 //僅於安全電流範圍收值
                                 if (!unsafeCurrent1) {
                                     current1 = btDataString.substring(3, 8);
