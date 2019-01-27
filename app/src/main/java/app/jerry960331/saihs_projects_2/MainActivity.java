@@ -239,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
                                     txLog.setText(btDataString + "\n" + txLog.getText().toString());
                                 }
 
+                                btDataString.setLength(43);
                                 PIR = btDataString.substring(1, 2);//偵測到人會收到0
                                 //僅於安全電流範圍收值
                                 if (!unsafeCurrent1) {
@@ -346,7 +347,10 @@ public class MainActivity extends AppCompatActivity {
                                 DatabaseReference myRef = firebase.getReference("test_user1").child("data_");
                                 Map<String, Object> data = new HashMap<>();
                                 Date currentTime = Calendar.getInstance().getTime();
-                                data.put(currentTime.toString(), btDataString);
+                                if (!btDataString.toString().equals("#0+00000+00000+00000+00000+0+0+0+0+0+0+0+0~")
+                                        && !btDataString.toString().equals("#1+00000+00000+00000+00000+0+0+0+0+0+0+0+0~") ) {
+                                    data.put(currentTime.toString(), btDataString.toString());
+                                }
                                 myRef.updateChildren(data);
 
                             } catch (Exception e) {
