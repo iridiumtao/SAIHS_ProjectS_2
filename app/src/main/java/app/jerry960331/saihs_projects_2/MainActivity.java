@@ -3,6 +3,7 @@ package app.jerry960331.saihs_projects_2;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.ExpandableListActivity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,6 +17,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -42,8 +44,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -124,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Firebase
     FirebaseDatabase firebase;
-    DatabaseReference firebaseCommand;
+    DatabaseReference dbRef;
 
     //鬧鐘回傳
     boolean isAlarmOn1 = false;
@@ -179,6 +184,75 @@ public class MainActivity extends AppCompatActivity {
 
         firebaseCommand("z");
         //"z" means "Hello, World!" talk to Arduino
+
+        dbRef = FirebaseDatabase.getInstance().getReference("system_protector");
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (Integer.parseInt(dataSnapshot.getValue().toString()) != 0) {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("系統警示")
+                            .setMessage("App暫不開放")
+                            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            })
+                            .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    finish();
+                                }
+                            })
+                            .show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        dbRef = FirebaseDatabase.getInstance().getReference("app_version");
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                    Log.d(TAG, "onCreate: "+dataSnapshot.getValue());
+
+                    if (Integer.parseInt(dataSnapshot.getValue().toString()) > BuildConfig.VERSION_CODE) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("發現新版本")
+                                .setMessage(
+                                        "目前版本:" + BuildConfig.VERSION_CODE + "\n" +
+                                        "最新版本:" + dataSnapshot.getValue() + "\n" +
+                                        "請至Google雲端硬碟下載最新版本以確保App正常執行。")
+                                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .show();
+                    }
+                }catch (Exception e){
+                    Toast.makeText(MainActivity.this, "無法檢查版本狀況", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
 
 
         registerReceiver(broadcastReceiver, new IntentFilter("Socket_Action"));
@@ -384,8 +458,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void firebaseCommand(Object command) {
         firebase = FirebaseDatabase.getInstance();
-        firebaseCommand = firebase.getReference("command");
-        firebaseCommand.setValue(command);
+        dbRef = firebase.getReference("command");
+        dbRef.setValue(command);
     }
 
 
