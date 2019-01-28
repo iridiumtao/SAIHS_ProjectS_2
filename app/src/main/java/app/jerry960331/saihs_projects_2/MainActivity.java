@@ -3,7 +3,6 @@ package app.jerry960331.saihs_projects_2;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.ExpandableListActivity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,9 +14,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -35,18 +32,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -72,23 +66,21 @@ public class MainActivity extends AppCompatActivity {
     Activity c;
     private final static String TAG = "MainActivity";
     static boolean active = false;
-    String StrR;
+    String StrR = "";
 
     //介面
     private ImageButton
             btnSkStat1, btnSkStat2, btnSkStat3, btnSkStat4,
-            btnSkAlarm1, btnSkAlarm2, btnSkAlarm3, btnSkAlarm4,
+            btnSkAlarm, btnSkInfo,
             btnSkChart1, btnSkChart2, btnSkChart3, btnSkChart4;
     private Switch
-            swSk1, swSk2, swSk3, swSk4,
-            swConnectionMethod;
+            swSk1, swSk2, swSk3, swSk4;
     private EditText txSocket1, txSocket2, txSocket3, txSocket4;
     private Button
             btnConnect,
             btnSkAuto1, btnSkAuto2, btnSkAuto3, btnSkAuto4,
             btnLogStart, btnLogStop, btnLogClear;
     private TextView txConnectStat, txLog;
-    private ImageView imageConnectStat;
 
     private ProgressDialog progress;
     private LinearLayout devLayout;
@@ -173,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -189,29 +181,19 @@ public class MainActivity extends AppCompatActivity {
         //Log.d("RND", Math.random()*180+"");
 
 
-        Button crashButton = new Button(this);
-        crashButton.setText("Crash!");
-        crashButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                //Crashlytics.getInstance().crash(); // Force a crash
-                throw new RuntimeException("This is a crash");
-            }
-        });
-
-        addContentView(crashButton, new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-
-
         firebaseCommand("z");
         //"z" means "Hello, World!" talk to Arduino
 
 
-        DatabaseReference reason = FirebaseDatabase.getInstance().getReference("test_user1");
+        DatabaseReference reason = FirebaseDatabase.getInstance().getReference("test_user1").child("command");
         reason.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 StrR = dataSnapshot.getValue().toString();
+                if (StrR.equals("a")) {
+                    StrR = "管理員未說明。";
+                }
+
             }
 
             @Override
@@ -219,11 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        /*if (StrR.equals("a")) {
-            StrR = "管理員未說明。";
-        }*/
-
+        
         dbRef = FirebaseDatabase.getInstance().getReference("test_user1").child("data_").child("Sun Jan 27 15:21:54 GMT+08:00 2019");
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -255,13 +233,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         dbRef = FirebaseDatabase.getInstance().getReference("app_version");
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
-                    Log.d(TAG, "onCreate: "+dataSnapshot.getValue());
+                    Log.d(TAG, "Latest app version: "+dataSnapshot.getValue());
 
                     if (Integer.parseInt(dataSnapshot.getValue().toString()) > BuildConfig.VERSION_CODE) {
                         new AlertDialog.Builder(MainActivity.this)
@@ -277,6 +254,8 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 })
                                 .show();
+                    }else {
+                        Toast.makeText(MainActivity.this, "已連接到資料庫", Toast.LENGTH_SHORT).show();
                     }
                 }catch (Exception e){
                     Toast.makeText(MainActivity.this, "無法檢查版本狀況", Toast.LENGTH_SHORT).show();
@@ -289,13 +268,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
-
-
-        registerReceiver(broadcastReceiver, new IntentFilter("Socket_Action"));
 
         int startedFromIntent = 0;
         try {
@@ -485,7 +457,6 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 Toast.makeText(getApplicationContext(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
                             }
-                            imageConnectStat.setVisibility(View.VISIBLE);
                             txConnectStat.setText(R.string.failed);
                         }
                     } catch (Exception ignored) {
@@ -598,17 +569,13 @@ public class MainActivity extends AppCompatActivity {
         btnSkStat3.setOnClickListener(SkStatListener3);
         btnSkStat4.setOnClickListener(SkStatListener4);
 
-        btnSkAlarm1.setOnClickListener(SkAlarmListener1);
-        btnSkAlarm2.setOnClickListener(SkAlarmListener1);
-        btnSkAlarm3.setOnClickListener(SkAlarmListener1);
-        btnSkAlarm4.setOnClickListener(SkAlarmListener1);
+        btnSkAlarm.setOnClickListener(SkAlarmListener1);
 
         btnSkChart1.setOnClickListener(SkChartListener1);
         btnSkChart2.setOnClickListener(SkChartListener2);
         btnSkChart3.setOnClickListener(SkChartListener3);
         btnSkChart4.setOnClickListener(SkChartListener4);
 
-        swConnectionMethod.setOnClickListener(SwConnectionMethodListener);
         btnConnect.setOnClickListener(btnConnectListener);
 
         btnLogStart.setOnClickListener(LogStart);
@@ -622,7 +589,6 @@ public class MainActivity extends AppCompatActivity {
         swSk2 = findViewById(R.id.swSk2);
         swSk3 = findViewById(R.id.swSk3);
         swSk4 = findViewById(R.id.swSk4);
-        swConnectionMethod = findViewById(R.id.swConnectionMethod);
 
         txSocket1 = findViewById(R.id.txSocket1);
         txSocket2 = findViewById(R.id.txSocket2);
@@ -631,17 +597,14 @@ public class MainActivity extends AppCompatActivity {
 
         btnConnect = findViewById(R.id.btnConnect);
         txConnectStat = findViewById(R.id.txConnectStat);
-        imageConnectStat = findViewById(R.id.imageConnectStat);
 
         btnSkStat1 = findViewById(R.id.btnSkStat1);
         btnSkStat2 = findViewById(R.id.btnSkStat2);
         btnSkStat3 = findViewById(R.id.btnSkStat3);
         btnSkStat4 = findViewById(R.id.btnSkStat4);
 
-        btnSkAlarm1 = findViewById(R.id.btnSkAlarm1);
-        btnSkAlarm2 = findViewById(R.id.btnSkAlarm2);
-        btnSkAlarm3 = findViewById(R.id.btnSkAlarm3);
-        btnSkAlarm4 = findViewById(R.id.btnSkAlarm4);
+        btnSkAlarm = findViewById(R.id.btnSkAlarm);
+        btnSkInfo = findViewById(R.id.btnSkInfo);
 
         btnSkChart1 = findViewById(R.id.btnSkChart1);
         btnSkChart2 = findViewById(R.id.btnSkChart2);
@@ -1091,80 +1054,6 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    //選擇WiFi、藍牙的連線方式
-    private Switch.OnClickListener SwConnectionMethodListener = new Switch.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            final Switch s = (Switch) v;
-            if (!isWiFiConnected && !isBTConnected) {  //若兩者未連線
-                if (s.isChecked()) { //BT被選
-                    connectionMethod = "Bluetooth";
-                    Toast.makeText(getApplicationContext(), R.string.Change_Connection_Method_BT,
-                            Toast.LENGTH_SHORT).show();
-                } else { //WIFI被選
-                    connectionMethod = "Wi-Fi";
-                    Toast.makeText(getApplicationContext(), R.string.Change_Connection_Method_WiFI,
-                            Toast.LENGTH_SHORT).show();
-                }
-            } else if (isBTConnected) { //若BT已連線
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(R.string.confirm)
-                        .setMessage(R.string.stop_bt_connect_to_wifi)
-                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // TODO: 11/8/2018 關閉BT連線，並連接至WIFI
-                                //TODO ======================================
-                                Toast.makeText(getApplicationContext(), R.string.connecting_with_dots, Toast.LENGTH_LONG).show();
-                                Toast.makeText(getApplicationContext(), R.string.connected_successfully, Toast.LENGTH_LONG).show();
-                                s.setChecked(true);
-                                //TODO ======================================
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                s.setChecked(true);
-                                Toast.makeText(getApplicationContext(), R.string.cancelled, Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                                s.setChecked(true);
-                                Toast.makeText(getApplicationContext(), R.string.cancelled, Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .show();
-
-            } else if (isWiFiConnected) { //若WIFI已連線 //目前無執行
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(R.string.confirm)
-                        .setMessage(R.string.stop_wifi_connect_to_bt)
-                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // TODO: 11/8/2018 關閉WIFI連線，並連接至BT
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                s.setChecked(false);
-                                Toast.makeText(getApplicationContext(), R.string.cancelled, Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                                s.setChecked(false);
-                                Toast.makeText(getApplicationContext(), R.string.cancelled, Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .show();
-            }
-        }
-    };
 
     //幫你打開藍牙
     public void setBluetoothEnable(Boolean enable) {
@@ -1196,7 +1085,6 @@ public class MainActivity extends AppCompatActivity {
     public void Connect(final int i) {
         //btnConnect.setVisibility(View.INVISIBLE);
         //txConnectStat.setVisibility(View.INVISIBLE);
-        //imageConnectStat.setVisibility(View.INVISIBLE);
 
         if (connectionMethod.equals("Bluetooth")) {
 
@@ -1219,7 +1107,6 @@ public class MainActivity extends AppCompatActivity {
             //todo progressDialog
             Toast.makeText(getApplicationContext(), R.string.connecting_with_dots, Toast.LENGTH_SHORT).show();
             txConnectStat.setText(R.string.connecting_with_dots);
-            imageConnectStat.setVisibility(View.INVISIBLE);
 
             // Spawn a new thread to avoid blocking the GUI one
             new Thread() {
@@ -1267,7 +1154,6 @@ public class MainActivity extends AppCompatActivity {
 
                         isBTConnected = true;
                         txConnectStat.setVisibility(View.INVISIBLE);
-                        //imageConnectStat.setVisibility(View.INVISIBLE);
 
                         //FunctionSetEnable(true);
 
@@ -1288,30 +1174,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
-    private void FunctionSetEnable(boolean b) {
-        swSk1.setEnabled(b);
-        swSk2.setEnabled(b);
-        swSk3.setEnabled(b);
-        swSk4.setEnabled(b);
-        btnSkStat1.setEnabled(b);
-        btnSkStat2.setEnabled(b);
-        btnSkStat3.setEnabled(b);
-        btnSkStat4.setEnabled(b);
-        btnSkAlarm1.setEnabled(b);
-        btnSkAlarm2.setEnabled(b);
-        btnSkAlarm3.setEnabled(b);
-        btnSkAlarm4.setEnabled(b);
-        btnSkChart1.setEnabled(b);
-        btnSkChart2.setEnabled(b);
-        btnSkChart3.setEnabled(b);
-        btnSkChart4.setEnabled(b);
-        btnSkAuto1.setEnabled(b);
-        btnSkAuto2.setEnabled(b);
-        btnSkAuto3.setEnabled(b);
-        btnSkAuto4.setEnabled(b);
-    }
-
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws
             IOException {
@@ -1547,6 +1409,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             logIsOn = true;
 
+            Crashlytics.getInstance().crash();
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("sw4mA");
@@ -1683,9 +1546,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_dev:
                 item.setChecked(!item.isChecked());
                 devMode = item.isChecked();
-                if (!isWiFiConnected && !isBTConnected) {
-                    FunctionSetEnable(item.isChecked());
-                }
                 break;
             case R.id.action_destroy:
                 Intent i = getBaseContext().getPackageManager()
@@ -1822,7 +1682,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         Log.d("MainActivity:", "onDestroy");
-        unregisterReceiver(broadcastReceiver); //from broadcast receiver while MainActivity is running
         btHandler.removeCallbacksAndMessages(null);
         Disconnect(); //BT disconnect
 

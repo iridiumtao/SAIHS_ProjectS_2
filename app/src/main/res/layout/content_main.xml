@@ -24,71 +24,22 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintVertical_bias="0.82"
             app:srcCompat="@drawable/socket_demo_5" />
-
-        <ImageView
-            android:id="@+id/imageConnectStat"
-            android:layout_width="19dp"
-            android:layout_height="22dp"
-            android:layout_marginStart="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/txConnectStat"
-            app:layout_constraintEnd_toStartOf="@+id/txConnectStat"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/txConnectStat"
-            app:srcCompat="@drawable/ic_warning" />
 
         <TextView
             android:id="@+id/txConnectStat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:layout_marginEnd="20dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:gravity="end"
             android:text="@string/not_connected"
-            app:layout_constraintBottom_toBottomOf="@+id/textView2"
-            app:layout_constraintEnd_toStartOf="@+id/textView2"
-            app:layout_constraintTop_toTopOf="@+id/textView2"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <Switch
-            android:id="@+id/swConnectionMethod"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:checked="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btnConnect"
+            app:layout_constraintEnd_toEndOf="@+id/btnConnect"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.023" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="6dp"
-            android:text="Wi-Fi"
-            app:layout_constraintBottom_toBottomOf="@+id/swConnectionMethod"
-            app:layout_constraintEnd_toStartOf="@+id/swConnectionMethod"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/swConnectionMethod"
-            app:layout_constraintVertical_bias="0.625" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/bluetooth"
-            app:layout_constraintBottom_toBottomOf="@+id/swConnectionMethod"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/swConnectionMethod"
-            app:layout_constraintTop_toTopOf="@+id/swConnectionMethod"
-            app:layout_constraintVertical_bias="0.625" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <Switch
             android:id="@+id/swSk2"
@@ -146,14 +97,16 @@
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="70dp"
             android:layout_height="39dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/connect"
 
+            android:layout_marginStart="8dp"
+            android:text="@string/connect"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView3"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView3"
-            app:layout_constraintTop_toTopOf="@+id/textView3" />
+            app:layout_constraintHorizontal_bias="0.957"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.294" />
 
 
         <ImageButton
@@ -165,7 +118,7 @@
             android:contentDescription="@string/btnSkStatDescription"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="@+id/swSk1"
-            app:layout_constraintEnd_toStartOf="@+id/btnSkAlarm1"
+            app:layout_constraintEnd_toStartOf="@+id/btnSkChart1"
             app:layout_constraintTop_toTopOf="@+id/swSk1"
             app:layout_constraintVertical_bias="0.6"
             app:srcCompat="@drawable/dot_black_48dp" />
@@ -179,7 +132,7 @@
             android:contentDescription="@string/btnSkStatDescription"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="@+id/swSk2"
-            app:layout_constraintEnd_toStartOf="@+id/btnSkAlarm2"
+            app:layout_constraintEnd_toStartOf="@+id/btnSkChart2"
             app:layout_constraintTop_toTopOf="@+id/swSk2"
             app:layout_constraintVertical_bias="0.4"
             app:srcCompat="@drawable/dot_black_48dp" />
@@ -193,7 +146,7 @@
             android:contentDescription="@string/btnSkStatDescription"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="@+id/swSk3"
-            app:layout_constraintEnd_toStartOf="@+id/btnSkAlarm3"
+            app:layout_constraintEnd_toStartOf="@+id/btnSkChart3"
             app:layout_constraintTop_toTopOf="@+id/swSk3"
             app:layout_constraintVertical_bias="0.4"
             app:srcCompat="@drawable/dot_black_48dp" />
@@ -207,72 +160,43 @@
             android:contentDescription="@string/btnSkStatDescription"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="@+id/swSk4"
-            app:layout_constraintEnd_toStartOf="@+id/btnSkAlarm4"
+            app:layout_constraintEnd_toStartOf="@+id/btnSkChart4"
             app:layout_constraintTop_toTopOf="@+id/swSk4"
             app:layout_constraintVertical_bias="0.4"
             app:srcCompat="@drawable/dot_black_48dp" />
 
         <ImageButton
-            android:id="@+id/btnSkAlarm1"
+            android:id="@+id/btnSkAlarm"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/btnSkAlarmDescription"
             android:scaleType="centerInside"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/btnSkStat1"
-            app:layout_constraintEnd_toStartOf="@+id/btnSkChart1"
-            app:layout_constraintTop_toTopOf="@+id/btnSkStat1"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintBottom_toTopOf="@+id/btnSkAuto1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.85"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toBottomOf="@+id/btnConnect"
+            app:layout_constraintVertical_bias="1.0"
             app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
 
         <ImageButton
-            android:id="@+id/btnSkAlarm2"
-            style="@style/AppTheme"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/btnSkAlarmDescription"
-            android:scaleType="centerInside"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/btnSkStat2"
-            app:layout_constraintEnd_toStartOf="@+id/btnSkChart2"
-            app:layout_constraintTop_toTopOf="@+id/btnSkStat2"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
-
-        <ImageButton
-            android:id="@+id/btnSkAlarm3"
+            android:id="@+id/btnSkInfo"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginEnd="8dp"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/btnSkAlarmDescription"
             android:scaleType="centerInside"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/btnSkStat3"
-            app:layout_constraintEnd_toStartOf="@+id/btnSkChart3"
-            app:layout_constraintTop_toTopOf="@+id/btnSkStat3"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
-
-        <ImageButton
-            android:id="@+id/btnSkAlarm4"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="8dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/btnSkAlarmDescription"
-            android:scaleType="centerInside"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/btnSkStat4"
-            app:layout_constraintEnd_toStartOf="@+id/btnSkChart4"
-            app:layout_constraintTop_toTopOf="@+id/btnSkStat4"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/baseline_access_alarms_black_48dp" />
+            app:layout_constraintBottom_toBottomOf="@+id/btnSkAlarm"
+            app:layout_constraintEnd_toStartOf="@+id/btnSkAlarm"
+            app:layout_constraintTop_toTopOf="@+id/btnSkAlarm"
+            app:srcCompat="@drawable/icon_info_48dp" />
 
         <ImageButton
             android:id="@+id/btnSkChart1"
@@ -283,9 +207,9 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/btnSkChartDescription"
             android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="@+id/btnSkAlarm1"
+            app:layout_constraintBottom_toBottomOf="@+id/btnSkStat1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btnSkAlarm1"
+            app:layout_constraintTop_toTopOf="@+id/btnSkStat1"
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
 
@@ -296,9 +220,9 @@
             android:layout_marginEnd="80dp"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="@+id/btnSkAlarm2"
+            app:layout_constraintBottom_toBottomOf="@+id/btnSkStat2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btnSkAlarm2"
+            app:layout_constraintTop_toTopOf="@+id/btnSkStat2"
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
 
@@ -309,9 +233,9 @@
             android:layout_marginEnd="80dp"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="@+id/btnSkAlarm3"
+            app:layout_constraintBottom_toBottomOf="@+id/btnSkStat3"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btnSkAlarm3"
+            app:layout_constraintTop_toTopOf="@+id/btnSkStat3"
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
 
@@ -322,9 +246,9 @@
             android:layout_marginEnd="80dp"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="@+id/btnSkAlarm4"
+            app:layout_constraintBottom_toBottomOf="@+id/btnSkStat4"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btnSkAlarm4"
+            app:layout_constraintTop_toTopOf="@+id/btnSkStat4"
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/baseline_insert_chart_outlined_black_48dp" />
 
@@ -403,10 +327,10 @@
             android:text="__________________________________"
             app:layout_constraintBottom_toTopOf="@+id/btnSkStat2"
             app:layout_constraintEnd_toEndOf="@+id/btnSkChart1"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.43"
             app:layout_constraintStart_toStartOf="@+id/swSk1"
             app:layout_constraintTop_toTopOf="@+id/btnSkStat1"
-            app:layout_constraintVertical_bias="0.86" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/textView5"
@@ -418,7 +342,7 @@
             android:text="__________________________________"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/btnSkChart4"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.43"
             app:layout_constraintStart_toStartOf="@+id/swSk4"
             app:layout_constraintTop_toTopOf="@+id/btnSkStat4"
             app:layout_constraintVertical_bias="0.53" />
@@ -434,7 +358,7 @@
             android:text="__________________________________"
             app:layout_constraintBottom_toTopOf="@+id/btnSkStat4"
             app:layout_constraintEnd_toEndOf="@+id/btnSkChart3"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.43"
             app:layout_constraintStart_toStartOf="@+id/swSk3"
             app:layout_constraintTop_toTopOf="@+id/btnSkStat3"
             app:layout_constraintVertical_bias="0.86" />
@@ -451,7 +375,7 @@
             android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/btnSkStat3"
             app:layout_constraintEnd_toEndOf="@+id/btnSkChart2"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.43"
             app:layout_constraintStart_toStartOf="@+id/swSk2"
             app:layout_constraintTop_toTopOf="@+id/btnSkStat2"
             app:layout_constraintVertical_bias="0.86" />

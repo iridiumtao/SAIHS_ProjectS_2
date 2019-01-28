@@ -33,7 +33,7 @@
     <string name="stop_wifi_connect_to_bt">更改此處將會「關閉Wi-Fi連線」並透過藍牙連線</string>
     <string name="socket_picture">插座圖示</string>
     <string name="connect">連線</string>
-    <string name="not_connected">未連線</string>
+    <string name="not_connected">藍牙\n未連線</string>
     <string name="bluetooth">藍牙</string>
     <string name="title">綠能插座</string>
     <string name="current_description_good">該插座目前電流狀況良好，連線裝置並未使用過多電力。注意，若此電流值異常增加，檢查該連線設備。</string>
