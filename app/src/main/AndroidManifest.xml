@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -37,6 +38,10 @@
         <receiver
             android:process=":remote"
             android:name=".AlarmReceiver" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="19f7ff238c9b30ca5913eb9e6f7a208382cd05a5"
+            />
     </application>
 
 </manifest>

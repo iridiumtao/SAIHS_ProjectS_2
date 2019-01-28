@@ -35,6 +35,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -44,6 +45,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,11 +65,14 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import io.fabric.sdk.android.Fabric;
+
 
 public class MainActivity extends AppCompatActivity {
     Activity c;
     private final static String TAG = "MainActivity";
     static boolean active = false;
+    String StrR;
 
     //介面
     private ImageButton
@@ -167,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -182,17 +189,50 @@ public class MainActivity extends AppCompatActivity {
         //Log.d("RND", Math.random()*180+"");
 
 
+        Button crashButton = new Button(this);
+        crashButton.setText("Crash!");
+        crashButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                //Crashlytics.getInstance().crash(); // Force a crash
+                throw new RuntimeException("This is a crash");
+            }
+        });
+
+        addContentView(crashButton, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+
+
         firebaseCommand("z");
         //"z" means "Hello, World!" talk to Arduino
 
-        dbRef = FirebaseDatabase.getInstance().getReference("system_protector");
+
+        DatabaseReference reason = FirebaseDatabase.getInstance().getReference("test_user1");
+        reason.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                StrR = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        /*if (StrR.equals("a")) {
+            StrR = "管理員未說明。";
+        }*/
+
+        dbRef = FirebaseDatabase.getInstance().getReference("test_user1").child("data_").child("Sun Jan 27 15:21:54 GMT+08:00 2019");
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (Integer.parseInt(dataSnapshot.getValue().toString()) != 0) {
+                if (!dataSnapshot.getValue().toString().equals("#0+01272+00000+00295+00000+0+0+0+0+1+0+0+0~")) {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle("系統警示")
-                            .setMessage("App暫不開放")
+                            .setMessage("App暫不開放\n" +
+                                    "原因：" + StrR)
                             .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
