@@ -1056,21 +1056,26 @@ public class MainActivity extends AppCompatActivity {
 
 
     //幫你打開藍牙
-    public void setBluetoothEnable(Boolean enable) {
+    public void  setBluetoothEnable(Boolean enable) {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter != null) {
-            if (enable) {
-                if (!mBluetoothAdapter.isEnabled()) {
-                    //mBluetoothAdapter.enable();
-                    Intent enableBtIntent = new
-                            Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);//跳出視窗
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                }
-            } else {
-                if (mBluetoothAdapter.isEnabled()) {
-                    mBluetoothAdapter.disable();
+        try {
+            if (mBluetoothAdapter != null) {
+                if (enable) {
+                    if (!mBluetoothAdapter.isEnabled()) {
+                        //mBluetoothAdapter.enable();
+                        Intent enableBtIntent = new
+                                Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);//跳出視窗
+                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    }
+                } else {
+                    if (mBluetoothAdapter.isEnabled()) {
+                        mBluetoothAdapter.disable();
+                    }
                 }
             }
+        }catch (Exception e){
+            Toast.makeText(this, R.string.BTCrash,
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1093,9 +1098,15 @@ public class MainActivity extends AppCompatActivity {
             final String address = "98:D3:33:81:25:60"; //HC05的address
             final String name = "SBLUE";
 
-            if (!btAdapter.isEnabled()) {
-                Toast.makeText(getBaseContext(), R.string.please_try_again_after_bt_enable,
-                        Toast.LENGTH_LONG).show();
+            try {
+                if (!btAdapter.isEnabled()) {
+                    Toast.makeText(getBaseContext(), R.string.please_try_again_after_bt_enable,
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }catch (Exception e){
+                Toast.makeText(this, R.string.BTCrash,
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -1408,8 +1419,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             logIsOn = true;
-
-            Crashlytics.getInstance().crash();
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("sw4mA");
