@@ -10,7 +10,6 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,6 +40,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -67,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private final static String TAG = "MainActivity";
     static boolean active = false;
     String StrR = "";
+    private Menu menu;
 
     //介面
     private ImageButton
@@ -128,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
     //Firebase
     FirebaseDatabase firebase;
     DatabaseReference dbRef;
+    String loginName;
 
     //鬧鐘回傳
     boolean isAlarmOn1 = false;
@@ -157,6 +164,9 @@ public class MainActivity extends AppCompatActivity {
     String test = "";
     String sendData = "z";
 
+    private FirebaseAuth auth;
+    private FirebaseAuth.AuthStateListener authListener;
+    private String userUID;
 
 //alt+enter 字串抽離
 
@@ -176,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
         txVStat.bringToFront();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         devLayout.setVisibility(View.GONE);
+
         //FunctionSetEnable(false);
 
         //Log.d("RND", Math.random()*180+"");
@@ -192,12 +203,7 @@ public class MainActivity extends AppCompatActivity {
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
 
-                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    for (Map.Entry<String, Object> entry : map.entrySet()){
-                        String key = entry.getKey();
-                        String value = entry.getValue().toString();
-                        Log.d(TAG, key+"; Value is: " + value);
-                    }
+                    ArrayList <String> db = new ArrayList<>();
 
                 }
 
@@ -488,6 +494,25 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        //user account
+        auth = FirebaseAuth.getInstance();
+        authListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null){
+                    Toast.makeText(MainActivity.this, "Log in successfully by\n" + user.getEmail(), Toast.LENGTH_SHORT).show();
+                    loginName = user.getEmail().substring(0, user.getEmail().indexOf("@"));
+
+                    invalidateOptionsMenu();
+
+                }else {
+                    Toast.makeText(MainActivity.this, "Log out.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        };
     }
 
     private void firebaseCommand(Object command) {
@@ -1358,12 +1383,15 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             logIsOn = true;
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("sw4mA");
+            firebase = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = firebase.getReference("test_user1").child("data_");
             Map<String, Object> data = new HashMap<>();
-            data.put("command", "Hello, World!");
+            Date currentTime = Calendar.getInstance().getTime();
+            if (!btDataString.toString().equals("#0+00000+00000+00000+00000+0+0+0+0+0+0+0+0~")
+                    && !btDataString.toString().equals("#1+00000+00000+00000+00000+0+0+0+0+0+0+0+0~") ) {
+                data.put(currentTime.toString(), "#1+00000+00000+00000+00000+0+0+0+0+0+0+0+0~");
+            }
             myRef.updateChildren(data);
-
 
             /*myRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -1421,6 +1449,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -1438,20 +1467,87 @@ public class MainActivity extends AppCompatActivity {
             menu.findItem(R.id.action_destroy).setVisible(true);
             menu.findItem(R.id.action_log).setVisible(true);
             menu.findItem(R.id.action_devData).setVisible(true);
+        }
 
-
+        if (loginName != null) {
+            menu.findItem(R.id.action_login).setTitle(loginName);
         }
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+    public boolean onOptionsItemSelected(final MenuItem item) {
         int id = item.getItemId();
-
         switch (id) {
+            case R.id.action_login:
+                final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+                CustomDialog.functionSelect = "Login";
+                CustomDialog.show();
+                CustomDialog.setLoginDialogResult(new CustomDialogActivity.OnLoginDialogResult() {
+                    @Override
+                    public void userData(final String email, final String password) {
+                        auth.signInWithEmailAndPassword(email, password)
+                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (!task.isSuccessful()){
+                                            FirebaseAuthException e = (FirebaseAuthException )task.getException();
+                                            Log.d(TAG, e+"");
+                                            if (!e.toString().equals("com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The password is invalid or the user does not have a password.")){
+                                                //create new account
+                                                new AlertDialog.Builder(MainActivity.this)
+                                                        .setTitle(R.string.confirm)
+                                                        .setMessage("Account not found. Do you want to register with this email and password?")
+                                                        .setPositiveButton("Sign up", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                auth.createUserWithEmailAndPassword(email, password)
+                                                                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                                                                Log.d(TAG,"2"+ task);
+                                                                                FirebaseAuthException e = (FirebaseAuthException )task.getException();
+                                                                                String message = task.isSuccessful() ? "Sign up successfully" : "Sign up failed";
+                                                                                String strE = "";
+                                                                                if (e != null){
+                                                                                   strE = e.toString();
+                                                                                }
+                                                                                new AlertDialog.Builder(MainActivity.this)
+                                                                                        .setMessage(message+"\n"+strE)
+                                                                                        .setPositiveButton(R.string.confirm,null)
+                                                                                        .show();
+                                                                                if (message.equals("Sign up successfully")){
+                                                                                    String menuText = email.substring(0, email.indexOf("@"));
+                                                                                    item.setTitle(menuText);
+                                                                                }else {
+                                                                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                                                                }
+                                                                            }
+                                                                        });
+                                                            }
+                                                        })
+                                                        .setNegativeButton(R.string.cancel, null)
+                                                        .show();
+                                            }else {
+                                                Toast.makeText(MainActivity.this, "登入失敗，密碼錯誤", Toast.LENGTH_LONG).show();
+                                            }
+                                        }else if (task.isSuccessful()) {
+                                            String menuText = email.substring(0, email.indexOf("@"));
+                                            item.setTitle(menuText);
+                                            Toast.makeText(MainActivity.this, "Login Successfully", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                    }
+                });
+                CustomDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                break;
             case R.id.action_settings:
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.confirm)
@@ -1515,34 +1611,42 @@ public class MainActivity extends AppCompatActivity {
 
         NotificationManager manager = getNotificationManager(channelId, channelName);
 
-        if (channelId.equals("Warning")) {
-            //產生通知
-            NotificationCompat.Builder builder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.icon_notification_home2)
-                            .setContentTitle(notificationTitle)
-                            .setContentText(notificationText)
-                            .setColor(getResources().getColor(R.color.colorPrimary))
-                            .setPriority(2)
-                            .setWhen(System.currentTimeMillis())
-                            .setChannelId(channelId);  //設定頻道ID
-            //送出通知
-            manager.notify(1, builder.build());
+        switch (channelId) {
+            case "Warning": {
+                //產生通知
+                NotificationCompat.Builder builder =
+                        new NotificationCompat.Builder(this)
+                                .setSmallIcon(R.drawable.icon_notification_home2)
+                                .setContentTitle(notificationTitle)
+                                .setContentText(notificationText)
+                                .setColor(getResources().getColor(R.color.colorPrimary))
+                                .setPriority(2)
+                                .setWhen(System.currentTimeMillis())
+                                .setChannelId(channelId);  //設定頻道ID
 
-        } else if (channelId.equals("test")) {
-            NotificationCompat.Builder builder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.icon_notification_home2)
-                            .setContentTitle("Alarm")
-                            .setContentText("test")
-                            .setColor(getResources().getColor(R.color.colorPrimary))
-                            .setPriority(2)
-                            .setWhen(System.currentTimeMillis())
-                            .setChannelId(channelId);  //設定頻道ID
-            //送出通知
-            manager.notify(1, builder.build());
-        } else {
-            Toast.makeText(this, "NOTIFICATION ERROR", Toast.LENGTH_SHORT).show();
+                //送出通知
+                manager.notify(1, builder.build());
+
+                break;
+            }
+            case "test": {
+                NotificationCompat.Builder builder =
+                        new NotificationCompat.Builder(this)
+                                .setSmallIcon(R.drawable.icon_notification_home2)
+                                .setContentTitle("Alarm")
+                                .setContentText("test")
+                                .setColor(getResources().getColor(R.color.colorPrimary))
+                                .setPriority(2)
+                                .setWhen(System.currentTimeMillis())
+                                .setChannelId(channelId);  //設定頻道ID
+
+                //送出通知
+                manager.notify(1, builder.build());
+                break;
+            }
+            default:
+                Toast.makeText(this, "NOTIFICATION ERROR", Toast.LENGTH_SHORT).show();
+                break;
         }
 
     }
@@ -1596,8 +1700,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         Log.d("MainActivity:", "onStart");
-        active = true;
         super.onStart();
+        auth.addAuthStateListener(authListener);
     }
 
     @Override
@@ -1619,6 +1723,7 @@ public class MainActivity extends AppCompatActivity {
                 .apply();
         Toast.makeText(getApplicationContext(), "已將資料儲存至手機", Toast.LENGTH_SHORT).show();
 
+        auth.removeAuthStateListener(authListener);
         super.onStop();
 
     }

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -74,6 +75,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     private Calendar alarmCal;
     private OnAlarmDialogResult alarmDialogResult; //回傳鬧鐘資料
     private OnChartDialogResult chartDialogResult;
+    private OnLoginDialogResult loginDialogResult;
     private LinearLayout alarmSet1;
     ArrayList selectedItems = new ArrayList();
     boolean[] checkedItems;
@@ -107,6 +109,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     private Boolean currentNotSafe = false;
     private TextView txChartAvCurrent;
 
+    //Login
+    private EditText edEmail;
+    private EditText edPassword;
+    private Button btnConfirm;
+
 
     CustomDialogActivity(Activity a) {
         super(a);
@@ -126,7 +133,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         switch (functionSelect) {
             case "Stat":
 
-                setContentView(R.layout.current_dialog);
+                setContentView(R.layout.dialog_status);
 
                 txCurrentStat = findViewById(R.id.txCurrentStat);
                 txCurrentNow = findViewById(R.id.txCurrentNow);
@@ -191,7 +198,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
             case "Chart2":
                 Log.d("d", "chart");
-                setContentView(R.layout.chart_dialog);
+                setContentView(R.layout.dialog_chart);
                 txChartAvCurrent = findViewById(R.id.txChartAvCurrent);
                 chart = findViewById(R.id.currentChartRT);
                 chart.setVisibility(View.VISIBLE);
@@ -291,11 +298,38 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 }, 10);
 
                 break;
+            case "Login":
+                setContentView(R.layout.dialog_login);
+
+                edEmail = findViewById(R.id.edEmail);
+                edPassword = findViewById(R.id.edPassword);
+                btnConfirm = findViewById(R.id.btnConfirn);
+                btnConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            if (edEmail.getText().toString().contains("@")){
+                                if (edPassword.getText().toString().length() > 5) {
+                                    loginDialogResult.userData(edEmail.getText().toString(), edPassword.getText().toString());
+                                    onStop();
+                                    dismiss();
+                                }else {
+                                    Toast.makeText(getContext(), "密碼長度需大於6位", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }else {
+                                Toast.makeText(getContext(), "請輸入正確的Email", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (Exception e){
+                            Toast.makeText(getContext(), "請輸入資料", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
         }
     }
 
     private void AlarmDialog() {
-        setContentView(R.layout.alarm_dialog);
+        setContentView(R.layout.dialog_alarm);
         setTitle("Alarm");
 
         btnGotoTimer = findViewById(R.id.btnGotoTimer);
@@ -562,7 +596,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         btnGotoTimer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setContentView(R.layout.alarm_timer);
+                setContentView(R.layout.dialog_timer);
                 swTimer = findViewById(R.id.swTimer);
                 btnReset = findViewById(R.id.btnReset);
                 btnGotoAlarm = findViewById(R.id.btnGotoAlarm);
@@ -790,6 +824,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 Toast.makeText(getContext(), "Chart dialog finish", Toast.LENGTH_SHORT).show();
 
                 break;
+            case "Login":
+                break;
         }
         super.onStop();
 
@@ -829,6 +865,14 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
     public interface OnChartDialogResult {
         void finish(String result);
+    }
+
+
+    void setLoginDialogResult(OnLoginDialogResult dialogResult){
+        loginDialogResult = dialogResult;
+    }
+    public interface OnLoginDialogResult {
+        void userData(String email, String password);
     }
 
     @Override
