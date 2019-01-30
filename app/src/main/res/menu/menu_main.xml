@@ -10,14 +10,12 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
+        android:visible="false"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_notification"
         android:title="@string/notification_test" />
 
-    <item
-        android:id="@+id/action_auto"
-        android:title="@string/auto_mode_test"/>
     <item
         android:id="@+id/action_log"
         android:checkable="true"
@@ -33,7 +31,12 @@
     <item
         android:id="@+id/action_help"
         android:title="@string/action_help"
+        android:visible="false"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_statOnCloud"
+        android:checkable="true"
+        android:title="Status on Cloud" />
     <item
         android:id="@+id/action_destroy"
         android:title="Restart App" />

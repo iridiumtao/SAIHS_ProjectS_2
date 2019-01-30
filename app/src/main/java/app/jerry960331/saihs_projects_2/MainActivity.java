@@ -180,93 +180,34 @@ public class MainActivity extends AppCompatActivity {
 
         //Log.d("RND", Math.random()*180+"");
 
-
         firebaseCommand("z");
         //"z" means "Hello, World!" talk to Arduino
+        onCreateFirebaseCheck();
 
+        DatabaseReference getStat = FirebaseDatabase.getInstance().getReference("BlueStormIII");
 
-        DatabaseReference reason = FirebaseDatabase.getInstance().getReference("test_user1").child("command");
-        reason.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                StrR = dataSnapshot.getValue().toString();
-                if (StrR.equals("a")) {
-                    StrR = "管理員未說明。";
-                }
+        getStat.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // This method is called once with the initial value and again
+                    // whenever data at this location is updated.
 
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        
-        dbRef = FirebaseDatabase.getInstance().getReference("test_user1").child("data_").child("Sun Jan 27 15:21:54 GMT+08:00 2019");
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.getValue().toString().equals("#0+01272+00000+00295+00000+0+0+0+0+1+0+0+0~")) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("系統警示")
-                            .setMessage("App暫不開放\n" +
-                                    "原因：" + StrR)
-                            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish();
-                                }
-                            })
-                            .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                @Override
-                                public void onCancel(DialogInterface dialog) {
-                                    finish();
-                                }
-                            })
-                            .show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        dbRef = FirebaseDatabase.getInstance().getReference("app_version");
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                try {
-                    Log.d(TAG, "Latest app version: "+dataSnapshot.getValue());
-
-                    if (Integer.parseInt(dataSnapshot.getValue().toString()) > BuildConfig.VERSION_CODE) {
-                        new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("發現新版本")
-                                .setMessage(
-                                        "目前版本:" + BuildConfig.VERSION_CODE + "\n" +
-                                        "最新版本:" + dataSnapshot.getValue() + "\n" +
-                                        "請至Google雲端硬碟下載最新版本以確保App正常執行。")
-                                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                })
-                                .show();
-                    }else {
-                        Toast.makeText(MainActivity.this, "已連接到資料庫", Toast.LENGTH_SHORT).show();
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    for (Map.Entry<String, Object> entry : map.entrySet()){
+                        String key = entry.getKey();
+                        String value = entry.getValue().toString();
+                        Log.d(TAG, key+"; Value is: " + value);
                     }
-                }catch (Exception e){
-                    Toast.makeText(MainActivity.this, "無法檢查版本狀況", Toast.LENGTH_SHORT).show();
+
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
 
-            }
-        });
 
 
         int startedFromIntent = 0;
@@ -275,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
             alarmSocketSelect = bundle.getBooleanArray("socket");
             alarmPurpose = bundle.getString("purpose");
             Toast.makeText(this, "Intent from Broadcast", Toast.LENGTH_SHORT).show();
-            Connect(1);
+            Connect();
             startedFromIntent = 1;
         } catch (Exception e) {
 
@@ -467,89 +408,93 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
+    private void onCreateFirebaseCheck() {
+        DatabaseReference reason = FirebaseDatabase.getInstance().getReference("test_user1").child("command");
+        reason.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                StrR = dataSnapshot.getValue().toString();
+                if (StrR.equals("a")) {
+                    StrR = "管理員未說明。";
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+        dbRef = FirebaseDatabase.getInstance().getReference("test_user1").child("data_").child("Sun Jan 27 15:21:54 GMT+08:00 2019");
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.getValue().toString().equals("#0+01272+00000+00295+00000+0+0+0+0+1+0+0+0~")) {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("系統警示")
+                            .setMessage("App暫不開放\n" +
+                                    "原因：" + StrR)
+                            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            })
+                            .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    finish();
+                                }
+                            })
+                            .show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        dbRef = FirebaseDatabase.getInstance().getReference("app_version");
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                    Log.d(TAG, "Latest app version: "+dataSnapshot.getValue());
+
+                    if (Integer.parseInt(dataSnapshot.getValue().toString()) > BuildConfig.VERSION_CODE) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("發現新版本")
+                                .setMessage(
+                                        "目前版本:" + BuildConfig.VERSION_CODE + "\n" +
+                                        "最新版本:" + dataSnapshot.getValue() + "\n" +
+                                        "請至Google雲端硬碟下載最新版本以確保App正常執行。")
+                                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .show();
+                    }else {
+                        Toast.makeText(MainActivity.this, "已連接到資料庫", Toast.LENGTH_SHORT).show();
+                    }
+                }catch (Exception e){
+                    Toast.makeText(MainActivity.this, "無法檢查版本狀況", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void firebaseCommand(Object command) {
         firebase = FirebaseDatabase.getInstance();
         dbRef = firebase.getReference("command");
         dbRef.setValue(command);
     }
-
-
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // internet lost alert dialog method call from here...
-
-            Toast.makeText(MainActivity.this, "Received from alarm successfully", Toast.LENGTH_LONG).show();
-            Log.d(TAG, "Received from Alarm");
-
-            try {
-                Bundle bundle = getIntent().getExtras();
-                if (bundle.getBooleanArray("socket") != null) {
-                    alarmSocketSelect = bundle.getBooleanArray("socket");
-                }
-                alarmPurpose = bundle.getString("purpose");
-            } catch (Exception e) {
-                Toast.makeText(MainActivity.this, "資料傳送失敗\n" + e, Toast.LENGTH_LONG).show();
-            }
-            autoSocketAction();
-
-        }
-    };
-
-
-    private void autoSocketAction() {
-
-        final int[] j = {0};
-
-        if (!isBTConnected) {
-            Connect(1);
-            return;
-        }
-
-        Toast.makeText(MainActivity.this, "正在傳送動作訊號", Toast.LENGTH_LONG).show();
-
-        final Handler handler = new Handler(getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (alarmPurpose.equals("TURN_ON")) {
-                    if (alarmSocketSelect[j[0]] && j[0] == 0) {
-                        btConnectedThread.write("a");
-                    }
-                    if (alarmSocketSelect[j[0]] && j[0] == 1) {
-                        btConnectedThread.write("c");
-                    }
-                    if (alarmSocketSelect[j[0]] && j[0] == 2) {
-                        btConnectedThread.write("e");
-                    }
-                    if (alarmSocketSelect[j[0]] && j[0] == 3) {
-                        btConnectedThread.write("g");
-                    }
-                } else if (alarmPurpose.equals("TURN_OFF")) {
-                    if (alarmSocketSelect[j[0]] && j[0] == 0) {
-                        btConnectedThread.write("b");
-                    }
-                    if (alarmSocketSelect[j[0]] && j[0] == 1) {
-                        btConnectedThread.write("d");
-                    }
-                    if (alarmSocketSelect[j[0]] && j[0] == 2) {
-                        btConnectedThread.write("f");
-                    }
-                    if (alarmSocketSelect[j[0]] && j[0] == 3) {
-                        btConnectedThread.write("h");
-                    }
-                }
-                j[0]++;
-
-                if (j[0] == 5) {
-                    handler.removeCallbacksAndMessages(null);
-                }
-            }
-
-        }, 1000);
-
-    }
-
 
     private void setOnClickListeners() {
         swSk1.setOnClickListener(SwListener);
@@ -1053,8 +998,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
-
     //幫你打開藍牙
     public void  setBluetoothEnable(Boolean enable) {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -1083,11 +1026,11 @@ public class MainActivity extends AppCompatActivity {
     private Button.OnClickListener btnConnectListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Connect(0);
+            Connect();
         }
     };
 
-    public void Connect(final int i) {
+    public void Connect() {
         //btnConnect.setVisibility(View.INVISIBLE);
         //txConnectStat.setVisibility(View.INVISIBLE);
 
@@ -1167,11 +1110,6 @@ public class MainActivity extends AppCompatActivity {
                         txConnectStat.setVisibility(View.INVISIBLE);
 
                         //FunctionSetEnable(true);
-
-
-                        if (i == 1) {
-                            autoSocketAction();
-                        }
 
                     }
                 }
@@ -1490,14 +1428,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (!devMode) {
             menu.findItem(R.id.action_bt).setVisible(false);
-            menu.findItem(R.id.action_auto).setVisible(false);
             menu.findItem(R.id.action_notification).setVisible(false);
             menu.findItem(R.id.action_destroy).setVisible(false);
             menu.findItem(R.id.action_log).setVisible(false);
             menu.findItem(R.id.action_devData).setVisible(false);
         } else {
             menu.findItem(R.id.action_bt).setVisible(true);
-            menu.findItem(R.id.action_auto).setVisible(true);
             menu.findItem(R.id.action_notification).setVisible(true);
             menu.findItem(R.id.action_destroy).setVisible(true);
             menu.findItem(R.id.action_log).setVisible(true);
@@ -1547,14 +1483,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_notification:
                 makeOreoNotification("Warning", "安全警示");
                 break;
-            case R.id.action_auto:
-                if (AutoOn1 || AutoOn2 || AutoOn3 || AutoOn4) {
-                    //TimeCountDown.start();
-                }
-                break;
             case R.id.action_dev:
                 item.setChecked(!item.isChecked());
                 devMode = item.isChecked();
+                break;
+            case R.id.action_statOnCloud:
+                item.setChecked(!item.isChecked());
+                // TODO: 2019/1/30 把擷取插座狀態的部分關掉 
                 break;
             case R.id.action_destroy:
                 Intent i = getBaseContext().getPackageManager()
