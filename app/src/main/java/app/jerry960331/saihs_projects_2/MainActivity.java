@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
     private String userUID;
+    boolean statOnCloud = true;
 
 //alt+enter 字串抽離
 
@@ -516,9 +517,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void firebaseCommand(Object command) {
-        firebase = FirebaseDatabase.getInstance();
-        dbRef = firebase.getReference("command");
-        dbRef.setValue(command);
+        if (statOnCloud){
+            firebase = FirebaseDatabase.getInstance();
+            dbRef = firebase.getReference("command");
+            dbRef.setValue(command);
+        }
     }
 
     private void setOnClickListeners() {
@@ -626,13 +629,13 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
 
                                     if (s.isChecked()) {
-                                        btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
+                                        //btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
                                         i = 1;
                                         IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "a";
                                         firebaseCommand("a");
                                     } else {
-                                        btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
+                                        //btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
                                         i = 1;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "b";
@@ -647,13 +650,13 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto2.setTextColor(getResources().getColor(R.color.colorPrimary));
 
                                     if (s.isChecked()) {
-                                        btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
+                                        //btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
                                         i = 2;
                                         IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "c";
                                         firebaseCommand("c");
                                     } else {
-                                        btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
+                                        //btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
                                         i = 2;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "d";
@@ -667,13 +670,13 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto3.setTextColor(getResources().getColor(R.color.colorPrimary));
 
                                     if (s.isChecked()) {
-                                        btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
+                                        //btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
                                         IO = getResources().getString(R.string.turnOn);
                                         i = 3;
                                         BT_comm = "e";
                                         firebaseCommand("e");
                                     } else {
-                                        btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
+                                        //btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
                                         i = 3;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "f";
@@ -688,13 +691,13 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto4.setTextColor(getResources().getColor(R.color.colorPrimary));
 
                                     if (s.isChecked()) {
-                                        btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
+                                        //btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
                                         i = 4;
                                         IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "g";
                                         firebaseCommand("g");
                                     } else {
-                                        btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
+                                        //btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
                                         i = 4;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "h";
@@ -1450,6 +1453,8 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         this.menu = menu;
+        menu.findItem(R.id.action_statOnCloud).setChecked(true);
+        menu.findItem(R.id.action_dev).setChecked(true);
         return true;
     }
 
@@ -1585,6 +1590,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action_statOnCloud:
                 item.setChecked(!item.isChecked());
+                statOnCloud = item.isChecked();
                 // TODO: 2019/1/30 把擷取插座狀態的部分關掉 
                 break;
             case R.id.action_destroy:
