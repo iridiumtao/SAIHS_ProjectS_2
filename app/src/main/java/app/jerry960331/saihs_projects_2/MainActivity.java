@@ -1455,6 +1455,7 @@ public class MainActivity extends AppCompatActivity {
         this.menu = menu;
         menu.findItem(R.id.action_statOnCloud).setChecked(true);
         menu.findItem(R.id.action_dev).setChecked(true);
+        devMode = true;
         return true;
     }
 
