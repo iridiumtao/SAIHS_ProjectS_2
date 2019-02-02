@@ -199,22 +199,21 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference getStat = FirebaseDatabase.getInstance().getReference("BlueStormIII");
 
         getStat.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // This method is called once with the initial value and again
-                    // whenever data at this location is updated.
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
 
-                    ArrayList <String> db = new ArrayList<>();
+                ArrayList<String> db = new ArrayList<>();
 
-                }
+            }
 
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    // Failed to read value
-                    Log.w(TAG, "Failed to read value.", error.toException());
-                }
-            });
-
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
 
 
         int startedFromIntent = 0;
@@ -383,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
                                 Map<String, Object> data = new HashMap<>();
                                 Date currentTime = Calendar.getInstance().getTime();
                                 if (!btDataString.toString().equals("#0+00000+00000+00000+00000+0+0+0+0+0+0+0+0~")
-                                        && !btDataString.toString().equals("#1+00000+00000+00000+00000+0+0+0+0+0+0+0+0~") ) {
+                                        && !btDataString.toString().equals("#1+00000+00000+00000+00000+0+0+0+0+0+0+0+0~")) {
                                     data.put(currentTime.toString(), btDataString.toString());
                                 }
                                 myRef.updateChildren(data);
@@ -425,6 +424,7 @@ public class MainActivity extends AppCompatActivity {
                     StrR = "管理員未說明。";
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
@@ -466,15 +466,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
-                    Log.d(TAG, "Latest app version: "+dataSnapshot.getValue());
+                    Log.d(TAG, "Latest app version: " + dataSnapshot.getValue());
 
                     if (Integer.parseInt(dataSnapshot.getValue().toString()) > BuildConfig.VERSION_CODE) {
                         new AlertDialog.Builder(MainActivity.this)
                                 .setTitle("發現新版本")
                                 .setMessage(
                                         "目前版本:" + BuildConfig.VERSION_CODE + "\n" +
-                                        "最新版本:" + dataSnapshot.getValue() + "\n" +
-                                        "請至Google雲端硬碟下載最新版本以確保App正常執行。")
+                                                "最新版本:" + dataSnapshot.getValue() + "\n" +
+                                                "請至Google雲端硬碟下載最新版本以確保App正常執行。")
                                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -482,10 +482,10 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 })
                                 .show();
-                    }else {
+                    } else {
                         Toast.makeText(MainActivity.this, "已連接到資料庫", Toast.LENGTH_SHORT).show();
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     Toast.makeText(MainActivity.this, "無法檢查版本狀況", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -502,13 +502,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null){
+                if (user != null) {
                     Toast.makeText(MainActivity.this, "Log in successfully by\n" + user.getEmail(), Toast.LENGTH_SHORT).show();
                     loginName = user.getEmail().substring(0, user.getEmail().indexOf("@"));
 
                     invalidateOptionsMenu();
 
-                }else {
+                } else {
                     Toast.makeText(MainActivity.this, "Log out.", Toast.LENGTH_SHORT).show();
                 }
 
@@ -517,7 +517,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void firebaseCommand(Object command) {
-        if (statOnCloud){
+        if (statOnCloud) {
             firebase = FirebaseDatabase.getInstance();
             dbRef = firebase.getReference("command");
             dbRef.setValue(command);
@@ -855,7 +855,6 @@ public class MainActivity extends AppCompatActivity {
             CustomDialog.show();
             CustomDialog.setAlarmDialogResult(new CustomDialogActivity.OnAlarmDialogResult() {
                 public void finish(String result) {
-
                 }
 
                 @Override
@@ -1027,7 +1026,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     //幫你打開藍牙
-    public void  setBluetoothEnable(Boolean enable) {
+    public void setBluetoothEnable(Boolean enable) {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         try {
             if (mBluetoothAdapter != null) {
@@ -1044,7 +1043,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(this, R.string.BTCrash,
                     Toast.LENGTH_SHORT).show();
         }
@@ -1075,7 +1074,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                     return;
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 Toast.makeText(this, R.string.BTCrash,
                         Toast.LENGTH_SHORT).show();
                 return;
@@ -1145,8 +1144,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (connectionMethod.equals("Wi-Fi")) {
             Toast.makeText(getBaseContext(), "Unavailable",
                     Toast.LENGTH_LONG).show();
-
-
 
 
         }
@@ -1340,9 +1337,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         //just for test
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        // 10sec
-        calendar.add(Calendar.SECOND, 10);
+        /*calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.SECOND, 5);*/
 
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -1391,7 +1387,7 @@ public class MainActivity extends AppCompatActivity {
             Map<String, Object> data = new HashMap<>();
             Date currentTime = Calendar.getInstance().getTime();
             if (!btDataString.toString().equals("#0+00000+00000+00000+00000+0+0+0+0+0+0+0+0~")
-                    && !btDataString.toString().equals("#1+00000+00000+00000+00000+0+0+0+0+0+0+0+0~") ) {
+                    && !btDataString.toString().equals("#1+00000+00000+00000+00000+0+0+0+0+0+0+0+0~")) {
                 data.put(currentTime.toString(), "#1+00000+00000+00000+00000+0+0+0+0+0+0+0+0~");
             }
             myRef.updateChildren(data);
@@ -1496,10 +1492,10 @@ public class MainActivity extends AppCompatActivity {
                                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
-                                        if (!task.isSuccessful()){
-                                            FirebaseAuthException e = (FirebaseAuthException )task.getException();
-                                            Log.d(TAG, e+"");
-                                            if (!e.toString().equals("com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The password is invalid or the user does not have a password.")){
+                                        if (!task.isSuccessful()) {
+                                            FirebaseAuthException e = (FirebaseAuthException) task.getException();
+                                            Log.d(TAG, e + "");
+                                            if (!e.toString().equals("com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The password is invalid or the user does not have a password.")) {
                                                 //create new account
                                                 new AlertDialog.Builder(MainActivity.this)
                                                         .setTitle(R.string.confirm)
@@ -1511,21 +1507,21 @@ public class MainActivity extends AppCompatActivity {
                                                                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                                                                Log.d(TAG,"2"+ task);
-                                                                                FirebaseAuthException e = (FirebaseAuthException )task.getException();
+                                                                                Log.d(TAG, "2" + task);
+                                                                                FirebaseAuthException e = (FirebaseAuthException) task.getException();
                                                                                 String message = task.isSuccessful() ? "Sign up successfully" : "Sign up failed";
                                                                                 String strE = "";
-                                                                                if (e != null){
-                                                                                   strE = e.toString();
+                                                                                if (e != null) {
+                                                                                    strE = e.toString();
                                                                                 }
                                                                                 new AlertDialog.Builder(MainActivity.this)
-                                                                                        .setMessage(message+"\n"+strE)
-                                                                                        .setPositiveButton(R.string.confirm,null)
+                                                                                        .setMessage(message + "\n" + strE)
+                                                                                        .setPositiveButton(R.string.confirm, null)
                                                                                         .show();
-                                                                                if (message.equals("Sign up successfully")){
+                                                                                if (message.equals("Sign up successfully")) {
                                                                                     String menuText = email.substring(0, email.indexOf("@"));
                                                                                     item.setTitle(menuText);
-                                                                                }else {
+                                                                                } else {
                                                                                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
                                                                                 }
                                                                             }
@@ -1534,10 +1530,10 @@ public class MainActivity extends AppCompatActivity {
                                                         })
                                                         .setNegativeButton(R.string.cancel, null)
                                                         .show();
-                                            }else {
+                                            } else {
                                                 Toast.makeText(MainActivity.this, "登入失敗，密碼錯誤", Toast.LENGTH_LONG).show();
                                             }
-                                        }else if (task.isSuccessful()) {
+                                        } else if (task.isSuccessful()) {
                                             String menuText = email.substring(0, email.indexOf("@"));
                                             item.setTitle(menuText);
                                             Toast.makeText(MainActivity.this, "Login Successfully", Toast.LENGTH_SHORT).show();
@@ -1620,10 +1616,24 @@ public class MainActivity extends AppCompatActivity {
 
         switch (channelId) {
             case "Warning": {
+                /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    int importance = NotificationManager.IMPORTANCE_HIGH;
+                    NotificationChannel mChannel = new NotificationChannel(channelId, channelName, importance);
+
+                    // Create a notification and set the notification channel.
+                    Notification notification = new Notification.Builder(MainActivity.this)
+                            .setContentTitle(notificationTitle)
+                            .setContentText(notificationText)
+                            .setSmallIcon(R.drawable.icon_notification_blue_stormIII)
+                            .setChannelId(channelId)
+                            .build();
+                }*/
+
                 //產生通知
+
                 NotificationCompat.Builder builder =
                         new NotificationCompat.Builder(this)
-                                .setSmallIcon(R.drawable.icon_notification_home2)
+                                .setSmallIcon(R.drawable.icon_notification_blue_storm_iii)
                                 .setContentTitle(notificationTitle)
                                 .setContentText(notificationText)
                                 .setColor(getResources().getColor(R.color.colorPrimary))
@@ -1639,7 +1649,7 @@ public class MainActivity extends AppCompatActivity {
             case "test": {
                 NotificationCompat.Builder builder =
                         new NotificationCompat.Builder(this)
-                                .setSmallIcon(R.drawable.icon_notification_home2)
+                                .setSmallIcon(R.drawable.icon_notification_blue_storm_iii)
                                 .setContentTitle("Alarm")
                                 .setContentText("test")
                                 .setColor(getResources().getColor(R.color.colorPrimary))
