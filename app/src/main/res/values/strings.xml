@@ -4,18 +4,18 @@
     <string name="action_help">Help</string>
     <string name="ON">ON</string>
     <string name="OFF">OFF</string>
-    <string name="socket_1">Socket 1 </string>
-    <string name="socket_4">Socket 4 </string>
-    <string name="socket_3">Socket 3 </string>
-    <string name="socket_2">Socket 2 </string>
-    <string name="socket">Socket</string>
+    <string name="socket_1">Outlet 1 </string>
+    <string name="socket_4">Outlet 4 </string>
+    <string name="socket_3">Outlet 3 </string>
+    <string name="socket_2">Outlet 2 </string>
+    <string name="socket">outlet</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="btnSkStatDescription">Status of the socket. Click to show more information.</string>
-    <string name="btnSkAlarmDescription">Alarm of the socket. Click to show more information.</string>
-    <string name="btnSkChartDescription">Current chart of the socket. click to show more information.</string>
+    <string name="btnSkStatDescription">Status of the outlet. Click to show more information.</string>
+    <string name="btnSkAlarmDescription">Alarm of the outlet. Click to show more information.</string>
+    <string name="btnSkChartDescription">Current chart of the outlet. click to show more information.</string>
     <string name="turnOn">has been turned on.</string>
     <string name="turnOff">has been turned off.</string>
-    <string name="intent_exit">Leave this page will stop the connection with Smart Socket.</string>
+    <string name="intent_exit">Leave this page will stop the connection with Smart Outlet.</string>
     <string name="confirm">Confirm</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
@@ -170,5 +170,59 @@
     <string name="action">Action</string>
     <string name="open_off">OPEN / OFF</string>
     <string name="safe_current_value">safe current value</string>
+    <string name="login">Login</string>
+    <string name="logged_description">Your preferences will be automatically save to the database on cloud. If you have any problem about your account, please contract us by the following Email address.\njerry960331@gmail.com</string>
+    <string name="description_login">Please enter your Email and password to either Log In or Sign Up. If you have any problem about your account, please contract us by the following Email address.\njerry960331@gmail.com</string>
+    <string name="password">Password</string>
+    <string name="please_enter_the_name">Please enter a name</string>
+    <string name="log_in_or_sign_up">Log In or Sign Up</string>
+    <string name="device">Device</string>
+    <string name="Are_you_sure_you_want_to_logout">你確定要登出嗎？</string>
+    <string name="turn_on_outlet">Turn on outlet:</string>
+    <string name="log_in_successfully_by">Login successfully by</string>
+    <string name="log_out">Log out</string>
+    <string name="login_successfully">Login Successfully.</string>
+
+    <string-array name="weeks">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+    <string name="save_data_to_phone">Data have been saved.</string>
+    <string name="login_fail_wrong_password">Login failed. Wrong password.</string>
+    <string name="next_alarm_have_been_set_on">Next alarm have been set on</string>
+    <string name="alarm_not_set">Alarm not set.</string>
+    <string name="unable_to_check_app_version">Unable to check app version.</string>
+    <string name="connected_to_db">Connected to database.</string>
+    <string name="please_download_new_version">Please download the latest version from google drive.</string>
+    <string name="latest_version">Latest version:</string>
+    <string name="current_version">Current version:</string>
+    <string name="find_a_new_version">New version found</string>
+    <string name="because">Because</string>
+    <string name="app_not_access_deny">Access deny.</string>
+    <string name="system_info">System Message</string>
+    <string name="data_load_fail">Fail to load data.</string>
+    <string name="socket_current_warning">The outlet current is abnormal! Please check it now.</string>
+    <string name="Security_warning">Caution</string>
+    <string name="days_of_week_not_set">Days of week not set.</string>
+    <string name="average">Average</string>
+    <string name="current">Current</string>
+    <string name="current_dev_mode">Current(Dev Mode)</string>
+    <string name="turn_off_outlet">Turn off outlet:</string>
+    <string name="days_of_week_have_been_set_to">Days of week have been set to</string>
+    <string name="period_format">", "</string>
+    <string name="setup_not_complete">Setup not complete</string>
+    <string name="no_repeat">No repeat</string>
+    <string name="please_select_days_of_week">Please select days of week.</string>
+    <string name="date_format">E dd MM</string>
+    <string name="alarm_had_been_on">Alarm had been set.</string>
+    <string name="password_must_be_at_least_6_characters">Password must be at least 6 characters.</string>
+    <string name="please_enter_a_valid_email">Please enter a valid Email.</string>
+    <string name="link">Link</string>
+    <string name="alarm_have_been_set_to">Alarm have been set to</string>
 
 </resources>

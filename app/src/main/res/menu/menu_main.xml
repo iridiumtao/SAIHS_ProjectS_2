@@ -4,8 +4,8 @@
     tools:context="app.jerry960331.saihs_projects_2.MainActivity">
     <item
         android:id="@+id/action_login"
-        android:title="LOGIN"
         android:capitalize="none"
+        android:title="@string/login"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_bt"

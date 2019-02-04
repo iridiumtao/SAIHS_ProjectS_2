@@ -48,10 +48,12 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
+            android:gravity="center|end"
+            android:text="@string/socket_2"
             app:layout_constraintBottom_toTopOf="@+id/swSk3"
             app:layout_constraintEnd_toStartOf="@+id/btnSkStat2"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/swSk1" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Switch
             android:id="@+id/swSk1"
@@ -62,6 +64,8 @@
             android:layout_marginEnd="8dp"
 
             android:layout_marginBottom="16dp"
+            android:gravity="center|end"
+            android:text="@string/socket_1"
             app:layout_constraintBottom_toTopOf="@+id/swSk2"
             app:layout_constraintEnd_toStartOf="@+id/btnSkStat1"
             app:layout_constraintHorizontal_bias="1.0"
@@ -76,21 +80,26 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
+            android:gravity="center|end"
+            android:text="@string/socket_3"
             app:layout_constraintBottom_toTopOf="@+id/swSk4"
             app:layout_constraintEnd_toStartOf="@+id/btnSkStat3"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/swSk2" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Switch
             android:id="@+id/swSk4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
+            android:gravity="center|right|end"
+            android:text="@string/socket_4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnSkStat4"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/swSk3" />
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/btnConnect"
@@ -321,14 +330,12 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:text="__________________________________"
             app:layout_constraintBottom_toTopOf="@+id/btnSkStat2"
-            app:layout_constraintEnd_toEndOf="@+id/btnSkChart1"
-            app:layout_constraintHorizontal_bias="0.43"
-            app:layout_constraintStart_toStartOf="@+id/swSk1"
+            app:layout_constraintEnd_toEndOf="@+id/btnSkAuto1"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/btnSkStat1"
             app:layout_constraintTop_toTopOf="@+id/btnSkStat1"
             app:layout_constraintVertical_bias="1.0" />
 
@@ -336,14 +343,12 @@
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
-            android:layout_marginEnd="8dp"
             android:text="__________________________________"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/btnSkChart4"
-            app:layout_constraintHorizontal_bias="0.43"
-            app:layout_constraintStart_toStartOf="@+id/swSk4"
+            app:layout_constraintEnd_toEndOf="@+id/btnSkAuto4"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/btnSkStat4"
             app:layout_constraintTop_toTopOf="@+id/btnSkStat4"
             app:layout_constraintVertical_bias="0.53" />
 
@@ -351,15 +356,13 @@
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:text="__________________________________"
             app:layout_constraintBottom_toTopOf="@+id/btnSkStat4"
-            app:layout_constraintEnd_toEndOf="@+id/btnSkChart3"
-            app:layout_constraintHorizontal_bias="0.43"
-            app:layout_constraintStart_toStartOf="@+id/swSk3"
+            app:layout_constraintEnd_toEndOf="@+id/btnSkAuto3"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/btnSkStat3"
             app:layout_constraintTop_toTopOf="@+id/btnSkStat3"
             app:layout_constraintVertical_bias="0.86" />
 
@@ -367,97 +370,16 @@
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:text="__________________________________"
             android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/btnSkStat3"
-            app:layout_constraintEnd_toEndOf="@+id/btnSkChart2"
-            app:layout_constraintHorizontal_bias="0.43"
-            app:layout_constraintStart_toStartOf="@+id/swSk2"
+            app:layout_constraintEnd_toEndOf="@+id/btnSkAuto2"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/btnSkStat2"
             app:layout_constraintTop_toTopOf="@+id/btnSkStat2"
             app:layout_constraintVertical_bias="0.86" />
-
-        <EditText
-            android:id="@+id/txSocket1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
-            android:background="@android:color/transparent"
-            android:ems="8"
-            android:gravity="right"
-            android:hint="@string/socket_1"
-            android:text="@string/socket_1"
-            android:textSize="12sp"
-            android:focusable="false"
-            app:layout_constraintBottom_toBottomOf="@+id/swSk1"
-            app:layout_constraintEnd_toStartOf="@+id/swSk1"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/swSk1"
-            app:layout_constraintVertical_bias="0.56" />
-
-        <EditText
-            android:id="@+id/txSocket3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
-            android:background="@android:color/transparent"
-            android:ems="8"
-            android:gravity="right"
-            android:hint="@string/socket_3"
-            android:inputType="text"
-            android:text="@string/socket_3"
-            android:textSize="12sp"
-            android:focusable="false"
-            app:layout_constraintBottom_toBottomOf="@+id/swSk3"
-            app:layout_constraintEnd_toStartOf="@+id/swSk3"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/swSk3"
-            app:layout_constraintVertical_bias="0.798" />
-
-        <EditText
-            android:id="@+id/txSocket2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
-            android:background="@android:color/transparent"
-            android:ems="8"
-            android:gravity="right"
-            android:hint="@string/socket_2"
-            android:inputType="text"
-            android:text="@string/socket_2"
-            android:textSize="12sp"
-            android:focusable="false"
-            app:layout_constraintBottom_toBottomOf="@+id/swSk2"
-            app:layout_constraintEnd_toStartOf="@+id/swSk2"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/swSk2"
-            app:layout_constraintVertical_bias="0.701" />
-
-        <EditText
-            android:id="@+id/txSocket4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
-            android:background="@android:color/transparent"
-            android:ems="8"
-            android:gravity="right"
-            android:hint="@string/socket_4"
-            android:inputType="text"
-            android:text="@string/socket_4"
-            android:textSize="12sp"
-            android:focusable="false"
-            app:layout_constraintBottom_toBottomOf="@+id/swSk4"
-            app:layout_constraintEnd_toStartOf="@+id/swSk4"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/swSk4"
-            app:layout_constraintVertical_bias="0.923" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -7,10 +7,15 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -35,6 +40,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,6 +83,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     private OnAlarmDialogResult alarmDialogResult; //回傳鬧鐘資料
     private OnChartDialogResult chartDialogResult;
     private OnLoginDialogResult loginDialogResult;
+    private OnInputDialogResult InputDialogResult;
     private LinearLayout alarmSet1;
     ArrayList selectedItems = new ArrayList();
     boolean[] checkedItems;
@@ -113,6 +121,18 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     private EditText edEmail;
     private EditText edPassword;
     private Button btnConfirm;
+    TextInputLayout txEmailLayout;
+    TextInputLayout txPasswordLayout;
+
+    //logged
+    TextView txUserName;
+    TextView txUserEmail;
+    TextView txUserDevice;
+    private Button btnLogOut;
+
+    //input
+    EditText edText;
+    TextInputLayout txInLayout;
 
 
     CustomDialogActivity(Activity a) {
@@ -277,7 +297,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                                     data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(current)), 0);
                                     //avData.addEntry(new Entry(set.getEntryCount(), sum / convertNum), 0);
                                 }
-                                txChartAvCurrent.setText("平均電流：" + convertNum + "mA");
+                                txChartAvCurrent.setText(getContext().getString(R.string.average_current) + convertNum + "mA");
 
                                 data.notifyDataChanged();
                                 chart.notifyDataSetChanged();
@@ -303,25 +323,158 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
                 edEmail = findViewById(R.id.edEmail);
                 edPassword = findViewById(R.id.edPassword);
+                txEmailLayout = findViewById(R.id.txEmailLayout);
+                txPasswordLayout = findViewById(R.id.txPasswordLayout);
                 btnConfirm = findViewById(R.id.btnConfirn);
                 btnConfirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        try {
-                            if (edEmail.getText().toString().contains("@")){
-                                if (edPassword.getText().toString().length() > 5) {
-                                    loginDialogResult.userData(edEmail.getText().toString(), edPassword.getText().toString());
-                                    onStop();
-                                    dismiss();
-                                }else {
-                                    Toast.makeText(getContext(), "密碼長度需大於6位", Toast.LENGTH_SHORT).show();
+
+                        if (edEmail.getText().toString().contains("@")) {
+                            if (edPassword.getText().toString().length() > 5) {
+                                loginDialogResult.userData(edEmail.getText().toString(), edPassword.getText().toString());
+                                onStop();
+                                dismiss();
+                            } else {
+                                txPasswordLayout.setError(getContext().getString(R.string.password_must_be_at_least_6_characters));
+                                edPassword.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                        txPasswordLayout.setError(null);
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+
+                                    }
+                                });
+                            }
+
+                        } else {
+                            txEmailLayout.setError(getContext().getString(R.string.please_enter_a_valid_email));
+                            edEmail.addTextChangedListener(new TextWatcher() {
+                                @Override
+                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
                                 }
 
-                            }else {
-                                Toast.makeText(getContext(), "請輸入正確的Email", Toast.LENGTH_SHORT).show();
+                                @Override
+                                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                    txEmailLayout.setError(null);
+                                }
+
+                                @Override
+                                public void afterTextChanged(Editable s) {
+
+                                }
+                            });
+                        }
+
+                    }
+                });
+                break;
+            case "Logged in":
+                setContentView(R.layout.dialog_logged_in);
+
+                txUserName = findViewById(R.id.txUserName);
+                txUserName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CustomDialogActivity CustomDialog = new CustomDialogActivity(c);
+                        CustomDialog.functionSelect = "Input";
+                        CustomDialog.show();
+                        CustomDialog.edText.setText(txUserName.getText().toString());
+                        CustomDialog.setInputDialogResult(new OnInputDialogResult() {
+                            @Override
+                            public void text(String text) {
+                                txUserName.setText(text);
+                                loginDialogResult.userName(txUserName.getText().toString());
                             }
-                        }catch (Exception e){
-                            Toast.makeText(getContext(), "請輸入資料", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
+                txUserEmail = findViewById(R.id.txUserEmail);
+                btnLogOut = findViewById(R.id.btnLogOut);
+                txUserDevice = findViewById(R.id.txUserDevice);
+                txUserDevice.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CustomDialogActivity CustomDialog = new CustomDialogActivity(c);
+                        CustomDialog.functionSelect = "Input";
+                        CustomDialog.show();
+                        CustomDialog.edText.setText(txUserDevice.getText().toString());
+                        CustomDialog.setInputDialogResult(new OnInputDialogResult() {
+                            @Override
+                            public void text(String text) {
+                                txUserDevice.setText(text);
+                                loginDialogResult.userDevice(txUserDevice.getText().toString());
+                            }
+                        });
+                    }
+                });
+
+                btnLogOut.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new AlertDialog.Builder(getContext())
+                                .setTitle(R.string.confirm)
+                                .setMessage(getContext().getString(R.string.Are_you_sure_you_want_to_logout))
+                                .setPositiveButton(R.string.confirm, new OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        loginDialogResult.logOut(true);
+                                        loginDialogResult.userName(txUserName.getText().toString());
+                                        onStop();
+                                        dismiss();
+
+                                    }
+                                })
+                                .setNegativeButton(getContext().getString(R.string.cancel), null)
+                                .show();
+                    }
+                });
+                break;
+            case "Input":
+                setContentView(R.layout.dialog_input);
+                edText = findViewById(R.id.edText);
+                txInLayout = findViewById(R.id.txInLayout);
+                btnConfirm = findViewById(R.id.btnConfirm);
+                btnConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (edText.getText() != null) {
+                            if (!edText.getText().toString().equals("")) {
+                                InputDialogResult.text(edText.getText().toString());
+                                onStop();
+                                dismiss();
+                            } else {
+                                txInLayout.setError(getContext().getResources().getString(R.string.please_enter_the_name));
+                                edText.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                        if (edText.getText().toString().equals("")){
+                                            txInLayout.setError(getContext().getResources().getString(R.string.please_enter_the_name));
+                                        }else {
+                                            txInLayout.setError(null);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+
+                                    }
+                                });
+                            }
                         }
                     }
                 });
@@ -354,17 +507,17 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
             @Override
             public void run() {
                 txNowTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date()));
-                txNowDate.setText(new SimpleDateFormat("MM月dd日 E", Locale.getDefault()).format(new Date()));
+                txNowDate.setText(new SimpleDateFormat(getContext().getString(R.string.date_format), Locale.getDefault()).format(new Date()));
                 clockHandler.postDelayed(this, 1000);
             }
         }, 10);
 
-        final String[] date = {"週一", "週二", "週三", "週四", "週五", "週六", "週日"};
+        final String[] date = getContext().getResources().getStringArray(R.array.weeks);
         //若鬧鐘先前已開啟，則將圖示開啟
         if (isAlarmOn1) {
             btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_on);
             isAlarmOn1 = true;
-            Toast.makeText(getContext(), "鬧鐘先前設定開啟", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.alarm_had_been_on), Toast.LENGTH_SHORT).show();
         } else {
             btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
             isAlarmOn1 = false;
@@ -377,7 +530,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         try {
             for (int i = 0; i < checkedItems.length; i++) {
                 if (checkedItems[i]) {
-                    s += date[i] + "、";
+                    s += date[i] + getContext().getString(R.string.period_format);
                 }
             }
             s = s.substring(0, s.length() - 1);
@@ -427,11 +580,11 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
 
                 final AlertDialog.Builder datePickDialog = new AlertDialog.Builder(getContext());
-                datePickDialog.setTitle("請選擇週期");
-                datePickDialog.setNeutralButton("不重複", new OnClickListener() {
+                datePickDialog.setTitle(getContext().getString(R.string.please_select_days_of_week));
+                datePickDialog.setNeutralButton(getContext().getString(R.string.no_repeat), new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        txAlarmSetSchedule1.setText("不重複");
+                        txAlarmSetSchedule1.setText(getContext().getString(R.string.no_repeat));
                     }
                 });
                 datePickDialog.setMultiChoiceItems(date, checkedItems, new OnMultiChoiceClickListener() {
@@ -458,14 +611,14 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                         try {
                             for (int i = 0; i < checkedItems.length; i++) {
                                 if (checkedItems[i]) {
-                                    s += date[i] + "、";
+                                    s += date[i] + getContext().getString(R.string.period_format);
                                 }
                             }
                             s = s.substring(0, s.length() - 1);
-                            Toast.makeText(getContext(), "已設定週期為" + s, Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), getContext().getString(R.string.days_of_week_have_been_set_to) + s, Toast.LENGTH_LONG).show();
                             txAlarmSetSchedule1.setText(s);
                         } catch (Exception e) {
-                            Toast.makeText(getContext(), "未完成設定", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), getContext().getString(R.string.setup_not_complete), Toast.LENGTH_LONG).show();
                             txAlarmSetSchedule1.setText(R.string.not_set);
                             btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
                             isAlarmOn1 = false;
@@ -484,10 +637,10 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                                 }
                             }
                             s = new StringBuilder(s.substring(0, s.length() - 1));
-                            Toast.makeText(getContext(), "已設定週期為" + s, Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), getContext().getString(R.string.days_of_week_have_been_set_to) + s, Toast.LENGTH_LONG).show();
                             txAlarmSetSchedule1.setText(s.toString());
                         } catch (Exception e) {
-                            Toast.makeText(getContext(), "未完成設定", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), getContext().getString(R.string.setup_not_complete), Toast.LENGTH_LONG).show();
                             txAlarmSetSchedule1.setText(R.string.not_set);
                             btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
                             isAlarmOn1 = false;
@@ -574,7 +727,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 if (txAlarmSetSchedule1.getText().toString().equals(getContext().getString(R.string.not_set))) {
                     btnAlarmIsOn1.setImageResource(R.drawable.icon_alarm_off);
                     isAlarmOn1 = false;
-                    Toast.makeText(getContext(), "未設定週期", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getContext().getString(R.string.days_of_week_not_set), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -698,10 +851,10 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     private void TxIntentChange() {
         String s = "";
         if (swAlarm.isChecked()) {
-            txAlarmIntent1.setText("開啟插座:");
+            txAlarmIntent1.setText(getContext().getString(R.string.turn_on_outlet));
             alarmPurpose = "TURN_ON";
         } else {
-            txAlarmIntent1.setText("關閉插座:");
+            txAlarmIntent1.setText(getContext().getString(R.string.turn_off_outlet));
             alarmPurpose = "TURN_OFF";
         }
         for (int i = 0; i < 4; i++) {
@@ -736,10 +889,10 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         Log.d("call", "createSet()");
         LineDataSet set;
         if (devModeValue) {
-            set = new LineDataSet(null, "電流值(開發模式)");
+            set = new LineDataSet(null, getContext().getString(R.string.current_dev_mode));
 
         } else {
-            set = new LineDataSet(null, "電流值");
+            set = new LineDataSet(null, getContext().getString(R.string.current));
         }
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(Color.rgb(0, 185, 169)); //Color.rgb(0, 185, 169) == colorPrimary
@@ -759,7 +912,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     private LineDataSet createAvSet() {
         Log.d("call", "createSet()");
         LineDataSet set;
-        set = new LineDataSet(null, "平均值");
+        set = new LineDataSet(null, getContext().getString(R.string.average));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(Color.rgb(167, 255, 235)); //Color.rgb(0, 185, 169) == colorPrimary
         //set.setCircleColor(Color.rgb(0, 185, 169));
@@ -789,7 +942,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
         switch (functionSelect) {
             case "Stat":
-                Toast.makeText(getContext(), "Stat dialog finish", Toast.LENGTH_SHORT).show();
+                Log.d("onStop", "Stat dialog finish");
                 statHandler.removeCallbacksAndMessages(null);
                 break;
 
@@ -821,10 +974,10 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
             case "Chart2":
                 chartDialogResult.finish("Chart2 Finish");
                 getCurrentHandler.removeCallbacksAndMessages(null);
-                Toast.makeText(getContext(), "Chart dialog finish", Toast.LENGTH_SHORT).show();
+                Log.d("onStop", "Chart dialog finish");
 
                 break;
-            case "Login":
+            case "Logged in":
                 break;
         }
         super.onStop();
@@ -868,11 +1021,26 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     }
 
 
-    void setLoginDialogResult(OnLoginDialogResult dialogResult){
+    void setLoginDialogResult(OnLoginDialogResult dialogResult) {
         loginDialogResult = dialogResult;
     }
+
     public interface OnLoginDialogResult {
         void userData(String email, String password);
+
+        void logOut(boolean logOut);
+
+        void userName(String name);
+
+        void userDevice(String device);
+    }
+
+    void setInputDialogResult(OnInputDialogResult dialogResult) {
+        InputDialogResult = dialogResult;
+    }
+
+    public interface OnInputDialogResult {
+        void text(String text);
     }
 
     @Override

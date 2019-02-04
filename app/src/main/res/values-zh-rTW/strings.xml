@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="weeks">
+        <item>星期一</item>
+        <item>星期二</item>
+        <item>星期三</item>
+        <item>星期四</item>
+        <item>星期五</item>
+        <item>星期六</item>
+        <item>星期日</item>
+    </string-array>
+
     <string name="app_name">綠能雲端插座</string>
     <string name="action_settings">設定</string>
     <string name="action_help">幫助</string>
@@ -69,4 +79,48 @@
     <string name="action">動作</string>
     <string name="open_off">關 / 開</string>
     <string name="safe_current_value">安全電流值</string>
+    <string name="login">登入</string>
+    <string name="Are_you_sure_you_want_to_logout">你確定要登出嗎？</string>
+    <string name="save_data_to_phone">已將資料儲存至手機</string>
+    <string name="login_successfully">登入成功</string>
+    <string name="login_fail_wrong_password">登入失敗，密碼錯誤</string>
+    <string name="next_alarm_have_been_set_on">下一個鬧鐘已被設在</string>
+    <string name="alarm_not_set">未設置鬧鐘</string>
+    <string name="log_out">登出</string>
+    <string name="log_in_successfully_by">登入帳戶：</string>
+    <string name="unable_to_check_app_version">無法檢查版本狀況</string>
+    <string name="connected_to_db">已連接到資料庫</string>
+    <string name="please_download_new_version">請至Google雲端硬碟下載最新版本以確保App正常執行。</string>
+    <string name="latest_version">最新版本:</string>
+    <string name="current_version">目前版本:</string>
+    <string name="find_a_new_version">發現新版本</string>
+    <string name="because">原因：</string>
+    <string name="app_not_access_deny">App暫不開放</string>
+    <string name="system_info">系統訊息</string>
+    <string name="data_load_fail">資料載入失敗</string>
+    <string name="socket_current_warning">插座電流狀況異常！請立即前往查看</string>
+    <string name="Security_warning">安全警示</string>
+    <string name="days_of_week_not_set">未設定週期</string>
+    <string name="average">平均值</string>
+    <string name="current">電流值</string>
+    <string name="current_dev_mode">電流值(開發模式)</string>
+    <string name="turn_off_outlet">關閉插座:</string>
+    <string name="turn_on_outlet">開啟插座:</string>
+    <string name="days_of_week_have_been_set_to">已設定週期為</string>
+    <string name="period_format">、</string>
+    <string name="setup_not_complete">未完成設定</string>
+    <string name="no_repeat">不重複</string>
+    <string name="please_select_days_of_week">請選擇週期</string>
+    <string name="date_format">MM月dd日 E</string>
+    <string name="alarm_had_been_on">鬧鐘先前設定開啟</string>
+    <string name="password_must_be_at_least_6_characters">密碼長度需大於6位</string>
+    <string name="please_enter_a_valid_email">請輸入正確的Email</string>
+    <string name="device">裝置</string>
+    <string name="log_in_or_sign_up">登入或註冊</string>
+    <string name="please_enter_the_name">請輸入名稱</string>
+    <string name="password">密碼</string>
+    <string name="description_login">不論登入或註冊，請由此輸入你的帳號密碼。如有任何帳號問題，請透過以下的Email與我們聯繫：\njerry960331@gamil.com</string>
+    <string name="logged_description">你的偏好設定會被自動地上傳至雲端資料庫。如有任何帳號問題，請透過以下的Email與我們聯繫：\njerry960331@gamil.com</string>
+    <string name="link">連結</string>
+    <string name="alarm_have_been_set_to">鬧鐘已被設定於：</string>
 </resources>
