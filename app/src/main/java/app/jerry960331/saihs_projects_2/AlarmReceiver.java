@@ -35,7 +35,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        Toast.makeText(context, "鬧鐘響", Toast.LENGTH_LONG).show();
+        //Toast.makeText(context, "定時插座執行", Toast.LENGTH_LONG).show();
         FirebaseApp.initializeApp(context);
 
         Log.d("ss", "onReceive: ");// not working
@@ -172,7 +172,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             CharSequence name = "鬧鐘通知";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-            mChannel.setDescription(message);
+            mChannel.setDescription("定時插座執行時提醒");
             mChannel.enableLights(true);
             mChannel.setLightColor(Color.GREEN);
             mChannel.enableVibration(true);
@@ -185,6 +185,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.icon_notification_blue_storm_iii)
                 .setContentTitle(title)
                 .setContentText(message)
+                .setAutoCancel(true)
                 .setColor(Color.rgb(0, 185, 169));
 
         Intent resultIntent = new Intent(context, MainActivity.class);
