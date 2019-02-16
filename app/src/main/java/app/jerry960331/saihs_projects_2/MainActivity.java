@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -174,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
     private String userEmail;
     private String userName;
     private String userDevice;
+    private String appTitle;
 
 //alt+enter 字串抽離
 
@@ -186,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setTitle(R.string.title);
 
         findViews();
         setOnClickListeners();
@@ -250,6 +251,10 @@ public class MainActivity extends AppCompatActivity {
         swSk2.setText(getSharedPreferences("user", MODE_PRIVATE).getString("socket2", getResources().getString(R.string.socket_2)));
         swSk3.setText(getSharedPreferences("user", MODE_PRIVATE).getString("socket3", getResources().getString(R.string.socket_3)));
         swSk4.setText(getSharedPreferences("user", MODE_PRIVATE).getString("socket4", getResources().getString(R.string.socket_4)));
+        appTitle = getSharedPreferences("user", MODE_PRIVATE).getString("appTitle", getString(R.string.title));
+        Log.d(TAG, appTitle +"apple  "+ R.string.title);
+        setTitle(appTitle);
+        safeCurrentValue = getSharedPreferences("user", MODE_PRIVATE).getInt("safeCurrentValue", safeCurrentValue);
 
 
         btHandler = new Handler() {
@@ -1692,6 +1697,9 @@ public class MainActivity extends AppCompatActivity {
                 item.setChecked(!item.isChecked());
                 devLayout.setVisibility(item.isChecked() ? View.VISIBLE : View.GONE);
                 break;
+            case R.id.action_extra:
+                extraSettings();
+                break;
             case R.id.action_devData:
                 item.setChecked(!item.isChecked());
                 devModeValue = item.isChecked();
@@ -1699,6 +1707,84 @@ public class MainActivity extends AppCompatActivity {
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    void extraSettings(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.extra_settings);
+        final String[] extraSet = {"更改App標題", "調整限制電流", "叫歐東新增其他功能"};
+        builder.setItems(extraSet, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+
+                switch (which) {
+                    case 0: //更改App標題
+                        CustomDialog.functionSelect = "Input";
+                        CustomDialog.show();
+                        CustomDialog.edText.setText(appTitle);
+                        CustomDialog.setInputDialogResult(new CustomDialogActivity.OnInputDialogResult() {
+                            @Override
+                            public void text(String text) {
+                                appTitle = text;
+                                onStop();
+                                Intent i = getBaseContext().getPackageManager()
+                                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(i);
+                            }
+                        });
+                        break;
+                    case 1: //調整限制電流
+                        CustomDialog.functionSelect = "Input";
+                        CustomDialog.show();
+                        CustomDialog.edText.setText(safeCurrentValue+"");
+                        CustomDialog.setInputDialogResult(new CustomDialogActivity.OnInputDialogResult() {
+                            @Override
+                            public void text(String text) {
+                                try {
+                                    safeCurrentValue = Integer.parseInt(text);
+
+                                    Intent i = getBaseContext().getPackageManager()
+                                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(i);
+                                }catch (Exception e){
+                                    Toast.makeText(MainActivity.this, "必須輸入數值", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                        break;
+                    case 2:
+                        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.facebook.orca");
+                        if (launchIntent != null) {
+
+                            startActivity(launchIntent);//null pointer check in case package name was not found
+                            Toast.makeText(MainActivity.this, "自己點開插座小群跟我講", Toast.LENGTH_LONG).show();
+
+                        }else{
+                            Intent sendIntent = new Intent();
+                            sendIntent.setAction(Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, "歐東 做事摟：(請修改此處為期望新增之內容)");
+                            sendIntent.setType("text/plain");
+                            startActivity(sendIntent);
+                        }
+                        break;
+                }
+            }
+        });
+
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     void makeOreoNotification(String channelId, String channelName) {
@@ -1840,6 +1926,8 @@ public class MainActivity extends AppCompatActivity {
                 .putString("socket2", swSk2.getText().toString())
                 .putString("socket3", swSk3.getText().toString())
                 .putString("socket4", swSk4.getText().toString())
+                .putString("appTitle", appTitle)
+                .putInt("safeCurrentValue", safeCurrentValue)
                 .apply();
         Log.d("onStop", userName + userEmail);
 

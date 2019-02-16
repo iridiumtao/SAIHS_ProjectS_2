@@ -43,6 +43,9 @@
         android:checkable="true"
         android:title="Status on Cloud" />
     <item
+        android:id="@+id/action_extra"
+        android:title="@string/extra_settings" />
+    <item
         android:id="@+id/action_destroy"
         android:title="Restart App" />
 </menu>

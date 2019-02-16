@@ -18,8 +18,8 @@ android {
         applicationId "app.jerry960331.saihs_projects_2"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 91
-        versionName "91r"
+        versionCode 92
+        versionName "92b"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -51,8 +51,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
-
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
 
 }
 apply plugin: 'com.google.gms.google-services'

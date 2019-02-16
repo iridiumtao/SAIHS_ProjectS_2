@@ -224,5 +224,6 @@
     <string name="please_enter_a_valid_email">Please enter a valid Email.</string>
     <string name="link">Link</string>
     <string name="alarm_have_been_set_to">Alarm have been set to</string>
+    <string name="extra_settings">Extra settings</string>
 
 </resources>
