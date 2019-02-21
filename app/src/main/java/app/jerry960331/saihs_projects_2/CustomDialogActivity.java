@@ -132,6 +132,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
     //input
     EditText edText;
+    TextView txWarning;
     TextInputLayout txInLayout;
 
 
@@ -444,6 +445,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 edText = findViewById(R.id.edText);
                 txInLayout = findViewById(R.id.txInLayout);
                 btnConfirm = findViewById(R.id.btnConfirm);
+                txWarning = findViewById(R.id.txWarning);
+                txWarning.setVisibility(View.INVISIBLE);
                 btnConfirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

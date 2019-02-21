@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -23,6 +24,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
@@ -36,6 +40,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -584,7 +589,6 @@ public class MainActivity extends AppCompatActivity {
         btnLogStop.setOnClickListener(LogStop);
         btnLogClear.setOnClickListener(LogClear);
     }
-
     //ctrl+alt+M
     private void findViews() {
         swSk1 = findViewById(R.id.swSk1);
@@ -1442,9 +1446,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });*/
 
-            //this will sound the alarm tone
-            //this will sound the alarm once, if you wish to
-            //raise alarm in loop continuously then use MediaPlayer and setLooping(true)
             Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), alarmUri);
             ringtone.play();
@@ -1712,12 +1713,12 @@ public class MainActivity extends AppCompatActivity {
     void extraSettings(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.extra_settings);
-        final String[] extraSet = {"更改App標題", "調整限制電流", "叫歐東新增其他功能"};
+        final String[] extraSet = {"更改App標題", "調整限制電流", "更改語言", "叫歐東新增其他功能"};
         builder.setItems(extraSet, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-
+                Drawable drawable = getResources().getDrawable(R.drawable.icon_warning_64dp);
                 switch (which) {
                     case 0: //更改App標題
                         CustomDialog.functionSelect = "Input";
@@ -1734,6 +1735,11 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(i);
                             }
                         });
+                        CustomDialog.txWarning.setVisibility(View.VISIBLE);
+                        CustomDialog.txWarning.setText(" 完成後App將會重啟");
+
+                        drawable.setBounds(0, 0, 64, 64);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                        CustomDialog.txWarning.setCompoundDrawables(drawable, null, null, null);//只放左边
                         break;
                     case 1: //調整限制電流
                         CustomDialog.functionSelect = "Input";
@@ -1754,21 +1760,30 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
+                        CustomDialog.txInLayout.setError("請輸入數值");
+                        CustomDialog.txWarning.setVisibility(View.VISIBLE);
+                        CustomDialog.txWarning.setText(" 完成後App將會重啟");
+                        drawable.setBounds(0, 0, 64, 64);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                        CustomDialog.txWarning.setCompoundDrawables(drawable, null, null, null);//只放左边
                         break;
                     case 2:
+
+
+                        break;
+                    case 3:
                         Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.facebook.orca");
-                        if (launchIntent != null) {
+                        //if (launchIntent != null) {
 
-                            startActivity(launchIntent);//null pointer check in case package name was not found
-                            Toast.makeText(MainActivity.this, "自己點開插座小群跟我講", Toast.LENGTH_LONG).show();
+                            //startActivity(launchIntent);//null pointer check in case package name was not found
+                            //Toast.makeText(MainActivity.this, "自己點開插座小群跟我講", Toast.LENGTH_LONG).show();
 
-                        }else{
+                        //}else{
                             Intent sendIntent = new Intent();
                             sendIntent.setAction(Intent.ACTION_SEND);
                             sendIntent.putExtra(Intent.EXTRA_TEXT, "歐東 做事摟：(請修改此處為期望新增之內容)");
                             sendIntent.setType("text/plain");
                             startActivity(sendIntent);
-                        }
+                        //}
                         break;
                 }
             }
@@ -1785,6 +1800,30 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        View v = findViewById(R.id.appBarLayout);
+        CoordinatorLayout.LayoutParams loparams = (CoordinatorLayout.LayoutParams) v.getLayoutParams();
+        CoordinatorLayout layout = findViewById(R.id.coordinatorLayout);
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+            // Get our View (TextView or anything) object:
+
+            // Get params:
+/*
+            loparams.height = 200;
+            loparams.width = layout.getHeight();
+            v.setLayoutParams(loparams);*/
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+            /*loparams.height = 500;
+            loparams.width = layout.getWidth();
+            v.setLayoutParams(loparams);*/
+        }
     }
 
     void makeOreoNotification(String channelId, String channelName) {
