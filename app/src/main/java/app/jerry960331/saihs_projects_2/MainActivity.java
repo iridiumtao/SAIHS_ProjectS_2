@@ -315,11 +315,9 @@ public class MainActivity extends AppCompatActivity {
                                 //35 37 39 41
 
                                 if (Integer.parseInt(current1) > safeCurrentValue) {
-                                    btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
                                     unsafeCurrent1 = true;
                                 }
                                 if (Integer.parseInt(current3) > safeCurrentValue) {
-                                    btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
                                     unsafeCurrent3 = true;
                                 }
 
@@ -352,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkStat4.setImageResource(R.drawable.dot_red_48dp);
                                 }
 
-                                if (Integer.parseInt(chipAutoOn1) == 1) {
+                                if (Integer.parseInt(chipAutoOn1) == 1 && !unsafeCurrent1) {
                                     if (Integer.parseInt(PIR) == 0) {
                                         swSk1.setChecked(true);
                                         btnSkStat1.setImageResource(R.drawable.dot_blue_48dp);
@@ -370,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
                                         btnSkStat2.setImageResource(R.drawable.dot_blue_48dp);
                                     }
                                 }
-                                if (Integer.parseInt(chipAutoOn3) == 1) {
+                                if (Integer.parseInt(chipAutoOn3) == 1 && !unsafeCurrent3) {
                                     if (Integer.parseInt(PIR) == 0) {
                                         swSk3.setChecked(true);
                                         btnSkStat3.setImageResource(R.drawable.dot_blue_48dp);
@@ -389,6 +387,12 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
 
+                                if (Integer.parseInt(current1) > safeCurrentValue) {
+                                    btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
+                                }
+                                if (Integer.parseInt(current3) > safeCurrentValue) {
+                                    btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
+                                }
 
                                 firebase = FirebaseDatabase.getInstance();
                                 DatabaseReference myRef = firebase.getReference("test_user1").child("data_");
@@ -677,7 +681,7 @@ public class MainActivity extends AppCompatActivity {
                                     AutoOn1 = false;
                                     btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto));
                                     btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
-
+                                    unsafeCurrent1 = false;
                                     if (s.isChecked()) {
                                         //btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
                                         i = 1;
@@ -690,7 +694,6 @@ public class MainActivity extends AppCompatActivity {
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "b";
                                         firebaseCommand("b");
-                                        unsafeCurrent1 = false;
                                     }
                                     break;
                                 case R.id.swSk2:
@@ -718,7 +721,7 @@ public class MainActivity extends AppCompatActivity {
                                     AutoOn3 = false;
                                     btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto));
                                     btnSkAuto3.setTextColor(getResources().getColor(R.color.colorPrimary));
-
+                                    unsafeCurrent3 = false;
                                     if (s.isChecked()) {
                                         //btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
                                         IO = getResources().getString(R.string.turnOn);
@@ -731,7 +734,6 @@ public class MainActivity extends AppCompatActivity {
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "f";
                                         firebaseCommand("f");
-                                        unsafeCurrent3 = false;
                                     }
                                     break;
                                 case R.id.swSk4:
@@ -1834,7 +1836,8 @@ public class MainActivity extends AppCompatActivity {
                                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(i);
                             }
-                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                             }
@@ -1850,7 +1853,6 @@ public class MainActivity extends AppCompatActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
-
     }
 
     @Override
