@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -32,6 +33,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -1767,8 +1769,7 @@ public class MainActivity extends AppCompatActivity {
                         CustomDialog.txWarning.setCompoundDrawables(drawable, null, null, null);//只放左边
                         break;
                     case 2:
-
-
+                        changeLang();
                         break;
                     case 3:
                         Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.facebook.orca");
@@ -1788,18 +1789,60 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-
-
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void changeLang(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("設定語言");
+        final String[] extraSet = {"跟隨系統設定", "正體中文", "English", "日本語"};
+        builder.setItems(extraSet, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Locale myLocale = Locale.getDefault();
+                switch(which) {
+                    case 0:
+                        break;
+                    case 1:
+                        myLocale = new Locale("zh","TW");
+                        break;
+                    case 2:
+                        myLocale = new Locale("en");
+                        break;
+                    case 3:
+                        myLocale = new Locale("jp");
+                        break;
+                }
+                Resources res = getResources();
+                DisplayMetrics dm = res.getDisplayMetrics();
+                Configuration conf = res.getConfiguration();
+                conf.locale = myLocale;
+                res.updateConfiguration(conf, dm);
+
+                onStop();
+                Intent i = getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
 
     @Override
