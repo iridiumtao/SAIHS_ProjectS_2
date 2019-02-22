@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
     boolean AutoTimerIsOn = false;
     boolean AutoTimerRepeatNOPE = false;
     String PIR;
-    int safeCurrentValue = 3000;
+    int safeCurrentValue;
     String current1 = "0", current2 = "0", current3 = "0", current4 = "0";
     Double currentAv1 = 0.0, currentAv2 = 0.0, currentAv3 = 0.0, currentAv4 = 0.0;
     String chipAutoOn1 = "0", chipAutoOn2 = "0", chipAutoOn3 = "0", chipAutoOn4 = "0";
@@ -259,9 +259,9 @@ public class MainActivity extends AppCompatActivity {
         swSk3.setText(getSharedPreferences("user", MODE_PRIVATE).getString("socket3", getResources().getString(R.string.socket_3)));
         swSk4.setText(getSharedPreferences("user", MODE_PRIVATE).getString("socket4", getResources().getString(R.string.socket_4)));
         appTitle = getSharedPreferences("user", MODE_PRIVATE).getString("appTitle", getString(R.string.title));
-        Log.d(TAG, appTitle +"apple  "+ R.string.title);
+        Log.d(TAG, appTitle + "apple  " + R.string.title);
         setTitle(appTitle);
-        safeCurrentValue = getSharedPreferences("user", MODE_PRIVATE).getInt("safeCurrentValue", safeCurrentValue);
+        safeCurrentValue = getSharedPreferences("user", MODE_PRIVATE).getInt("safeCurrentValue", 12000);
 
 
         btHandler = new Handler() {
@@ -484,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
                                 .setTitle(getResources().getString(R.string.find_a_new_version))
                                 .setMessage(
                                         getResources().getString(R.string.current_version) + " " + BuildConfig.VERSION_CODE + "\n" +
-                                                getResources().getString(R.string.latest_version) + " " +  dataSnapshot.getValue() + "\n" +
+                                                getResources().getString(R.string.latest_version) + " " + dataSnapshot.getValue() + "\n" +
                                                 getResources().getString(R.string.please_download_new_version))
                                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                     @Override
@@ -591,6 +591,7 @@ public class MainActivity extends AppCompatActivity {
         btnLogStop.setOnClickListener(LogStop);
         btnLogClear.setOnClickListener(LogClear);
     }
+
     //ctrl+alt+M
     private void findViews() {
         swSk1 = findViewById(R.id.swSk1);
@@ -1712,7 +1713,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    void extraSettings(){
+    void extraSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.extra_settings);
         final String[] extraSet = {"更改App標題", "調整限制電流", "更改語言", "叫歐東新增其他功能"};
@@ -1746,18 +1747,19 @@ public class MainActivity extends AppCompatActivity {
                     case 1: //調整限制電流
                         CustomDialog.functionSelect = "Input";
                         CustomDialog.show();
-                        CustomDialog.edText.setText(safeCurrentValue+"");
+                        CustomDialog.edText.setText(safeCurrentValue + "");
                         CustomDialog.setInputDialogResult(new CustomDialogActivity.OnInputDialogResult() {
                             @Override
                             public void text(String text) {
                                 try {
                                     safeCurrentValue = Integer.parseInt(text);
 
+                                    onStop();
                                     Intent i = getBaseContext().getPackageManager()
                                             .getLaunchIntentForPackage(getBaseContext().getPackageName());
                                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(i);
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     Toast.makeText(MainActivity.this, "必須輸入數值", Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -1769,22 +1771,15 @@ public class MainActivity extends AppCompatActivity {
                         CustomDialog.txWarning.setCompoundDrawables(drawable, null, null, null);//只放左边
                         break;
                     case 2:
-                        changeLang();
+                        setLocale();
                         break;
                     case 3:
-                        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.facebook.orca");
-                        //if (launchIntent != null) {
-
-                            //startActivity(launchIntent);//null pointer check in case package name was not found
-                            //Toast.makeText(MainActivity.this, "自己點開插座小群跟我講", Toast.LENGTH_LONG).show();
-
-                        //}else{
-                            Intent sendIntent = new Intent();
-                            sendIntent.setAction(Intent.ACTION_SEND);
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, "歐東 做事摟：(請修改此處為期望新增之內容)");
-                            sendIntent.setType("text/plain");
-                            startActivity(sendIntent);
-                        //}
+                        //Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.facebook.orca");
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, "歐東 做事摟：(請修改此處為期望新增之內容)");
+                        sendIntent.setType("text/plain");
+                        startActivity(sendIntent);
                         break;
                 }
             }
@@ -1799,7 +1794,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void changeLang(){
+    private void setLocale() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("設定語言");
         final String[] extraSet = {"跟隨系統設定", "正體中文", "English", "日本語"};
@@ -1807,11 +1802,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Locale myLocale = Locale.getDefault();
-                switch(which) {
+                switch (which) {
                     case 0:
                         break;
                     case 1:
-                        myLocale = new Locale("zh","TW");
+                        myLocale = new Locale("zh", "TW");
                         break;
                     case 2:
                         myLocale = new Locale("en");
@@ -1820,18 +1815,31 @@ public class MainActivity extends AppCompatActivity {
                         myLocale = new Locale("jp");
                         break;
                 }
-                Resources res = getResources();
-                DisplayMetrics dm = res.getDisplayMetrics();
-                Configuration conf = res.getConfiguration();
-                conf.locale = myLocale;
-                res.updateConfiguration(conf, dm);
 
-                onStop();
-                Intent i = getBaseContext().getPackageManager()
-                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
-
+                final Locale finalMyLocale = myLocale;
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.confirm)
+                        .setMessage("App即將重啟")
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Resources res = getResources();
+                                DisplayMetrics dm = res.getDisplayMetrics();
+                                Configuration conf = res.getConfiguration();
+                                conf.locale = finalMyLocale;
+                                res.updateConfiguration(conf, dm);
+                                onStop();
+                                Intent i = getBaseContext().getPackageManager()
+                                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(i);
+                            }
+                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .show();
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -1861,7 +1869,7 @@ public class MainActivity extends AppCompatActivity {
             loparams.height = 200;
             loparams.width = layout.getHeight();
             v.setLayoutParams(loparams);*/
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
             /*loparams.height = 500;
             loparams.width = layout.getWidth();
