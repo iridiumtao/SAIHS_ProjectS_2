@@ -123,4 +123,6 @@
     <string name="logged_description">你的偏好設定會被自動地上傳至雲端資料庫。如有任何帳號問題，請透過以下的Email與我們聯繫：\njerry960331@gamil.com</string>
     <string name="link">連結</string>
     <string name="alarm_have_been_set_to">鬧鐘已被設定於：</string>
+    <string name="dismiss_warning">解除警報狀態</string>
+    <string name="dismiss">解除</string>
 </resources>

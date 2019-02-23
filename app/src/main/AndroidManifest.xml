@@ -23,8 +23,10 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
             </intent-filter>
         </activity>
         <activity
@@ -39,6 +41,7 @@
         <receiver
             android:process=":remote"
             android:name=".AlarmReceiver" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="19f7ff238c9b30ca5913eb9e6f7a208382cd05a5"

@@ -9,10 +9,14 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothHeadset;
+import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -323,29 +327,37 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (Integer.parseInt(btDataString.substring(35, 36)) == 0) {
                                     btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
+                                    swSk1.setChecked(false);
                                 } else if (Integer.parseInt(btDataString.substring(35, 36)) == 1 && Integer.parseInt(current1) < 3000) {
                                     btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
+                                    swSk1.setChecked(true);
                                 } else if (Integer.parseInt(current1) > 3000) {
                                     btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
                                 }
                                 if (Integer.parseInt(btDataString.substring(37, 38)) == 0) {
                                     btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
+                                    swSk3.setChecked(false);
                                 } else if (Integer.parseInt(btDataString.substring(37, 38)) == 1 && Integer.parseInt(current2) < 3000) {
                                     btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
+                                    swSk3.setChecked(true);
                                 } else if (Integer.parseInt(current2) > 3000) {
                                     btnSkStat2.setImageResource(R.drawable.dot_red_48dp);
                                 }
                                 if (Integer.parseInt(btDataString.substring(39, 40)) == 0) {
                                     btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
+                                    swSk3.setChecked(false);
                                 } else if (Integer.parseInt(btDataString.substring(39, 40)) == 1 && Integer.parseInt(current3) < 3000) {
                                     btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
+                                    swSk4.setChecked(true);
                                 } else if (Integer.parseInt(current3) > 3000) {
                                     btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
                                 }
                                 if (Integer.parseInt(btDataString.substring(41, 42)) == 0) {
                                     btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
+                                    swSk4.setChecked(false);
                                 } else if (Integer.parseInt(btDataString.substring(41, 42)) == 1 && Integer.parseInt(current4) < 3000) {
                                     btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
+                                    swSk4.setChecked(true);
                                 } else if (Integer.parseInt(current4) > 3000) {
                                     btnSkStat4.setImageResource(R.drawable.dot_red_48dp);
                                 }
@@ -387,10 +399,10 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                if (Integer.parseInt(current1) > safeCurrentValue) {
+                                if (unsafeCurrent1) {
                                     btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
                                 }
-                                if (Integer.parseInt(current3) > safeCurrentValue) {
+                                if (unsafeCurrent3) {
                                     btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
                                 }
 
@@ -1172,7 +1184,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (!fail) {
                     //開啟執行緒用於傳輸及接收資料
-                    btConnectedThread = new MainActivity.ConnectedThread(btSocket);
+                    btConnectedThread = new ConnectedThread(btSocket);
                     btConnectedThread.start();
                     //開啟新執行緒顯示連接裝置名稱
                     btHandler.obtainMessage(CONNECTING_STATUS, 1, -1, name)
@@ -1182,16 +1194,64 @@ public class MainActivity extends AppCompatActivity {
                     btnConnect.setVisibility(View.INVISIBLE);
                     btConnectedThread.write("z"); //成功後傳值
 
-
                     isBTConnected = true;
                     txConnectStat.setVisibility(View.INVISIBLE);
 
+                    IntentFilter filter = new IntentFilter();
+                    filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+                    filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+                    filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+                    MainActivity.this.registerReceiver(mReceiver, filter);
                     //FunctionSetEnable(true);
-
                 }
             }
         }.start();
     }
+
+    //The BroadcastReceiver that listens for bluetooth broadcasts
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                //Device found
+                Log.d("bt stat onReceive", "Device found");
+            } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                //Device is now connected
+                Log.d("bt stat onReceive", "connected");
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                //Done searching
+                Log.d("bt stat onReceive", "Searching done");
+            } else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
+                //Device is about to disconnect
+                Log.d("bt stat onReceive", "Device is about to disconnect");
+
+            } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                //Device has disconnected
+                Log.d("bt stat onReceive", "Device has disconnected");
+                Toast.makeText(MainActivity.this, "裝置已斷線", Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("連線狀態")
+                        .setMessage("裝置已斷線")
+                        .show();
+
+                btnConnect.setVisibility(View.VISIBLE);
+                isBTConnected = false;
+                txConnectStat.setText(R.string.not_connected);
+                txConnectStat.setVisibility(View.VISIBLE);
+                btnSkStat1.setImageResource(R.drawable.dot_gray_48dp);
+                btnSkStat2.setImageResource(R.drawable.dot_gray_48dp);
+                btnSkStat3.setImageResource(R.drawable.dot_gray_48dp);
+                btnSkStat4.setImageResource(R.drawable.dot_gray_48dp);
+                swSk1.setChecked(false);
+                swSk2.setChecked(false);
+                swSk3.setChecked(false);
+                swSk4.setChecked(false);
+            }
+        }
+    };
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws
             IOException {
@@ -1971,7 +2031,6 @@ public class MainActivity extends AppCompatActivity {
         manager.notify(1, builder.build());
     }
 
-
     @Override
     protected void onPause() {
         Log.d("MainActivity:", "onPause");
@@ -2035,7 +2094,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity:", "onDestroy");
         btHandler.removeCallbacksAndMessages(null);
         Disconnect(); //BT disconnect
-
+        unregisterReceiver(mReceiver);
 
         super.onDestroy();
 

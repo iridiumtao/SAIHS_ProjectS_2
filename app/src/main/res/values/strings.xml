@@ -225,5 +225,7 @@
     <string name="link">Link</string>
     <string name="alarm_have_been_set_to">Alarm have been set to</string>
     <string name="extra_settings">Extra settings</string>
+    <string name="dismiss_warning">Dismiss warning status</string>
+    <string name="dismiss">Dismiss</string>
 
 </resources>

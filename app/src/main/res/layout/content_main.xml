@@ -136,7 +136,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btnSkChart1"
             app:layout_constraintTop_toTopOf="@+id/swSk1"
             app:layout_constraintVertical_bias="0.6"
-            app:srcCompat="@drawable/dot_black_48dp" />
+            app:srcCompat="@drawable/dot_gray_48dp" />
 
         <ImageButton
             android:id="@+id/btnSkStat2"
@@ -150,7 +150,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btnSkChart2"
             app:layout_constraintTop_toTopOf="@+id/swSk2"
             app:layout_constraintVertical_bias="0.4"
-            app:srcCompat="@drawable/dot_black_48dp" />
+            app:srcCompat="@drawable/dot_gray_48dp" />
 
         <ImageButton
             android:id="@+id/btnSkStat3"
@@ -164,7 +164,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btnSkChart3"
             app:layout_constraintTop_toTopOf="@+id/swSk3"
             app:layout_constraintVertical_bias="0.4"
-            app:srcCompat="@drawable/dot_black_48dp" />
+            app:srcCompat="@drawable/dot_gray_48dp" />
 
         <ImageButton
             android:id="@+id/btnSkStat4"
@@ -178,7 +178,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btnSkChart4"
             app:layout_constraintTop_toTopOf="@+id/swSk4"
             app:layout_constraintVertical_bias="0.4"
-            app:srcCompat="@drawable/dot_black_48dp" />
+            app:srcCompat="@drawable/dot_gray_48dp" />
 
         <ImageButton
             android:id="@+id/btnSkAlarm"

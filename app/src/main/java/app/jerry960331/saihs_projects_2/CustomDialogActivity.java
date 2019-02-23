@@ -66,6 +66,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     boolean devModeValue = false;
     Handler statHandler;
     private ArrayList currentSumArrayList = new ArrayList<Double>();
+    LinearLayout layoutWarning;
 
 
     //鬧鐘
@@ -162,6 +163,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 txCurrentDescription = findViewById(R.id.txCurrentDescription);
                 imageCurrentStat = findViewById(R.id.imageCurrentStat);
                 txPowerNow = findViewById(R.id.txPowerNow);
+                layoutWarning = findViewById(R.id.layoutWarning);
 
                 final int[] tick = {0};
                 statHandler = new Handler(getMainLooper());
@@ -200,12 +202,12 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             txCurrentStat.setText(R.string.red);
                             txCurrentDescription.setText(R.string.current_description_red);
                             imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
+                            layoutWarning.setVisibility(View.VISIBLE);
                         } else {
-                            txCurrentStat.setText(R.string.socket_off);
-                            txCurrentDescription.setText(R.string.current_description_off);
-                            imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
+                            txCurrentStat.setText("Loading");
+                            txCurrentDescription.setText("Loading");
+                            imageCurrentStat.setImageResource(R.drawable.dot_gray_48dp);
                         }
-
 
                         statHandler.postDelayed(this, 1000);
                     }
