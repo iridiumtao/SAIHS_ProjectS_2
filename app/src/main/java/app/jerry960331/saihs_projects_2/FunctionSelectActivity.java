@@ -3,6 +3,7 @@ package app.jerry960331.saihs_projects_2;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,10 +19,12 @@ public class FunctionSelectActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.function_select);
+        setContentView(R.layout.activity_func);
         findViews();
         onClickListeners();
-
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("歐東的家");
         txBS.setText(getSharedPreferences("user", MODE_PRIVATE).getString("user_device_BS", "Blue Storm III"));
         txSO.setText(getSharedPreferences("user", MODE_PRIVATE).getString("user_device_SO", "Salvation October"));
 

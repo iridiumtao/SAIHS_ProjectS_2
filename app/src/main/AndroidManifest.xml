@@ -16,10 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".FunctionSelectActivity">
+        <activity
+            android:name=".FunctionSelectActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -32,7 +33,6 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <!--category android:name="android.intent.category.LAUNCHER" -->
-
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" />
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
