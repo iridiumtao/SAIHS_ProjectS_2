@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
         alarmSetTime1 = getSharedPreferences("alarm1", MODE_PRIVATE).getString("alarmSetTime1", "");
         userEmail = getSharedPreferences("user", MODE_PRIVATE).getString("user_email", null);
         userName = getSharedPreferences("user", MODE_PRIVATE).getString("user_name", null);
-        userDevice = getSharedPreferences("user", MODE_PRIVATE).getString("user_device", "Blue Storm III");
+        userDevice = getSharedPreferences("user", MODE_PRIVATE).getString("user_device_BS", "Blue Storm III");
         swSk1.setText(getSharedPreferences("user", MODE_PRIVATE).getString("socket1", getResources().getString(R.string.socket_1)));
         swSk2.setText(getSharedPreferences("user", MODE_PRIVATE).getString("socket2", getResources().getString(R.string.socket_2)));
         swSk3.setText(getSharedPreferences("user", MODE_PRIVATE).getString("socket3", getResources().getString(R.string.socket_3)));
@@ -1725,6 +1725,12 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     });
+                    CustomDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else {
                     CustomDialog.functionSelect = "Logged in";
                     CustomDialog.show();
@@ -1765,13 +1771,6 @@ public class MainActivity extends AppCompatActivity {
 
                     Log.d(TAG, "onOptionsItemSelected: Logged in");
                 }
-
-                CustomDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show();
-                    }
-                });
 
                 break;
             case R.id.action_settings:
@@ -2133,7 +2132,7 @@ public class MainActivity extends AppCompatActivity {
         pref.edit()
                 .putString("user_email", userEmail)
                 .putString("user_name", userName)
-                .putString("user_device", userDevice)
+                .putString("user_device_BS", userDevice)
                 .putString("socket1", swSk1.getText().toString())
                 .putString("socket2", swSk2.getText().toString())
                 .putString("socket3", swSk3.getText().toString())

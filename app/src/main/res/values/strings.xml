@@ -21,7 +21,6 @@
     <string name="close">Close</string>
 
 
-
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
@@ -95,8 +94,6 @@
     <string name="pref_title_vibrate">Vibrate</string>
 
 
-
-
     <!-- BT Dev -->
     <string name="title_activity_bt">BTActivity</string>
     <string name="read_buffer"><![CDATA[<Read Buffer>]]></string>
@@ -105,12 +102,6 @@
     <string name="BTCrash">Bluetooth Error. Please make sure this device has Bluetooth support.</string>
     <string name="Bluetooth_is_already_on">Bluetooth is already on</string>
     <string name="Bluetooth_tuned_on">Bluetooth tuned on</string>
-
-
-
-
-
-
 
 
     <string name="Blank_test">
@@ -227,5 +218,6 @@
     <string name="extra_settings">Extra settings</string>
     <string name="clear_warning">Clear abnormal current warning</string>
     <string name="clear">Clear</string>
+    <string name="blue_storm_iii">Blue Storm III</string>
 
 </resources>
