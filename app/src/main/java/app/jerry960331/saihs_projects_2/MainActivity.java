@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     boolean AutoOn2 = false;
     boolean AutoOn3 = false;
     boolean AutoOn4 = false;
-    boolean unsafeCurrent1 = false, unsafeCurrent3 = false;
+    boolean unsafeCurrent1 = false, unsafeCurrent2 = false, unsafeCurrent3 = false, unsafeCurrent4 = false;
     boolean devMode = false;
     boolean devModeValue = false;
     boolean AutoTimerIsOn = false;
@@ -296,69 +296,75 @@ public class MainActivity extends AppCompatActivity {
                                 if (!unsafeCurrent1) {
                                     current1 = btDataString.substring(3, 8);
                                 }
+                                if (!unsafeCurrent2) {
+                                    current2 = btDataString.substring(9, 14);
+                                }
+                                if (!unsafeCurrent3) {
+                                    current3 = btDataString.substring(15, 20);
+                                }
+                                if (!unsafeCurrent4) {
+                                    current4 = btDataString.substring(21, 26);
+                                }
 
                                 //若值超過設定電流上限
                                 if (Integer.parseInt(btDataString.substring(3, 8)) > safeCurrentValue) {
                                     makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
                                     unsafeCurrent1 = true;
                                 }
-                                current2 = btDataString.substring(9, 14);
-                                if (!unsafeCurrent3) {
-                                    current3 = btDataString.substring(15, 20);
+                                if (Integer.parseInt(btDataString.substring(9, 14)) > safeCurrentValue) {
+                                    makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                                    unsafeCurrent2 = true;
                                 }
                                 if (Integer.parseInt(btDataString.substring(15, 20)) > safeCurrentValue) {
                                     makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
                                     unsafeCurrent3 = true;
                                 }
-                                current4 = btDataString.substring(21, 26);
+                                if (Integer.parseInt(btDataString.substring(21, 26)) > safeCurrentValue) {
+                                    makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                                    unsafeCurrent4 = true;
+                                }
 
-                                chipAutoOn1 = btDataString.substring(27, 28);//自動模式有開
+                                //自動模式是否為開啟
+                                chipAutoOn1 = btDataString.substring(27, 28);
                                 chipAutoOn2 = btDataString.substring(29, 30);
                                 chipAutoOn3 = btDataString.substring(31, 32);
                                 chipAutoOn4 = btDataString.substring(33, 34);
-                                //35 37 39 41
 
-                                if (Integer.parseInt(current1) > safeCurrentValue) {
-                                    unsafeCurrent1 = true;
-                                }
-                                if (Integer.parseInt(current3) > safeCurrentValue) {
-                                    unsafeCurrent3 = true;
-                                }
-
-                                if (Integer.parseInt(btDataString.substring(35, 36)) == 0) {
+                                //插座狀態
+                                if (Integer.parseInt(btDataString.substring(35, 36)) == 0 && !unsafeCurrent1) {
                                     btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
                                     swSk1.setChecked(false);
-                                } else if (Integer.parseInt(btDataString.substring(35, 36)) == 1 && Integer.parseInt(current1) < 3000) {
+                                } else if (Integer.parseInt(btDataString.substring(35, 36)) == 1 && Integer.parseInt(current1) < safeCurrentValue) {
                                     btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
                                     swSk1.setChecked(true);
-                                } else if (Integer.parseInt(current1) > 3000) {
+                                } else if (Integer.parseInt(current1) > safeCurrentValue || unsafeCurrent1) {
                                     btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
                                 }
-                                if (Integer.parseInt(btDataString.substring(37, 38)) == 0) {
+                                if (Integer.parseInt(btDataString.substring(37, 38)) == 0 && !unsafeCurrent2) {
                                     btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
                                     swSk3.setChecked(false);
-                                } else if (Integer.parseInt(btDataString.substring(37, 38)) == 1 && Integer.parseInt(current2) < 3000) {
+                                } else if (Integer.parseInt(btDataString.substring(37, 38)) == 1 && Integer.parseInt(current2) < safeCurrentValue) {
                                     btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
                                     swSk3.setChecked(true);
-                                } else if (Integer.parseInt(current2) > 3000) {
+                                } else if (Integer.parseInt(current2) > safeCurrentValue || unsafeCurrent2) {
                                     btnSkStat2.setImageResource(R.drawable.dot_red_48dp);
                                 }
-                                if (Integer.parseInt(btDataString.substring(39, 40)) == 0) {
+                                if (Integer.parseInt(btDataString.substring(39, 40)) == 0 && unsafeCurrent3) {
                                     btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
                                     swSk3.setChecked(false);
-                                } else if (Integer.parseInt(btDataString.substring(39, 40)) == 1 && Integer.parseInt(current3) < 3000) {
+                                } else if (Integer.parseInt(btDataString.substring(39, 40)) == 1 && Integer.parseInt(current3) < safeCurrentValue) {
                                     btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
                                     swSk4.setChecked(true);
-                                } else if (Integer.parseInt(current3) > 3000) {
+                                } else if (Integer.parseInt(current3) > safeCurrentValue || unsafeCurrent3) {
                                     btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
                                 }
-                                if (Integer.parseInt(btDataString.substring(41, 42)) == 0) {
+                                if (Integer.parseInt(btDataString.substring(41, 42)) == 0 && !unsafeCurrent4) {
                                     btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
                                     swSk4.setChecked(false);
-                                } else if (Integer.parseInt(btDataString.substring(41, 42)) == 1 && Integer.parseInt(current4) < 3000) {
+                                } else if (Integer.parseInt(btDataString.substring(41, 42)) == 1 && Integer.parseInt(current4) < safeCurrentValue) {
                                     btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
                                     swSk4.setChecked(true);
-                                } else if (Integer.parseInt(current4) > 3000) {
+                                } else if (Integer.parseInt(current4) > safeCurrentValue || unsafeCurrent4) {
                                     btnSkStat4.setImageResource(R.drawable.dot_red_48dp);
                                 }
 
@@ -371,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
                                         btnSkStat1.setImageResource(R.drawable.dot_blue_48dp);
                                     }
                                 }
-                                if (Integer.parseInt(chipAutoOn2) == 1) {
+                                if (Integer.parseInt(chipAutoOn2) == 1 && !unsafeCurrent2) {
                                     if (Integer.parseInt(PIR) == 0) {
                                         swSk2.setChecked(true);
                                         btnSkStat2.setImageResource(R.drawable.dot_blue_48dp);
@@ -389,7 +395,7 @@ public class MainActivity extends AppCompatActivity {
                                         btnSkStat3.setImageResource(R.drawable.dot_blue_48dp);
                                     }
                                 }
-                                if (Integer.parseInt(chipAutoOn4) == 1) {
+                                if (Integer.parseInt(chipAutoOn4) == 1 && !unsafeCurrent4) {
                                     if (Integer.parseInt(PIR) == 0) {
                                         swSk4.setChecked(true);
                                         btnSkStat4.setImageResource(R.drawable.dot_blue_48dp);
@@ -397,13 +403,6 @@ public class MainActivity extends AppCompatActivity {
                                         swSk4.setChecked(false);
                                         btnSkStat4.setImageResource(R.drawable.dot_blue_48dp);
                                     }
-                                }
-
-                                if (unsafeCurrent1) {
-                                    btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
-                                }
-                                if (unsafeCurrent3) {
-                                    btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
                                 }
 
                                 firebase = FirebaseDatabase.getInstance();
@@ -428,9 +427,7 @@ public class MainActivity extends AppCompatActivity {
                         if (msg.arg1 == 1) {
                             Toast.makeText(getApplicationContext(), R.string.connected_successfully, Toast.LENGTH_SHORT).show();
                         } else {
-
                             Toast.makeText(getApplicationContext(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
-
                             txConnectStat.setText(R.string.failed);
                         }
                     } catch (Exception ignored) {
@@ -582,12 +579,10 @@ public class MainActivity extends AppCompatActivity {
         swSk3.setOnClickListener(SwListener);
         swSk4.setOnClickListener(SwListener);
 
-
         swSk1.setOnLongClickListener(skTxChangeListener);
         swSk2.setOnLongClickListener(skTxChangeListener);
         swSk3.setOnLongClickListener(skTxChangeListener);
         swSk4.setOnLongClickListener(skTxChangeListener);
-
 
         btnSkStat1.setOnClickListener(SkStatListener1);
         btnSkStat2.setOnClickListener(SkStatListener2);
@@ -813,6 +808,14 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.currentStat = getResources().getString(R.string.socket_off);
                 CustomDialog.currentNow = 0;
                 CustomDialog.currentAve = 0.0;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent1 = false;
+                        }
+                    }
+                });
                 CustomDialog.show();
             } else {//有開
                 CustomDialog.functionSelect = "Stat";
@@ -820,6 +823,15 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.isSWOn = true;
                 //CustomDialog.currentNow = Integer.parseInt(current1);
                 CustomDialog.currentAve = currentAv1;
+                CustomDialog.safeCurrentValue = safeCurrentValue;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent1 = false;
+                        }
+                    }
+                });
                 CustomDialog.show();
 
                 final Handler getCurrentHandler = new Handler(getMainLooper());
@@ -830,7 +842,6 @@ public class MainActivity extends AppCompatActivity {
                         getCurrentHandler.postDelayed(this, 1000);
                     }
                 }, 10);
-
             }
 
 
@@ -846,6 +857,14 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.isSWOn = false;
                 CustomDialog.currentNow = 0;
                 CustomDialog.currentAve = 0.0;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent2 = false;
+                        }
+                    }
+                });
                 CustomDialog.show();
             } else {
                 CustomDialog.functionSelect = "Stat";
@@ -853,6 +872,15 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.isSWOn = false;
                 CustomDialog.currentNow = Integer.parseInt(current2);
                 CustomDialog.currentAve = currentAv2;
+                CustomDialog.safeCurrentValue = safeCurrentValue;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent2 = false;
+                        }
+                    }
+                });
                 CustomDialog.show();
             }
         }
@@ -867,6 +895,14 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.isSWOn = false;
                 CustomDialog.currentNow = 0;
                 CustomDialog.currentAve = 0.0;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent3 = false;
+                        }
+                    }
+                });
                 CustomDialog.show();
             } else {
                 CustomDialog.functionSelect = "Stat";
@@ -874,6 +910,15 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.isSWOn = false;
                 CustomDialog.currentNow = Integer.parseInt(current3);
                 CustomDialog.currentAve = currentAv3;
+                CustomDialog.safeCurrentValue = safeCurrentValue;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent3 = false;
+                        }
+                    }
+                });
                 CustomDialog.show();
             }
         }
@@ -888,6 +933,14 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.isSWOn = false;
                 CustomDialog.currentNow = 0;
                 CustomDialog.currentAve = 0.0;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent4 = false;
+                        }
+                    }
+                });
                 CustomDialog.show();
             } else {
                 CustomDialog.functionSelect = "Stat";
@@ -895,8 +948,16 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.isSWOn = false;
                 CustomDialog.currentNow = Integer.parseInt(current4);
                 CustomDialog.currentAve = currentAv4;
+                CustomDialog.safeCurrentValue = safeCurrentValue;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent4 = false;
+                        }
+                    }
+                });
                 CustomDialog.show();
-
             }
 
         }
@@ -2094,10 +2155,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity:", "onDestroy");
         btHandler.removeCallbacksAndMessages(null);
         Disconnect(); //BT disconnect
-        unregisterReceiver(mReceiver);
-
+        if (isBTConnected){
+            unregisterReceiver(mReceiver);
+        }
         super.onDestroy();
-
     }
 }
 

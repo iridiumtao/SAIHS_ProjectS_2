@@ -67,6 +67,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     Handler statHandler;
     private ArrayList currentSumArrayList = new ArrayList<Double>();
     LinearLayout layoutWarning;
+    Button btnWarningClear;
 
 
     //鬧鐘
@@ -81,6 +82,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     boolean isAlarmOn1;
     String alarmSetTime1 = "";
     private Calendar alarmCal;
+    private OnStatDialogResult statDialogResult;
     private OnAlarmDialogResult alarmDialogResult; //回傳鬧鐘資料
     private OnChartDialogResult chartDialogResult;
     private OnLoginDialogResult loginDialogResult;
@@ -164,6 +166,27 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 imageCurrentStat = findViewById(R.id.imageCurrentStat);
                 txPowerNow = findViewById(R.id.txPowerNow);
                 layoutWarning = findViewById(R.id.layoutWarning);
+                btnWarningClear = findViewById(R.id.btnWarningClear);
+
+                statDialogResult.warningClear(false);
+                btnWarningClear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new AlertDialog.Builder(getContext())
+                                .setTitle(R.string.confirm)
+                                .setMessage("The abnormal current warning will be clear.")
+                                .setPositiveButton(R.string.confirm, new OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        statDialogResult.warningClear(true);
+                                        onStop();
+                                        dismiss();
+                                    }
+                                })
+                                .show();
+                    }
+                });
+
 
                 final int[] tick = {0};
                 statHandler = new Handler(getMainLooper());
@@ -180,17 +203,17 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                         for (int i = 1; i < currentSumArrayList.size(); i++) {
                             sum += Double.parseDouble(currentSumArrayList.get(i).toString());
                         }
-                        txCurrentAve.setText(sum / tick[0] + "mA");
 
-
+                        //算出平均後乘100、四捨五入至整數為，再除100
+                        txCurrentAve.setText(Math.round((sum / tick[0]) * 100) / 100 + "mA");
                         txPowerNow.setText(currentNow * 0.11 + " W");
 
-
+                        Log.d("currentNow", currentNow+"");
                         if (currentNow == 0) {
                             txCurrentStat.setText(R.string.socket_off);
                             txCurrentDescription.setText(R.string.current_description_off);
                             imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
-                        } else if (currentNow > 0 && currentNow < 3000) {
+                        } else if (currentNow > 0 && currentNow < safeCurrentValue) {
                             txCurrentStat.setText(R.string.good);
                             txCurrentDescription.setText(R.string.current_description_good);
                             imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
@@ -198,7 +221,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             //  txCurrentStat.setText(R.string.orange);
                             //  txCurrentDescription.setText(R.string.current_description_orange);
                             //  imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
-                        } else if (currentNow > 3000) {
+                        } else if (currentNow > safeCurrentValue) {
                             txCurrentStat.setText(R.string.red);
                             txCurrentDescription.setText(R.string.current_description_red);
                             imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
@@ -212,8 +235,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                         statHandler.postDelayed(this, 1000);
                     }
                 }, 10);
-
-
                 break;
             case "Alarm": //=============================== Alarm =================================
                 AlarmDialog();
@@ -988,6 +1009,13 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         super.onStop();
 
 
+    }
+
+    void setStatDialogResult(OnStatDialogResult dialogResult) {
+        statDialogResult = dialogResult;
+    }
+    public interface OnStatDialogResult {
+        void warningClear(boolean warningClear);
     }
 
     void setAlarmDialogResult(OnAlarmDialogResult dialogResult) {

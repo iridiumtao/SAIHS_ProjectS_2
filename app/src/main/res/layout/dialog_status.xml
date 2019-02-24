@@ -143,18 +143,18 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="10dp"
             android:gravity="end"
-            android:text="@string/dismiss_warning"
+            android:text="@string/clear_warning"
             android:textColor="#F44336"
             android:textSize="18sp" />
 
         <Button
-            android:id="@+id/btnWarningDismiss"
+            android:id="@+id/btnWarningClear"
             android:layout_width="wrap_content"
             android:layout_height="31dp"
             android:layout_gravity="end"
             android:layout_weight="1"
             android:background="@drawable/button_red"
-            android:text="@string/dismiss"
+            android:text="@string/clear"
             android:textColor="#F44336" />
 
     </LinearLayout>
