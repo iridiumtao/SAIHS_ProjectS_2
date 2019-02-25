@@ -149,7 +149,7 @@
             app:layout_constraintHorizontal_bias="0.03"
             app:layout_constraintStart_toEndOf="@+id/textView"
             app:layout_constraintTop_toTopOf="@+id/textView"
-            app:srcCompat="@drawable/dot_gray_48dp" />
+            app:srcCompat="@drawable/dot_green_48dp" />
 
         <ImageView
             android:id="@+id/imageView6"
@@ -206,7 +206,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_percent="0.6"
-                    app:srcCompat="@drawable/socket_demo_6" />
+                    app:srcCompat="@drawable/socket_demo_7" />
 
                 <TextView
                     android:id="@+id/txBS"
@@ -287,7 +287,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_percent="0.6"
-                    app:srcCompat="@drawable/socket_demo_6" />
+                    app:srcCompat="@drawable/func_so" />
 
                 <TextView
                     android:id="@+id/txSO"
@@ -367,7 +367,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_percent="0.6"
-                    app:srcCompat="@drawable/socket_demo_6" />
+                    app:srcCompat="@drawable/func_remote_control" />
 
                 <TextView
                     android:id="@+id/txInfrared"
@@ -447,7 +447,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_percent="0.6"
-                    app:srcCompat="@drawable/socket_demo_6" />
+                    app:srcCompat="@drawable/func_air" />
 
                 <TextView
                     android:id="@+id/txEnvi"
