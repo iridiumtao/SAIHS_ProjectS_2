@@ -331,6 +331,7 @@ public class MainActivity extends AppCompatActivity {
                                 chipAutoOn4 = btDataString.substring(33, 34);
 
                                 //插座狀態
+                                //插座1
                                 if (Integer.parseInt(btDataString.substring(35, 36)) == 0 && !unsafeCurrent1) {
                                     btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
                                     swSk1.setChecked(false);
@@ -340,24 +341,27 @@ public class MainActivity extends AppCompatActivity {
                                 } else if (Integer.parseInt(current1) > safeCurrentValue || unsafeCurrent1) {
                                     btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
                                 }
+                                //插座2
                                 if (Integer.parseInt(btDataString.substring(37, 38)) == 0 && !unsafeCurrent2) {
                                     btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
-                                    swSk3.setChecked(false);
+                                    swSk2.setChecked(false);
                                 } else if (Integer.parseInt(btDataString.substring(37, 38)) == 1 && Integer.parseInt(current2) < safeCurrentValue) {
                                     btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
-                                    swSk3.setChecked(true);
+                                    swSk2.setChecked(true);
                                 } else if (Integer.parseInt(current2) > safeCurrentValue || unsafeCurrent2) {
                                     btnSkStat2.setImageResource(R.drawable.dot_red_48dp);
                                 }
-                                if (Integer.parseInt(btDataString.substring(39, 40)) == 0 && unsafeCurrent3) {
+                                //插座3
+                                if (Integer.parseInt(btDataString.substring(39, 40)) == 0 && !unsafeCurrent3) {
                                     btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
                                     swSk3.setChecked(false);
                                 } else if (Integer.parseInt(btDataString.substring(39, 40)) == 1 && Integer.parseInt(current3) < safeCurrentValue) {
                                     btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
-                                    swSk4.setChecked(true);
+                                    swSk3.setChecked(true);
                                 } else if (Integer.parseInt(current3) > safeCurrentValue || unsafeCurrent3) {
                                     btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
                                 }
+                                //插座4
                                 if (Integer.parseInt(btDataString.substring(41, 42)) == 0 && !unsafeCurrent4) {
                                     btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
                                     swSk4.setChecked(false);
@@ -367,6 +371,7 @@ public class MainActivity extends AppCompatActivity {
                                 } else if (Integer.parseInt(current4) > safeCurrentValue || unsafeCurrent4) {
                                     btnSkStat4.setImageResource(R.drawable.dot_red_48dp);
                                 }
+
 
                                 if (Integer.parseInt(chipAutoOn1) == 1 && !unsafeCurrent1) {
                                     if (Integer.parseInt(PIR) == 0) {
@@ -602,7 +607,6 @@ public class MainActivity extends AppCompatActivity {
         btnLogStop.setOnClickListener(LogStop);
         btnLogClear.setOnClickListener(LogClear);
     }
-
     //ctrl+alt+M
     private void findViews() {
         swSk1 = findViewById(R.id.swSk1);
@@ -667,7 +671,7 @@ public class MainActivity extends AppCompatActivity {
             final Switch s = (Switch) v;
             String switchText = s.getText().toString();
             final int switchId = s.getId();
-            String switchOnOff;
+            final String switchOnOff;
             if (s.isChecked()) {
                 switchOnOff = getResources().getString(R.string.open);
             } else {
@@ -684,12 +688,11 @@ public class MainActivity extends AppCompatActivity {
                             String IO = "";
                             switch (switchId) {
                                 case R.id.swSk1:
-
                                     AutoOn1 = false;
                                     btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto));
                                     btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
                                     unsafeCurrent1 = false;
-                                    if (s.isChecked()) {
+                                    if (switchOnOff.equals(getString(R.string.open))) {
                                         //btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
                                         i = 1;
                                         IO = getResources().getString(R.string.turnOn);
@@ -704,12 +707,11 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     break;
                                 case R.id.swSk2:
-
                                     AutoOn2 = false;
                                     btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto));
                                     btnSkAuto2.setTextColor(getResources().getColor(R.color.colorPrimary));
-
-                                    if (s.isChecked()) {
+                                    unsafeCurrent2 = false;
+                                    if (switchOnOff.equals(getString(R.string.open))) {
                                         //btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
                                         i = 2;
                                         IO = getResources().getString(R.string.turnOn);
@@ -724,12 +726,11 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     break;
                                 case R.id.swSk3:
-
                                     AutoOn3 = false;
                                     btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto));
                                     btnSkAuto3.setTextColor(getResources().getColor(R.color.colorPrimary));
                                     unsafeCurrent3 = false;
-                                    if (s.isChecked()) {
+                                    if (switchOnOff.equals(getString(R.string.open))) {
                                         //btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
                                         IO = getResources().getString(R.string.turnOn);
                                         i = 3;
@@ -744,12 +745,11 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     break;
                                 case R.id.swSk4:
-
                                     AutoOn4 = false;
                                     btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto));
                                     btnSkAuto4.setTextColor(getResources().getColor(R.color.colorPrimary));
-
-                                    if (s.isChecked()) {
+                                    unsafeCurrent4 = false;
+                                    if (switchOnOff.equals(getString(R.string.open))) {
                                         //btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
                                         i = 4;
                                         IO = getResources().getString(R.string.turnOn);
@@ -1174,6 +1174,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_ENABLE_BT) {
+            if (btAdapter != null && btAdapter.isEnabled()) {
+                Connect();
+            }
+        }
+    }
+
     //連線按鈕 OnClick
     private Button.OnClickListener btnConnectListener = new View.OnClickListener() {
         @Override
@@ -1193,8 +1201,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             if (!btAdapter.isEnabled()) {
-                Toast.makeText(getBaseContext(), R.string.please_try_again_after_bt_enable,
-                        Toast.LENGTH_LONG).show();
+                //Toast.makeText(getBaseContext(), R.string.please_try_again_after_bt_enable, Toast.LENGTH_LONG).show();
                 return;
             }
         } catch (Exception e) {
