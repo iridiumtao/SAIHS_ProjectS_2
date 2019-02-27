@@ -214,10 +214,10 @@ public class MainActivity extends AppCompatActivity {
         notificationTitle = getResources().getString(R.string.Security_warning);
         notificationText = getResources().getString(R.string.socket_current_warning);
 
-        firebaseCommand("z");
+
         //"z" means "Hello, World!" talk to Arduino
         onCreateFirebaseCheck();
-
+        //firebaseCommand("z");
         final DatabaseReference getStat = FirebaseDatabase.getInstance().getReference("BlueStormIII");
 
         getStat.addValueEventListener(new ValueEventListener() {
@@ -453,7 +453,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onCreateFirebaseCheck() {
-        DatabaseReference reason = FirebaseDatabase.getInstance().getReference("test_user1").child("command");
+        /*DatabaseReference reason = FirebaseDatabase.getInstance().getReference("test_user1").child("command");
         reason.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -466,13 +466,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
-        });
+        });*/
 
-        dbRef = FirebaseDatabase.getInstance().getReference("test_user1").child("data_").child("Sun Jan 27 15:21:54 GMT+08:00 2019");
+        dbRef = FirebaseDatabase.getInstance().getReference("2019-02-27 19:27:52");
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.getValue().toString().equals("#0+01272+00000+00295+00000+0+0+0+0+1+0+0+0~")) {
+                if (!dataSnapshot.getValue().toString().equals("timestamp sample")) {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle(getResources().getString(R.string.system_info))
                             .setMessage(getResources().getString(R.string.app_not_access_deny) + "\n" +
@@ -567,6 +567,8 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.log_in_successfully_by) + "\n" + user.getEmail(), Toast.LENGTH_SHORT).show();
 
                     invalidateOptionsMenu();
+                    userUID = user.getUid();
+                    Log.d(user.getEmail()+": ", userUID);
 
                 } else {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.log_out), Toast.LENGTH_SHORT).show();
@@ -582,7 +584,8 @@ public class MainActivity extends AppCompatActivity {
     private void firebaseCommand(Object command) {
         if (statOnCloud) {
             firebase = FirebaseDatabase.getInstance();
-            dbRef = firebase.getReference("command");
+
+            dbRef = firebase.getReference("users").child(userUID).child("Blue Storm III").child("command");
             dbRef.setValue(command);
         }
     }
