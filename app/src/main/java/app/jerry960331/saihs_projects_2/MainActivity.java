@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
     String current1 = "0", current2 = "0", current3 = "0", current4 = "0";
     Double currentAv1 = 0.0, currentAv2 = 0.0, currentAv3 = 0.0, currentAv4 = 0.0;
     String chipAutoOn1 = "0", chipAutoOn2 = "0", chipAutoOn3 = "0", chipAutoOn4 = "0";
+    Handler getCurrentHandler;
 
     //Firebase
     FirebaseDatabase firebase;
@@ -252,7 +253,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "schedule1" + getResources().getString(R.string.data_load_fail), Toast.LENGTH_LONG).show();
                 Log.d("schedule1資料復原錯誤", e + "");
             }
-
         }
         alarmSetTime1 = getSharedPreferences("alarm1", MODE_PRIVATE).getString("alarmSetTime1", "");
         userEmail = getSharedPreferences("user", MODE_PRIVATE).getString("user_email", null);
@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
         appTitle = getSharedPreferences("user", MODE_PRIVATE).getString("appTitle", getString(R.string.title));
         Log.d(TAG, appTitle + "apple  " + R.string.title);
         setTitle(appTitle);
-        safeCurrentValue = getSharedPreferences("user", MODE_PRIVATE).getInt("safeCurrentValue", 12000);
+        safeCurrentValue = getSharedPreferences("user", MODE_PRIVATE).getInt("safeCurrentValue", 5000);
 
 
         btHandler = new Handler() {
@@ -332,81 +332,90 @@ public class MainActivity extends AppCompatActivity {
 
                                 //插座狀態
                                 //插座1
-                                if (Integer.parseInt(btDataString.substring(35, 36)) == 0 && !unsafeCurrent1) {
-                                    btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
-                                    swSk1.setChecked(false);
-                                } else if (Integer.parseInt(btDataString.substring(35, 36)) == 1 && Integer.parseInt(current1) < safeCurrentValue) {
-                                    btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
-                                    swSk1.setChecked(true);
-                                } else if (Integer.parseInt(current1) > safeCurrentValue || unsafeCurrent1) {
-                                    btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
-                                }
-                                //插座2
-                                if (Integer.parseInt(btDataString.substring(37, 38)) == 0 && !unsafeCurrent2) {
-                                    btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
-                                    swSk2.setChecked(false);
-                                } else if (Integer.parseInt(btDataString.substring(37, 38)) == 1 && Integer.parseInt(current2) < safeCurrentValue) {
-                                    btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
-                                    swSk2.setChecked(true);
-                                } else if (Integer.parseInt(current2) > safeCurrentValue || unsafeCurrent2) {
-                                    btnSkStat2.setImageResource(R.drawable.dot_red_48dp);
-                                }
-                                //插座3
-                                if (Integer.parseInt(btDataString.substring(39, 40)) == 0 && !unsafeCurrent3) {
-                                    btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
-                                    swSk3.setChecked(false);
-                                } else if (Integer.parseInt(btDataString.substring(39, 40)) == 1 && Integer.parseInt(current3) < safeCurrentValue) {
-                                    btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
-                                    swSk3.setChecked(true);
-                                } else if (Integer.parseInt(current3) > safeCurrentValue || unsafeCurrent3) {
-                                    btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
-                                }
-                                //插座4
-                                if (Integer.parseInt(btDataString.substring(41, 42)) == 0 && !unsafeCurrent4) {
-                                    btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
-                                    swSk4.setChecked(false);
-                                } else if (Integer.parseInt(btDataString.substring(41, 42)) == 1 && Integer.parseInt(current4) < safeCurrentValue) {
-                                    btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
-                                    swSk4.setChecked(true);
-                                } else if (Integer.parseInt(current4) > safeCurrentValue || unsafeCurrent4) {
-                                    btnSkStat4.setImageResource(R.drawable.dot_red_48dp);
-                                }
-
-
                                 if (Integer.parseInt(chipAutoOn1) == 1 && !unsafeCurrent1) {
+                                    btnSkStat1.setImageResource(R.drawable.dot_blue_48dp);
                                     if (Integer.parseInt(PIR) == 0) {
                                         swSk1.setChecked(true);
-                                        btnSkStat1.setImageResource(R.drawable.dot_blue_48dp);
                                     } else {
                                         swSk1.setChecked(false);
-                                        btnSkStat1.setImageResource(R.drawable.dot_blue_48dp);
+                                    }
+                                }else {
+                                    if (Integer.parseInt(btDataString.substring(35, 36)) == 0 && !unsafeCurrent1) {
+                                        btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
+                                        swSk1.setChecked(false);
+                                    } else if (Integer.parseInt(btDataString.substring(35, 36)) == 1 && Integer.parseInt(current1) < safeCurrentValue) {
+                                        btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
+                                        swSk1.setChecked(true);
+                                    } else if (Integer.parseInt(current1) > safeCurrentValue || unsafeCurrent1) {
+                                        btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
+                                        swSk1.setChecked(false);
+                                        swSk1.setEnabled(false);
                                     }
                                 }
+
+                                //插座2
                                 if (Integer.parseInt(chipAutoOn2) == 1 && !unsafeCurrent2) {
+                                    btnSkStat2.setImageResource(R.drawable.dot_blue_48dp);
                                     if (Integer.parseInt(PIR) == 0) {
                                         swSk2.setChecked(true);
-                                        btnSkStat2.setImageResource(R.drawable.dot_blue_48dp);
                                     } else {
                                         swSk2.setChecked(false);
-                                        btnSkStat2.setImageResource(R.drawable.dot_blue_48dp);
+                                    }
+                                }else {
+                                    if (Integer.parseInt(btDataString.substring(37, 38)) == 0 && !unsafeCurrent2) {
+                                        btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
+                                        swSk2.setChecked(false);
+                                    } else if (Integer.parseInt(btDataString.substring(37, 38)) == 1 && Integer.parseInt(current2) < safeCurrentValue) {
+                                        btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
+                                        swSk2.setChecked(true);
+                                    } else if (Integer.parseInt(current2) > safeCurrentValue || unsafeCurrent2) {
+                                        btnSkStat2.setImageResource(R.drawable.dot_red_48dp);
+                                        swSk2.setChecked(false);
+                                        swSk2.setEnabled(false);
                                     }
                                 }
+
+                                //插座3
                                 if (Integer.parseInt(chipAutoOn3) == 1 && !unsafeCurrent3) {
+                                    btnSkStat3.setImageResource(R.drawable.dot_blue_48dp);
                                     if (Integer.parseInt(PIR) == 0) {
                                         swSk3.setChecked(true);
-                                        btnSkStat3.setImageResource(R.drawable.dot_blue_48dp);
                                     } else {
                                         swSk3.setChecked(false);
-                                        btnSkStat3.setImageResource(R.drawable.dot_blue_48dp);
+                                    }
+                                }else {
+                                    if (Integer.parseInt(btDataString.substring(39, 40)) == 0 && !unsafeCurrent3) {
+                                        btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
+                                        swSk3.setChecked(false);
+                                    } else if (Integer.parseInt(btDataString.substring(39, 40)) == 1 && Integer.parseInt(current3) < safeCurrentValue) {
+                                        btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
+                                        swSk3.setChecked(true);
+                                    } else if (Integer.parseInt(current3) > safeCurrentValue || unsafeCurrent3) {
+                                        btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
+                                        swSk3.setChecked(false);
+                                        swSk3.setEnabled(false);
                                     }
                                 }
+
+                                //插座4
                                 if (Integer.parseInt(chipAutoOn4) == 1 && !unsafeCurrent4) {
+                                    btnSkStat4.setImageResource(R.drawable.dot_blue_48dp);
                                     if (Integer.parseInt(PIR) == 0) {
                                         swSk4.setChecked(true);
-                                        btnSkStat4.setImageResource(R.drawable.dot_blue_48dp);
                                     } else {
                                         swSk4.setChecked(false);
-                                        btnSkStat4.setImageResource(R.drawable.dot_blue_48dp);
+                                    }
+                                }else {
+                                    if (Integer.parseInt(btDataString.substring(41, 42)) == 0 && !unsafeCurrent4) {
+                                        btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
+                                        swSk4.setChecked(false);
+                                    } else if (Integer.parseInt(btDataString.substring(41, 42)) == 1 && Integer.parseInt(current4) < safeCurrentValue) {
+                                        btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
+                                        swSk4.setChecked(true);
+                                    } else if (Integer.parseInt(current4) > safeCurrentValue || unsafeCurrent4) {
+                                        btnSkStat4.setImageResource(R.drawable.dot_red_48dp);
+                                        swSk4.setChecked(false);
+                                        swSk4.setEnabled(false);
                                     }
                                 }
 
@@ -767,8 +776,9 @@ public class MainActivity extends AppCompatActivity {
                             if (btConnectedThread != null) {
                                 String sendData = BT_comm;
                                 btConnectedThread.write(sendData);
+                                Log.d("Bluetooth Send Data: ", sendData);
                             }
-                            CustomizedSnackBar(getResources().getString(R.string.socket) + " " + i + " " + IO);
+                            CustomizedSnackBar(getResources().getString(R.string.socket) + " " + i + " " + IO, blue);
                         }
                     })
                     .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -801,23 +811,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
 
-            if (!swSk1.isChecked()) { //沒開
-                CustomDialog.functionSelect = "Stat";
-                CustomDialog.socketSelect = 1;
-                CustomDialog.isSWOn = false;
-                CustomDialog.currentStat = getResources().getString(R.string.socket_off);
-                CustomDialog.currentNow = 0;
-                CustomDialog.currentAve = 0.0;
-                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
-                    @Override
-                    public void warningClear(boolean warningClear) {
-                        if (warningClear){
-                            unsafeCurrent1 = false;
-                        }
-                    }
-                });
-                CustomDialog.show();
-            } else {//有開
+            if (swSk1.isChecked() || unsafeCurrent1) { //開啟或是過載
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 1;
                 CustomDialog.isSWOn = true;
@@ -829,12 +823,19 @@ public class MainActivity extends AppCompatActivity {
                     public void warningClear(boolean warningClear) {
                         if (warningClear){
                             unsafeCurrent1 = false;
+                            btConnectedThread.write("b");
+                            swSk1.setEnabled(true);
                         }
+                    }
+
+                    @Override
+                    public void finish(String result) {
+                        getCurrentHandler.removeCallbacksAndMessages(null);
                     }
                 });
                 CustomDialog.show();
 
-                final Handler getCurrentHandler = new Handler(getMainLooper());
+                getCurrentHandler = new Handler(getMainLooper());
                 getCurrentHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -842,6 +843,29 @@ public class MainActivity extends AppCompatActivity {
                         getCurrentHandler.postDelayed(this, 1000);
                     }
                 }, 10);
+            } else {//關閉
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 1;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentStat = getResources().getString(R.string.socket_off);
+                CustomDialog.currentNow = 0;
+                CustomDialog.currentAve = 0.0;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent1 = false;
+                            btConnectedThread.write("b");
+                            swSk1.setEnabled(true);
+                        }
+                    }
+
+                    @Override
+                    public void finish(String result) {
+
+                    }
+                });
+                CustomDialog.show();
             }
 
 
@@ -851,22 +875,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-            if (!swSk2.isChecked()) {
-                CustomDialog.functionSelect = "Stat";
-                CustomDialog.socketSelect = 2;
-                CustomDialog.isSWOn = false;
-                CustomDialog.currentNow = 0;
-                CustomDialog.currentAve = 0.0;
-                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
-                    @Override
-                    public void warningClear(boolean warningClear) {
-                        if (warningClear){
-                            unsafeCurrent2 = false;
-                        }
-                    }
-                });
-                CustomDialog.show();
-            } else {
+            if (swSk2.isChecked() || unsafeCurrent2) {
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 2;
                 CustomDialog.isSWOn = false;
@@ -878,7 +887,44 @@ public class MainActivity extends AppCompatActivity {
                     public void warningClear(boolean warningClear) {
                         if (warningClear){
                             unsafeCurrent2 = false;
+                            btConnectedThread.write("d");
+                            swSk2.setEnabled(true);
                         }
+                    }
+
+                    @Override
+                    public void finish(String result) {
+                        getCurrentHandler.removeCallbacksAndMessages(null);
+                    }
+                });
+                CustomDialog.show();
+                getCurrentHandler = new Handler(getMainLooper());
+                getCurrentHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CustomDialog.currentNow = Integer.parseInt(current2);
+                        getCurrentHandler.postDelayed(this, 1000);
+                    }
+                }, 10);
+            } else {
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 2;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentNow = 0;
+                CustomDialog.currentAve = 0.0;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent2 = false;
+                            btConnectedThread.write("d");
+                            swSk2.setEnabled(true);
+                        }
+                    }
+
+                    @Override
+                    public void finish(String result) {
+
                     }
                 });
                 CustomDialog.show();
@@ -889,22 +935,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-            if (!swSk3.isChecked()) {
-                CustomDialog.functionSelect = "Stat";
-                CustomDialog.socketSelect = 3;
-                CustomDialog.isSWOn = false;
-                CustomDialog.currentNow = 0;
-                CustomDialog.currentAve = 0.0;
-                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
-                    @Override
-                    public void warningClear(boolean warningClear) {
-                        if (warningClear){
-                            unsafeCurrent3 = false;
-                        }
-                    }
-                });
-                CustomDialog.show();
-            } else {
+            if (swSk3.isChecked() || unsafeCurrent3) {
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 3;
                 CustomDialog.isSWOn = false;
@@ -916,7 +947,44 @@ public class MainActivity extends AppCompatActivity {
                     public void warningClear(boolean warningClear) {
                         if (warningClear){
                             unsafeCurrent3 = false;
+                            btConnectedThread.write("f");
+                            swSk3.setEnabled(true);
                         }
+                    }
+
+                    @Override
+                    public void finish(String result) {
+                        //getCurrentHandler.removeCallbacksAndMessages(null);
+                    }
+                });
+                CustomDialog.show();
+                getCurrentHandler = new Handler(getMainLooper());
+                getCurrentHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CustomDialog.currentNow = Integer.parseInt(current3);
+                        getCurrentHandler.postDelayed(this, 1000);
+                    }
+                }, 10);
+            } else {
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 3;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentNow = 0;
+                CustomDialog.currentAve = 0.0;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent3 = false;
+                            btConnectedThread.write("f");
+                            swSk3.setEnabled(true);
+                        }
+                    }
+
+                    @Override
+                    public void finish(String result) {
+
                     }
                 });
                 CustomDialog.show();
@@ -927,22 +995,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-            if (!swSk4.isChecked()) {
-                CustomDialog.functionSelect = "Stat";
-                CustomDialog.socketSelect = 4;
-                CustomDialog.isSWOn = false;
-                CustomDialog.currentNow = 0;
-                CustomDialog.currentAve = 0.0;
-                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
-                    @Override
-                    public void warningClear(boolean warningClear) {
-                        if (warningClear){
-                            unsafeCurrent4 = false;
-                        }
-                    }
-                });
-                CustomDialog.show();
-            } else {
+            if (swSk4.isChecked() || unsafeCurrent4) {
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 4;
                 CustomDialog.isSWOn = false;
@@ -954,7 +1007,44 @@ public class MainActivity extends AppCompatActivity {
                     public void warningClear(boolean warningClear) {
                         if (warningClear){
                             unsafeCurrent4 = false;
+                            btConnectedThread.write("h");
+                            swSk4.setEnabled(true);
                         }
+                    }
+
+                    @Override
+                    public void finish(String result) {
+                        getCurrentHandler.removeCallbacksAndMessages(null);
+                    }
+                });
+                CustomDialog.show();
+                getCurrentHandler = new Handler(getMainLooper());
+                getCurrentHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CustomDialog.currentNow = Integer.parseInt(current4);
+                        getCurrentHandler.postDelayed(this, 1000);
+                    }
+                }, 10);
+            } else {
+                CustomDialog.functionSelect = "Stat";
+                CustomDialog.socketSelect = 4;
+                CustomDialog.isSWOn = false;
+                CustomDialog.currentNow = 0;
+                CustomDialog.currentAve = 0.0;
+                CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
+                    @Override
+                    public void warningClear(boolean warningClear) {
+                        if (warningClear){
+                            unsafeCurrent4 = false;
+                            btConnectedThread.write("h");
+                            swSk4.setEnabled(true);
+                        }
+                    }
+
+                    @Override
+                    public void finish(String result) {
+
                     }
                 });
                 CustomDialog.show();
@@ -1405,33 +1495,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //auto按鈕的onClickListener
-    //因為switch-case有問題 所以用最原始的方法
-    //使用單晶自動模式 所以插座鎖定被取消了
     public void auto1(View view) {
-        if (!AutoOn1) {
-            AutoOn1 = true;
-            btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
-            btnSkAuto1.setTextColor(getResources().getColor(R.color.white));
-            //swSk1.setEnabled(false);
-            AutoTimerRepeatNOPE = false;
-            if (btConnectedThread != null) {
-                btConnectedThread.write("i");
-            }
-            firebaseCommand("i");
+        if (unsafeCurrent1){
+            CustomizedSnackBar(getString(R.string.please_clear_abnormal_current_first), red);
         } else {
-            AutoOn1 = false;
-            btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto));
-            btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
-            //swSk1.setEnabled(true);
-            if (btConnectedThread != null) {
-                btConnectedThread.write("m");
+            if (!AutoOn1) {
+                AutoOn1 = true;
+                btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
+                btnSkAuto1.setTextColor(getResources().getColor(R.color.white));
+                //swSk1.setEnabled(false);
+                AutoTimerRepeatNOPE = false;
+                if (btConnectedThread != null) {
+                    btConnectedThread.write("i");
+                }
+                firebaseCommand("i");
+            } else {
+                AutoOn1 = false;
+                btnSkAuto1.setBackground(getResources().getDrawable(R.drawable.button_auto));
+                btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
+                //swSk1.setEnabled(true);
+                if (btConnectedThread != null) {
+                    btConnectedThread.write("m");
+                }
+                firebaseCommand("m");
             }
-            firebaseCommand("m");
         }
     }
 
     public void auto2(View view) {
-        if (!AutoOn2) {
+        if (unsafeCurrent2){
+            CustomizedSnackBar(getString(R.string.please_clear_abnormal_current_first), red);
+        } else if (!AutoOn2) {
             AutoOn2 = true;
             btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
             btnSkAuto2.setTextColor(getResources().getColor(R.color.white));
@@ -1454,7 +1548,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void auto3(View view) {
-        if (!AutoOn3) {
+        if (unsafeCurrent3){
+            CustomizedSnackBar(getString(R.string.please_clear_abnormal_current_first), red);
+        } else if (!AutoOn3) {
             AutoOn3 = true;
             btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
             btnSkAuto3.setTextColor(getResources().getColor(R.color.white));
@@ -1477,7 +1573,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void auto4(View view) {
-        if (!AutoOn4) {
+        if (unsafeCurrent4){
+            CustomizedSnackBar(getString(R.string.please_clear_abnormal_current_first), red);
+        } else if (!AutoOn4) {
             AutoOn4 = true;
             btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
             btnSkAuto4.setTextColor(getResources().getColor(R.color.white));
@@ -1597,11 +1695,11 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void CustomizedSnackBar(String SnackBarText) {
+    public void CustomizedSnackBar(String SnackBarText, int color) {
         snackbar = Snackbar.make(findViewById(android.R.id.content), SnackBarText, Snackbar.LENGTH_SHORT)
                 .setAction("DISMISS", null);
         snackBarView = snackbar.getView();
-        snackBarView.setBackgroundColor(blue);
+        snackBarView.setBackgroundColor(color);
         snackBarTxV = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
         snackbar.show();
     }
@@ -1809,7 +1907,22 @@ public class MainActivity extends AppCompatActivity {
                         .show();
                 break;
             case R.id.action_notification:
-                makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                Calendar calendar = Calendar.getInstance();
+                //just for test
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.add(Calendar.SECOND, 10);
+
+                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                Intent intent = new Intent(this, AlarmReceiver.class);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("smoke","smoke");
+                intent.putExtras(bundle);
+
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+                //makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
                 break;
             case R.id.action_dev:
                 item.setChecked(!item.isChecked());

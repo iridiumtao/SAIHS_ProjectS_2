@@ -219,5 +219,7 @@
     <string name="clear_warning">Clear abnormal current warning</string>
     <string name="clear">Clear</string>
     <string name="blue_storm_iii">Blue Storm III</string>
+    <string name="the_abnormal_current_will_be_clear">The abnormal current warning will be cleared.</string>
+    <string name="please_clear_abnormal_current_first">Please clear abnormal current warning first!</string>
 
 </resources>

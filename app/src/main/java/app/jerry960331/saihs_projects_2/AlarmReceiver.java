@@ -48,115 +48,120 @@ public class AlarmReceiver extends BroadcastReceiver {
         Bundle bundle = intent.getExtras();
         boolean[] socket;
         String purpose;
-        assert bundle != null;
-        socket = bundle.getBooleanArray("socketFromMain");
-        purpose = bundle.getString("purposeFromMain");
-        assert purpose != null;
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("command");
-        if (purpose.equals("TURN_ON")) {
+        //assert bundle != null;
+        if (bundle.getBooleanArray("socketFromMain") != null && bundle.getString("purposeFromMain") != null) {
+            socket = bundle.getBooleanArray("socketFromMain");
+            purpose = bundle.getString("purposeFromMain");
 
-            assert socket != null;
-            if (socket[0]) {
-                val += "a";
-            }
-            if (socket[1]) {
-                val += "c";
-            }
-            if (socket[2]) {
-                val += "e";
-            }
-            if (socket[3]) {
-                val += "g";
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("command");
+            if (purpose.equals("TURN_ON")) {
+
+                assert socket != null;
+                if (socket[0]) {
+                    val += "a";
+                }
+                if (socket[1]) {
+                    val += "c";
+                }
+                if (socket[2]) {
+                    val += "e";
+                }
+                if (socket[3]) {
+                    val += "g";
+                }
+
+                ref.setValue(val);
+            } else {
+
+                assert socket != null;
+                if (socket[0]) {
+                    val += "b";
+                }
+                if (socket[1]) {
+                    val += "d";
+                }
+                if (socket[2]) {
+                    val += "f";
+                }
+                if (socket[3]) {
+                    val += "h";
+                }
+
+                ref.setValue(val);
             }
 
-            ref.setValue(val);
-        } else {
 
-            assert socket != null;
-            if (socket[0]) {
-                val += "b";
-            }
-            if (socket[1]) {
-                val += "d";
-            }
-            if (socket[2]) {
-                val += "f";
-            }
-            if (socket[3]) {
-                val += "h";
-            }
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String str = dataSnapshot.getValue().toString();
 
-            ref.setValue(val);
-        }
+                    for (int i = 0; i < str.length(); i++) {
+                        switch (str.substring(i, i + 1)) {
+                            case "a":
+                                showNotify += "1,";
+                                socketNotify = true;
+                                break;
+                            case "c":
+                                showNotify += "2,";
+                                socketNotify = true;
+                                break;
+                            case "e":
+                                showNotify += "3,";
+                                socketNotify = true;
+                                break;
+                            case "g":
+                                showNotify += "4,";
+                                socketNotify = true;
+                                break;
 
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String str = dataSnapshot.getValue().toString();
-
-                for (int i = 0; i < str.length(); i++) {
-                    switch (str.substring(i, i + 1)) {
-                        case "a":
-                            showNotify += "1,";
-                            socketNotify = true;
-                            break;
-                        case "c":
-                            showNotify += "2,";
-                            socketNotify = true;
-                            break;
-                        case "e":
-                            showNotify += "3,";
-                            socketNotify = true;
-                            break;
-                        case "g":
-                            showNotify += "4,";
-                            socketNotify = true;
-                            break;
-
-                        case "b":
-                            showNotify += "1,";
-                            socketNotify = false;
-                            break;
-                        case "d":
-                            showNotify += "2,";
-                            socketNotify = false;
-                            break;
-                        case "f":
-                            showNotify += "3,";
-                            socketNotify = false;
-                            break;
-                        case "h":
-                            showNotify += "4,";
-                            socketNotify = false;
-                            break;
+                            case "b":
+                                showNotify += "1,";
+                                socketNotify = false;
+                                break;
+                            case "d":
+                                showNotify += "2,";
+                                socketNotify = false;
+                                break;
+                            case "f":
+                                showNotify += "3,";
+                                socketNotify = false;
+                                break;
+                            case "h":
+                                showNotify += "4,";
+                                socketNotify = false;
+                                break;
+                        }
                     }
+                    showNotify = showNotify.substring(0, showNotify.length() - 1);
+                    String show;
+                    if (socketNotify) {
+                        show = "開啟插座：";
+                    } else {
+                        show = "關閉插座：";
+                    }
+
+                    if (!isNetworkAvailable(context)) {
+                        Notification(context, "無法傳送插座訊號", "網路未連線");
+                    } else {
+                        Notification(context, "已成功傳送插座訊號", show + showNotify);
+                    }
+
                 }
-                showNotify = showNotify.substring(0, showNotify.length() - 1);
-                String show;
-                if (socketNotify) {
-                    show = "開啟插座：";
-                } else {
-                    show = "關閉插座：";
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
                 }
-
-                if (!isNetworkAvailable(context)) {
-                    Notification(context, "無法傳送插座訊號", "網路未連線");
-                } else {
-                    Notification(context, "已成功傳送插座訊號", show + showNotify);
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+            });
         /*} catch (Exception e) {
             Toast.makeText(context, "onReceive\n" + e + "", Toast.LENGTH_LONG).show();
             Log.d("onReceive: ", e + "");
         }*/
+        }else if (bundle.getString("smoke") != null) {
+            Notification(context, "安全警示", "偵測到有害氣體");
+        }
+
     }
 
     public void Notification(Context context, String title, String message) {
@@ -182,7 +187,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "alarm")
-                .setSmallIcon(R.drawable.icon_notification_blue_storm_iii)
+                .setSmallIcon(R.drawable.func_air)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setAutoCancel(true)

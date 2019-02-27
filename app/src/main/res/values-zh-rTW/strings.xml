@@ -126,4 +126,6 @@
     <string name="clear_warning">解除警報狀態</string>
     <string name="clear">解除</string>
     <string name="blue_storm_iii">Blue Storm III</string>
+    <string name="the_abnormal_current_will_be_clear">電流異常警告將被解除</string>
+    <string name="please_clear_abnormal_current_first">請先於「電流狀態」中解除電流異常警告!</string>
 </resources>

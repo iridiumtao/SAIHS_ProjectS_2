@@ -66,8 +66,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     boolean devModeValue = false;
     Handler statHandler;
     private ArrayList currentSumArrayList = new ArrayList<Double>();
-    LinearLayout layoutWarning;
-    Button btnWarningClear;
+    private Button btnWarningClear;
 
 
     //鬧鐘
@@ -165,7 +164,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 txCurrentDescription = findViewById(R.id.txCurrentDescription);
                 imageCurrentStat = findViewById(R.id.imageCurrentStat);
                 txPowerNow = findViewById(R.id.txPowerNow);
-                layoutWarning = findViewById(R.id.layoutWarning);
                 btnWarningClear = findViewById(R.id.btnWarningClear);
 
                 statDialogResult.warningClear(false);
@@ -174,7 +172,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                     public void onClick(View v) {
                         new AlertDialog.Builder(getContext())
                                 .setTitle(R.string.confirm)
-                                .setMessage("The abnormal current warning will be clear.")
+                                .setMessage(c.getString(R.string.the_abnormal_current_will_be_clear))
                                 .setPositiveButton(R.string.confirm, new OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -204,8 +202,13 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             sum += Double.parseDouble(currentSumArrayList.get(i).toString());
                         }
 
+
+                        if (currentNow <= safeCurrentValue){
+                            txCurrentAve.setText(Math.round((sum / tick[0]) * 100) / 100 + "mA");
+                        }else {
+                            txCurrentAve.setText(currentNow + "mA");
+                        }
                         //算出平均後乘100、四捨五入至整數為，再除100
-                        txCurrentAve.setText(Math.round((sum / tick[0]) * 100) / 100 + "mA");
                         txPowerNow.setText(currentNow * 0.11 + " W");
 
                         Log.d("currentNow", currentNow+"");
@@ -223,9 +226,10 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             //  imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
                         } else if (currentNow > safeCurrentValue) {
                             txCurrentStat.setText(R.string.red);
+                            txCurrentDescription.setTextColor(0xfff44336);
                             txCurrentDescription.setText(R.string.current_description_red);
                             imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
-                            layoutWarning.setVisibility(View.VISIBLE);
+                            btnWarningClear.setVisibility(View.VISIBLE);
                         } else {
                             txCurrentStat.setText("Loading");
                             txCurrentDescription.setText("Loading");
@@ -969,6 +973,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
         switch (functionSelect) {
             case "Stat":
                 Log.d("onStop", "Stat dialog finish");
+                statDialogResult.finish("Stat Finish");
                 statHandler.removeCallbacksAndMessages(null);
                 break;
 
@@ -1016,6 +1021,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     }
     public interface OnStatDialogResult {
         void warningClear(boolean warningClear);
+        void finish(String result);
     }
 
     void setAlarmDialogResult(OnAlarmDialogResult dialogResult) {
