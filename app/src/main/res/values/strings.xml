@@ -184,7 +184,8 @@
         <item>Sunday</item>
     </string-array>
     <string name="save_data_to_phone">Data have been saved.</string>
-    <string name="login_fail_wrong_password">Login failed. Wrong password.</string>
+    <string name="login_fail_wrong_password">Log in failed. Wrong password.</string>
+    <string name="log_in_fail">Log in failed</string>
     <string name="next_alarm_have_been_set_on">Next alarm have been set on</string>
     <string name="alarm_not_set">Alarm not set.</string>
     <string name="unable_to_check_app_version">Unable to check app version.</string>
@@ -221,5 +222,27 @@
     <string name="blue_storm_iii">Blue Storm III</string>
     <string name="the_abnormal_current_will_be_clear">The abnormal current warning will be cleared.</string>
     <string name="please_clear_abnormal_current_first">Please clear abnormal current warning first!</string>
+    <string name="firebase_err_invalid_passwd">com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The password is invalid or the user does not have a password.</string>
+    <string name="account_not_found_description">Account not found. Do you want to register with this email and password?</string>
+    <string name="Sign_up">Sign up</string>
+    <string name="pref_sync">Preference Sync</string>
+    <string name="overwrite_local">Overwrite local</string>
+    <string name="overwrite_online">Overwrite online</string>
+    <string name="set_default">Set to default</string>
+    <string name="username">username</string>
+    <string name="device_name">Device name</string>
+    <string name="firebase_data_missing_desc">Online data missing. All online data have be overwritten.</string>
+    <string name="not_login">not log in</string>
+    <string name="delete_local_user_data">Data clean up?</string>
+    <string name="delete_local_user_data_desc">Do you want to clean up your local preference? This will not delete online data. (App will be restarted)</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="data_clear">User preference have been cleared.</string>
+    <string name="logging_in">Logging in...</string>
+    <string name="pref_user_name_missing_desc">Username missing. Automatically set to</string>
+    <string name="system_lang">Follow system setting</string>
+    <string name="language">Language</string>
+    <string name="app_will_restart">App will restart</string>
+    <string name="must_enter_a_value">Must enter a value</string>
 
 </resources>

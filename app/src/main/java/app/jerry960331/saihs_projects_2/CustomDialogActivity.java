@@ -421,7 +421,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             @Override
                             public void text(String text) {
                                 txUserName.setText(text);
-                                loginDialogResult.userName(txUserName.getText().toString());
+                                //讓Main知道有輸入東西
                             }
                         });
                     }
@@ -440,7 +440,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                             @Override
                             public void text(String text) {
                                 txUserDevice.setText(text);
-                                loginDialogResult.userDevice(txUserDevice.getText().toString());
                             }
                         });
                     }
@@ -456,7 +455,6 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         loginDialogResult.logOut(true);
-                                        loginDialogResult.userName(txUserName.getText().toString());
                                         onStop();
                                         dismiss();
 
@@ -1009,6 +1007,8 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
                 break;
             case "Logged in":
+                loginDialogResult.userPref(txUserName.getText().toString(), txUserDevice.getText().toString());
+
                 break;
         }
         super.onStop();
@@ -1069,9 +1069,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
 
         void logOut(boolean logOut);
 
-        void userName(String name);
-
-        void userDevice(String device);
+        void userPref(String name,String device);
     }
 
     void setInputDialogResult(OnInputDialogResult dialogResult) {

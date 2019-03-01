@@ -9,8 +9,6 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothHeadset;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,8 +27,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
@@ -42,11 +38,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -70,15 +63,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -99,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
             btnSkChart1, btnSkChart2, btnSkChart3, btnSkChart4;
     private Switch
             swSk1, swSk2, swSk3, swSk4;
-    private EditText txSocket1, txSocket2, txSocket3, txSocket4;
     private Button
             btnConnect,
             btnSkAuto1, btnSkAuto2, btnSkAuto3, btnSkAuto4,
@@ -182,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
     private String userUID;
-    boolean statOnCloud = true;
+    boolean statOnCloud = false;
 
     private String userEmail;
     private String userName;
@@ -217,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
         //"z" means "Hello, World!" talk to Arduino
         onCreateFirebaseCheck();
-        //firebaseCommand("z");
+
         final DatabaseReference getStat = FirebaseDatabase.getInstance().getReference("BlueStormIII");
 
         getStat.addValueEventListener(new ValueEventListener() {
@@ -339,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                                     } else {
                                         swSk1.setChecked(false);
                                     }
-                                }else {
+                                } else {
                                     if (Integer.parseInt(btDataString.substring(35, 36)) == 0 && !unsafeCurrent1) {
                                         btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
                                         swSk1.setChecked(false);
@@ -361,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
                                     } else {
                                         swSk2.setChecked(false);
                                     }
-                                }else {
+                                } else {
                                     if (Integer.parseInt(btDataString.substring(37, 38)) == 0 && !unsafeCurrent2) {
                                         btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
                                         swSk2.setChecked(false);
@@ -383,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
                                     } else {
                                         swSk3.setChecked(false);
                                     }
-                                }else {
+                                } else {
                                     if (Integer.parseInt(btDataString.substring(39, 40)) == 0 && !unsafeCurrent3) {
                                         btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
                                         swSk3.setChecked(false);
@@ -405,7 +395,7 @@ public class MainActivity extends AppCompatActivity {
                                     } else {
                                         swSk4.setChecked(false);
                                     }
-                                }else {
+                                } else {
                                     if (Integer.parseInt(btDataString.substring(41, 42)) == 0 && !unsafeCurrent4) {
                                         btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
                                         swSk4.setChecked(false);
@@ -418,7 +408,7 @@ public class MainActivity extends AppCompatActivity {
                                         swSk4.setEnabled(false);
                                     }
                                 }
-
+                                /*假的資料(透過手機上傳)
                                 firebase = FirebaseDatabase.getInstance();
                                 DatabaseReference myRef = firebase.getReference("test_user1").child("data_");
                                 Map<String, Object> data = new HashMap<>();
@@ -428,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
                                     data.put(currentTime.toString(), btDataString.toString());
                                 }
                                 myRef.updateChildren(data);
-
+                                */
                             } catch (Exception e) {
                                 Log.d("e", e + "");
                             }
@@ -475,8 +465,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!dataSnapshot.getValue().toString().equals("timestamp sample")) {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle(getResources().getString(R.string.system_info))
-                            .setMessage(getResources().getString(R.string.app_not_access_deny) + "\n" +
-                                    getResources().getString(R.string.because) + StrR)
+                            .setMessage(getResources().getString(R.string.app_not_access_deny))
                             .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -562,19 +551,38 @@ public class MainActivity extends AppCompatActivity {
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.log_in_successfully_by) + "\n" + user.getEmail(), Toast.LENGTH_SHORT).show();
-
-                    invalidateOptionsMenu();
                     userUID = user.getUid();
-                    Log.d(user.getEmail()+": ", userUID);
+                    userEmail = user.getEmail();
+                    firebaseCommand("z");
+                    statOnCloud = true;
+                    Log.d(user.getEmail() + ": ", userUID);
+                    dbRef = FirebaseDatabase.getInstance().getReference("users").child(userUID);
+                    dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            firebaseUpdateUserData(userName, user.getEmail());
+                            firebaseUpdateBSPref();
+                            firebaseUpdateAppTitle();
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                    CustomizedSnackBar(getString(R.string.log_in_successfully_by) + userEmail, green);
 
                 } else {
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.log_out), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, getResources().getString(R.string.log_out), Toast.LENGTH_SHORT).show();
                     userEmail = "";
                     userName = "";
                     invalidateOptionsMenu();
+                    statOnCloud = false;
+                    CustomizedSnackBar(getString(R.string.not_login), green);
                 }
 
             }
@@ -619,6 +627,7 @@ public class MainActivity extends AppCompatActivity {
         btnLogStop.setOnClickListener(LogStop);
         btnLogClear.setOnClickListener(LogClear);
     }
+
     //ctrl+alt+M
     private void findViews() {
         swSk1 = findViewById(R.id.swSk1);
@@ -670,6 +679,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void text(String text) {
                     tx.setText(text);
+                    firebaseUpdateBSPref();
                 }
             });
             return true;
@@ -824,7 +834,7 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
                     @Override
                     public void warningClear(boolean warningClear) {
-                        if (warningClear){
+                        if (warningClear) {
                             unsafeCurrent1 = false;
                             btConnectedThread.write("b");
                             swSk1.setEnabled(true);
@@ -856,7 +866,7 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
                     @Override
                     public void warningClear(boolean warningClear) {
-                        if (warningClear){
+                        if (warningClear) {
                             unsafeCurrent1 = false;
                             btConnectedThread.write("b");
                             swSk1.setEnabled(true);
@@ -888,7 +898,7 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
                     @Override
                     public void warningClear(boolean warningClear) {
-                        if (warningClear){
+                        if (warningClear) {
                             unsafeCurrent2 = false;
                             btConnectedThread.write("d");
                             swSk2.setEnabled(true);
@@ -918,7 +928,7 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
                     @Override
                     public void warningClear(boolean warningClear) {
-                        if (warningClear){
+                        if (warningClear) {
                             unsafeCurrent2 = false;
                             btConnectedThread.write("d");
                             swSk2.setEnabled(true);
@@ -948,7 +958,7 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
                     @Override
                     public void warningClear(boolean warningClear) {
-                        if (warningClear){
+                        if (warningClear) {
                             unsafeCurrent3 = false;
                             btConnectedThread.write("f");
                             swSk3.setEnabled(true);
@@ -978,7 +988,7 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
                     @Override
                     public void warningClear(boolean warningClear) {
-                        if (warningClear){
+                        if (warningClear) {
                             unsafeCurrent3 = false;
                             btConnectedThread.write("f");
                             swSk3.setEnabled(true);
@@ -1008,7 +1018,7 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
                     @Override
                     public void warningClear(boolean warningClear) {
-                        if (warningClear){
+                        if (warningClear) {
                             unsafeCurrent4 = false;
                             btConnectedThread.write("h");
                             swSk4.setEnabled(true);
@@ -1038,7 +1048,7 @@ public class MainActivity extends AppCompatActivity {
                 CustomDialog.setStatDialogResult(new CustomDialogActivity.OnStatDialogResult() {
                     @Override
                     public void warningClear(boolean warningClear) {
-                        if (warningClear){
+                        if (warningClear) {
                             unsafeCurrent4 = false;
                             btConnectedThread.write("h");
                             swSk4.setEnabled(true);
@@ -1268,7 +1278,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_ENABLE_BT) {
+        if (requestCode == REQUEST_ENABLE_BT) {
             if (btAdapter != null && btAdapter.isEnabled()) {
                 Connect();
             }
@@ -1499,7 +1509,7 @@ public class MainActivity extends AppCompatActivity {
 
     //auto按鈕的onClickListener
     public void auto1(View view) {
-        if (unsafeCurrent1){
+        if (unsafeCurrent1) {
             CustomizedSnackBar(getString(R.string.please_clear_abnormal_current_first), red);
         } else {
             if (!AutoOn1) {
@@ -1526,7 +1536,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void auto2(View view) {
-        if (unsafeCurrent2){
+        if (unsafeCurrent2) {
             CustomizedSnackBar(getString(R.string.please_clear_abnormal_current_first), red);
         } else if (!AutoOn2) {
             AutoOn2 = true;
@@ -1551,7 +1561,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void auto3(View view) {
-        if (unsafeCurrent3){
+        if (unsafeCurrent3) {
             CustomizedSnackBar(getString(R.string.please_clear_abnormal_current_first), red);
         } else if (!AutoOn3) {
             AutoOn3 = true;
@@ -1576,7 +1586,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void auto4(View view) {
-        if (unsafeCurrent4){
+        if (unsafeCurrent4) {
             CustomizedSnackBar(getString(R.string.please_clear_abnormal_current_first), red);
         } else if (!AutoOn4) {
             AutoOn4 = true;
@@ -1712,7 +1722,7 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         this.menu = menu;
-        menu.findItem(R.id.action_statOnCloud).setChecked(true);
+        menu.findItem(R.id.action_statOnCloud).setChecked(false);
         menu.findItem(R.id.action_dev).setChecked(true);
         devMode = true;
         return true;
@@ -1739,6 +1749,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             menu.findItem(R.id.action_login).setTitle(userName);
         }
+
+        menu.findItem(R.id.action_statOnCloud).setChecked(statOnCloud);
         Log.d("onPrepareOptionsMenu: ", userName);
 
         return true;
@@ -1747,139 +1759,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         int id = item.getItemId();
+        FirebaseUser user;
         switch (id) {
             case R.id.action_login:
-                final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-                Log.d(TAG, "onOptionsItemSelected: login Prepare");
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user == null) {
-                    Log.d(TAG, "onOptionsItemSelected: login");
-                    CustomDialog.functionSelect = "Login";
-                    CustomDialog.show();
-                    CustomDialog.setLoginDialogResult(new CustomDialogActivity.OnLoginDialogResult() {
-                        @Override
-                        public void userData(final String email, final String password) {
-                            auth.signInWithEmailAndPassword(email, password)
-                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<AuthResult> task) {
-                                            if (!task.isSuccessful()) {
-                                                FirebaseAuthException e = (FirebaseAuthException) task.getException();
-                                                Log.d(TAG, e + "");
-                                                if (!e.toString().equals("com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The password is invalid or the user does not have a password.")) {
-                                                    //create new account
-                                                    new AlertDialog.Builder(MainActivity.this)
-                                                            .setTitle(R.string.confirm)
-                                                            .setMessage("Account not found. Do you want to register with this email and password?")
-                                                            .setPositiveButton("Sign up", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialog, int which) {
-                                                                    auth.createUserWithEmailAndPassword(email, password)
-                                                                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                                                                @Override
-                                                                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                                                                    Log.d(TAG, "2" + task);
-                                                                                    FirebaseAuthException e = (FirebaseAuthException) task.getException();
-                                                                                    String message = task.isSuccessful() ? "Sign up successfully" : "Sign up failed";
-                                                                                    String strE = "";
-                                                                                    if (e != null) {
-                                                                                        strE = e.toString().substring(66);
-                                                                                    }
-                                                                                    new AlertDialog.Builder(MainActivity.this)
-                                                                                            .setMessage(message + "\n" + strE)
-                                                                                            .setPositiveButton(R.string.confirm, null)
-                                                                                            .show();
-                                                                                    if (message.equals("Sign up successfully")) {
-                                                                                        String menuText = email.substring(0, email.indexOf("@"));
-                                                                                        item.setTitle(menuText);
-                                                                                        userEmail = email;
-                                                                                        userName = email.substring(0, email.indexOf("@"));
-                                                                                    } else {
-                                                                                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                                                                    }
-                                                                                }
-                                                                            });
-                                                                }
-                                                            })
-                                                            .setNegativeButton(R.string.cancel, null)
-                                                            .show();
-                                                } else {
-                                                    Toast.makeText(MainActivity.this, getResources().getString(R.string.login_fail_wrong_password), Toast.LENGTH_LONG).show();
-                                                }
-                                            } else if (task.isSuccessful()) {
-                                                String menuText = email.substring(0, email.indexOf("@"));
-                                                item.setTitle(menuText);
-                                                userEmail = email;
-                                                userName = email.substring(0, email.indexOf("@"));
-                                                Toast.makeText(MainActivity.this, getResources().getString(R.string.login_successfully), Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    });
-                        }
-
-                        @Override
-                        public void logOut(boolean logOut) {
-
-                        }
-
-                        @Override
-                        public void userName(String name) {
-
-                        }
-
-                        @Override
-                        public void userDevice(String device) {
-
-                        }
-
-                    });
-                    CustomDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    CustomDialog.functionSelect = "Logged in";
-                    CustomDialog.show();
-                    CustomDialog.txUserDevice.setText(userDevice);
-                    CustomDialog.setLoginDialogResult(new CustomDialogActivity.OnLoginDialogResult() {
-                        @Override
-                        public void userData(String email, String password) {
-
-                        }
-
-                        @Override
-                        public void userName(String name) {
-                            userName = name;
-                            invalidateOptionsMenu();
-                        }
-
-                        @Override
-                        public void logOut(boolean logOut) {
-                            if (logOut) {
-                                auth.signOut();
-                                userEmail = "";
-                                userName = "";
-                                invalidateOptionsMenu();
-                                Log.d(TAG, getResources().getString(R.string.log_out));
-                            }
-                        }
-
-                        @Override
-                        public void userDevice(String device) {
-                            userDevice = device;
-                        }
-
-                    });
-                    if (userEmail != null && userName != null) {
-                        CustomDialog.txUserName.setText(userName);
-                        CustomDialog.txUserEmail.setText(userEmail);
-                    }
-
-                    Log.d(TAG, "onOptionsItemSelected: Logged in");
-                }
-
+                login(item);
                 break;
             case R.id.action_settings:
                 new AlertDialog.Builder(this)
@@ -1919,7 +1802,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, AlarmReceiver.class);
 
                 Bundle bundle = new Bundle();
-                bundle.putString("smoke","smoke");
+                bundle.putString("smoke", "smoke");
                 intent.putExtras(bundle);
 
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
@@ -1932,9 +1815,23 @@ public class MainActivity extends AppCompatActivity {
                 devMode = item.isChecked();
                 break;
             case R.id.action_statOnCloud:
-                item.setChecked(!item.isChecked());
-                statOnCloud = item.isChecked();
-                // TODO: 2019/1/30 把擷取插座狀態的部分關掉 
+                user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    item.setChecked(!item.isChecked());
+                    statOnCloud = item.isChecked();
+                    // TODO: 2019/1/30 把擷取插座狀態的部分關掉
+                } else {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Please Login")
+                            .setMessage("You must login to enable this function")
+                            .setPositiveButton(R.string.login, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    login(menu.findItem(R.id.action_login));
+                                }
+                            })
+                            .show();
+                }
                 break;
             case R.id.action_destroy:
                 Intent i = getBaseContext().getPackageManager()
@@ -1958,6 +1855,274 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void login(final MenuItem item) {
+        final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+        Log.d(TAG + " Item: ", "login Prepare");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Log.d(TAG, "onOptionsItemSelected: login");
+            CustomDialog.functionSelect = "Login";
+            CustomDialog.show();
+            CustomDialog.setLoginDialogResult(new CustomDialogActivity.OnLoginDialogResult() {
+                @Override
+                public void userData(final String email, final String password) {
+
+                    final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+                    progressDialog.setMessage(getResources().getString(R.string.logging_in));
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+
+                    final Thread t = new Thread(){
+                        @Override
+                        public void run(){
+                                auth.signInWithEmailAndPassword(email, password)
+                                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                                                progressDialog.dismiss();
+
+                                                if (!task.isSuccessful()) {
+                                                    FirebaseAuthException e = (FirebaseAuthException) task.getException();
+                                                    Log.d(TAG, e + "");
+                                                    if (!e.toString().equals(getString(R.string.firebase_err_invalid_passwd))) {
+                                                        createNewAccount(email, password, item);
+                                                    } else {
+                                                        CustomizedSnackBar(getString(R.string.login_fail_wrong_password), red);
+                                                    }
+                                                } else if (task.isSuccessful()) {
+                                                    Toast.makeText(MainActivity.this,
+                                                            getResources().getString(R.string.login_successfully), Toast.LENGTH_SHORT).show();
+                                                    firebaseDownloadUserDataAndBSPref(email);
+
+                                                }
+                                            }
+                                        });
+                        }
+                    };
+                    t.start();
+                }
+
+                @Override
+                public void logOut(boolean logOut) {
+
+                }
+
+                @Override
+                public void userPref(String name, String device) {
+
+                }
+
+            });
+            CustomDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            CustomDialog.functionSelect = "Logged in";
+            CustomDialog.show();
+            CustomDialog.txUserDevice.setText(userDevice);
+            CustomDialog.setLoginDialogResult(new CustomDialogActivity.OnLoginDialogResult() {
+                @Override
+                public void userData(String email, String password) {
+
+                }
+
+                @Override
+                public void logOut(boolean logOut) {
+                    if (logOut) {
+                        auth.signOut();
+                        userEmail = "";
+                        userName = "";
+                        userDevice = "";
+                        invalidateOptionsMenu();
+                        CustomizedSnackBar(getString(R.string.log_out), green);
+                        Log.d(TAG, getString(R.string.log_out));
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle(getString(R.string.delete_local_user_data))
+                                .setMessage(getString(R.string.delete_local_user_data_desc))
+                                .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        swSk1.setText(getString(R.string.socket_1));
+                                        swSk2.setText(getString(R.string.socket_2));
+                                        swSk3.setText(getString(R.string.socket_3));
+                                        swSk4.setText(getString(R.string.socket_4));
+                                        safeCurrentValue = 5000;
+                                        userDevice = "Blue Storm III";
+                                        appTitle = getString(R.string.app_name);
+                                        CustomizedSnackBar(getString(R.string.data_clear), green);
+                                        onStop();
+                                        finish();
+                                        Intent i = getIntent();
+                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(i);
+                                    }
+                                })
+                                .setNegativeButton(getString(R.string.no), null)
+                                .show();
+                    }
+                }
+
+                @Override
+                public void userPref(String name, String device) {
+                    userName = name;
+                    firebaseUpdateUserData(name, null);
+                    firebase = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef = firebase.getReference("users").child(userUID).child("Blue Storm III").child("user_pref");
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("device_name", device);
+                    userDevice = device;
+                    myRef.updateChildren(data);
+                    invalidateOptionsMenu();
+                }
+
+            });
+            if (userEmail != null && userName != null) {
+                CustomDialog.txUserName.setText(userName);
+                CustomDialog.txUserEmail.setText(userEmail);
+            }
+
+            Log.d(TAG, "onOptionsItemSelected: Logged in");
+        }
+    }
+
+    private void firebaseDownloadUserDataAndBSPref(final String email) {
+        dbRef = FirebaseDatabase.getInstance().getReference("users").child(userUID);
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                    userName = Objects.requireNonNull(dataSnapshot.child("username").getValue()).toString();
+                    userEmail = Objects.requireNonNull(dataSnapshot.child("Email").getValue()).toString();
+                    appTitle = Objects.requireNonNull(dataSnapshot.child("App_Title").getValue()).toString();
+                    userDevice = Objects.requireNonNull(dataSnapshot.child("Blue Storm III").child("user_pref").child("device_name").getValue()).toString();
+                    swSk1.setText(Objects.requireNonNull(dataSnapshot.child("Blue Storm III").child("user_pref").child("Outlet1").getValue()).toString());
+                    swSk2.setText(Objects.requireNonNull(dataSnapshot.child("Blue Storm III").child("user_pref").child("Outlet2").getValue()).toString());
+                    swSk3.setText(Objects.requireNonNull(dataSnapshot.child("Blue Storm III").child("user_pref").child("Outlet3").getValue()).toString());
+                    swSk4.setText(Objects.requireNonNull(dataSnapshot.child("Blue Storm III").child("user_pref").child("Outlet4").getValue()).toString());
+                    safeCurrentValue = Integer.parseInt(Objects.requireNonNull(dataSnapshot.child("Blue Storm III").child("user_pref").child("safeCurrentValue").getValue()).toString());
+                    invalidateOptionsMenu();
+                    CustomizedSnackBar(getString(R.string.log_in_successfully_by) + email, green);
+
+                } catch (Exception e) {
+                    Log.d("userDataCompare: ", "firebase data missing");
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle(getString(R.string.pref_sync))
+                            .setMessage(getString(R.string.firebase_data_missing_desc))
+                            .setPositiveButton(getString(R.string.confirm), null)
+                            .setCancelable(false)
+                            .show();
+                    userEmail = email;
+                    userName = email.substring(0, email.indexOf("@"));
+                    firebaseUpdateUserData(userName, email);
+                    firebaseUpdateBSPref();
+                    firebaseUpdateAppTitle();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void firebaseUpdateUserData(String username, String email) {
+        firebase = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = firebase.getReference("users").child(userUID);
+        Map<String, Object> data = new HashMap<>();
+
+        if (email != null && !email.equals("")) {
+            data.put("Email", email);
+        }
+        Log.d(TAG, "firebaseUpdateUserData: " + username);
+        if (username != null && !username.equals("")) {
+            data.put("username", username);
+        } else if (username != null && username.equals("")) {
+            /*userName = email.substring(0, email.indexOf("@"));
+            data.put("username", userName);
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(getString(R.string.pref_sync))
+                    .setMessage(getString(R.string.pref_user_name_missing_desc)+ ": " + userName)
+                    .setPositiveButton(getString(R.string.confirm), null)
+                    .show();*/
+        }
+        myRef.updateChildren(data);
+        invalidateOptionsMenu();
+    }
+
+    private void firebaseUpdateBSPref() {
+        if (statOnCloud) {
+            firebase = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = firebase.getReference("users").child(userUID).child("Blue Storm III").child("user_pref");
+            Map<String, Object> data = new HashMap<>();
+            data.put("Outlet1", swSk1.getText().toString());
+            data.put("Outlet2", swSk2.getText().toString());
+            data.put("Outlet3", swSk3.getText().toString());
+            data.put("Outlet4", swSk4.getText().toString());
+            data.put("safeCurrentValue", safeCurrentValue);
+            data.put("device_name", userDevice);
+            myRef.updateChildren(data);
+        }
+    }
+
+    private void firebaseUpdateAppTitle() {
+        if (statOnCloud) {
+            firebase = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = firebase.getReference("users").child(userUID);
+            Map<String, Object> data = new HashMap<>();
+
+            data.put("App_Title", appTitle);
+            myRef.updateChildren(data);
+        }
+    }
+
+    private void createNewAccount(final String email, final String password, final MenuItem item) {
+        //create new account
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle(R.string.confirm)
+                .setMessage(getString(R.string.account_not_found_description))
+                .setPositiveButton(getString(R.string.Sign_up), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        auth.createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        FirebaseAuthException e = (FirebaseAuthException) task.getException();
+                                        String message = task.isSuccessful() ? "Sign up successfully" : "Sign up failed";
+                                        String strErr = "";
+                                        if (e != null) {
+                                            strErr = e.toString().substring(66);
+                                        }
+                                        new AlertDialog.Builder(MainActivity.this)
+                                                .setMessage(message + "\n" + strErr)
+                                                .setPositiveButton(R.string.confirm, null)
+                                                .show();
+                                        if (message.equals("Sign up successfully")) {
+                                            String menuText = email.substring(0, email.indexOf("@"));
+                                            item.setTitle(menuText);
+                                            userEmail = email;
+                                            userName = email.substring(0, email.indexOf("@"));
+                                            firebaseUpdateUserData(userName, email);
+                                            firebaseUpdateBSPref();
+                                            firebaseUpdateAppTitle();
+                                        } else {
+                                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                        }
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
     void extraSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.extra_settings);
@@ -1977,8 +2142,8 @@ public class MainActivity extends AppCompatActivity {
                             public void text(String text) {
                                 appTitle = text;
                                 onStop();
-                                Intent i = getBaseContext().getPackageManager()
-                                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                                finish();
+                                Intent i = getIntent();
                                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(i);
                             }
@@ -2000,18 +2165,18 @@ public class MainActivity extends AppCompatActivity {
                                     safeCurrentValue = Integer.parseInt(text);
 
                                     onStop();
-                                    Intent i = getBaseContext().getPackageManager()
-                                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                                    finish();
+                                    Intent i = getIntent();
                                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(i);
                                 } catch (Exception e) {
-                                    Toast.makeText(MainActivity.this, "必須輸入數值", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, getString(R.string.must_enter_a_value), Toast.LENGTH_LONG).show();
                                 }
                             }
                         });
-                        CustomDialog.txInLayout.setError("請輸入數值");
+                        CustomDialog.txInLayout.setError(getString(R.string.must_enter_a_value));
                         CustomDialog.txWarning.setVisibility(View.VISIBLE);
-                        CustomDialog.txWarning.setText(" 完成後App將會重啟");
+                        CustomDialog.txWarning.setText(getResources().getString(R.string.app_will_restart));
                         drawable.setBounds(0, 0, 64, 64);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
                         CustomDialog.txWarning.setCompoundDrawables(drawable, null, null, null);//只放左边
                         break;
@@ -2041,8 +2206,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setLocale() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("設定語言");
-        final String[] extraSet = {"跟隨系統設定", "正體中文", "English", "日本語"};
+        builder.setTitle(getString(R.string.language));
+        final String[] extraSet = {getResources().getString(R.string.system_lang), "正體中文", "English", "日本語"};
         builder.setItems(extraSet, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -2064,7 +2229,7 @@ public class MainActivity extends AppCompatActivity {
                 final Locale finalMyLocale = myLocale;
                 new AlertDialog.Builder(MainActivity.this)
                         .setTitle(R.string.confirm)
-                        .setMessage("App即將重啟")
+                        .setMessage(getResources().getString(R.string.app_will_restart))
                         .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -2277,7 +2442,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity:", "onDestroy");
         btHandler.removeCallbacksAndMessages(null);
         Disconnect(); //BT disconnect
-        if (isBTConnected){
+        if (isBTConnected) {
             unregisterReceiver(mReceiver);
         }
         super.onDestroy();

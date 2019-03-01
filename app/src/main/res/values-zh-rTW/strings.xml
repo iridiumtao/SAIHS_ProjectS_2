@@ -119,8 +119,8 @@
     <string name="log_in_or_sign_up">登入或註冊</string>
     <string name="please_enter_the_name">請輸入名稱</string>
     <string name="password">密碼</string>
-    <string name="description_login">不論登入或註冊，請由此輸入你的帳號密碼。如有任何帳號問題，請透過以下的Email與我們聯繫：\njerry960331@gamil.com</string>
-    <string name="logged_description">你的偏好設定會被自動地上傳至雲端資料庫。如有任何帳號問題，請透過以下的Email與我們聯繫：\njerry960331@gamil.com</string>
+    <string name="description_login">不論登入或註冊，請由此輸入你的帳號密碼。如有任何帳號問題，點擊「回報」按鈕。</string>
+    <string name="logged_description">你的偏好設定會被自動地上傳至雲端資料庫。如有任何帳號問題，點擊「回報」按鈕。</string>
     <string name="link">連結</string>
     <string name="alarm_have_been_set_to">鬧鐘已被設定於：</string>
     <string name="clear_warning">解除警報狀態</string>
@@ -128,4 +128,24 @@
     <string name="blue_storm_iii">Blue Storm III</string>
     <string name="the_abnormal_current_will_be_clear">電流異常警告將被解除</string>
     <string name="please_clear_abnormal_current_first">請先於「電流狀態」中解除電流異常警告!</string>
+    <string name="firebase_err_invalid_passwd">com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The password is invalid or the user does not have a password.</string>
+    <string name="not_login">未登入</string>
+    <string name="log_in_fail">登入失敗</string>
+    <string name="logging_in">登入中...</string>
+    <string name="data_clear">使用者偏好設定已被清除。</string>
+    <string name="no">不用</string>
+    <string name="yes">好</string>
+    <string name="delete_local_user_data_desc">需要清除本機使用者資料嗎？該動作不會清除雲端資料。(App 將會重啟)</string>
+    <string name="delete_local_user_data">清除資料？</string>
+    <string name="firebase_data_missing_desc">部分或所有線上資料遺失。所有線上資料已經被本機資料復原。</string>
+    <string name="device_name">家電名稱</string>
+    <string name="username">使用者名稱</string>
+    <string name="set_default">設為預設</string>
+    <string name="pref_user_name_missing_desc">使用者名稱遺失，已自動設為</string>
+    <string name="pref_sync">偏好設定同步</string>
+    <string name="app_will_restart">完成後App將會重啟</string>
+    <string name="must_enter_a_value">必須輸入數值</string>
+    <string name="Sign_up">登入</string>
+    <string name="account_not_found_description">未發現該帳號。請問是否要以此Email及密碼註冊新帳號？</string>
+    <string name="extra_settings">額外設定</string>
 </resources>
