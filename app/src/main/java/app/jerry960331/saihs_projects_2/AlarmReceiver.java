@@ -183,7 +183,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             mChannel.enableVibration(true);
             mChannel.setVibrationPattern(new long[]{ 1000, 1000, 1000, 1000, 1000 });
             mChannel.setShowBadge(true);
+            mChannel.setImportance(NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(mChannel);
+
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "alarm")
@@ -191,6 +193,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentTitle(title)
                 .setContentText(message)
                 .setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                //.setPriority(NotificationManager.IMPORTANCE_HIGH)
                 .setColor(Color.rgb(0, 185, 169));
 
         Intent resultIntent = new Intent(context, MainActivity.class);
