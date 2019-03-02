@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
+                Log.w(TAG, getString(R.string.Failed_to_read_value), error.toException());
             }
         });
 
@@ -501,9 +501,9 @@ public class MainActivity extends AppCompatActivity {
                                 .setTitle(getResources().getString(R.string.important_version))
                                 .setMessage(
                                         getResources().getString(R.string.current_version) + " " + BuildConfig.VERSION_CODE + "\n" +
-                                        getResources().getString(R.string.latest_version) + " " + dataSnapshot.child("app_version").getValue() + "\n" +
-                                        getResources().getString(R.string.minimum_version) + " " + dataSnapshot.child("minimum_version").getValue() + "\n" +
-                                        getResources().getString(R.string.must_update))
+                                                getResources().getString(R.string.latest_version) + " " + dataSnapshot.child("app_version").getValue() + "\n" +
+                                                getResources().getString(R.string.minimum_version) + " " + dataSnapshot.child("minimum_version").getValue() + "\n" +
+                                                getResources().getString(R.string.must_update))
                                 .setPositiveButton(R.string.link, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -519,14 +519,14 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 })
                                 .show();
-                    }else if (latest_ver > BuildConfig.VERSION_CODE) {
+                    } else if (latest_ver > BuildConfig.VERSION_CODE) {
                         final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                                 .setTitle(getResources().getString(R.string.find_a_new_version))
                                 .setMessage(
                                         getResources().getString(R.string.current_version) + " " + BuildConfig.VERSION_CODE + "\n" +
-                                        getResources().getString(R.string.latest_version) + " " + dataSnapshot.child("app_version").getValue() + "\n" +
-                                        getResources().getString(R.string.latest_changes) + "\n" + dataSnapshot.child("latest_changes").getValue() + "\n\n" +
-                                        getResources().getString(R.string.please_download_new_version))
+                                                getResources().getString(R.string.latest_version) + " " + dataSnapshot.child("app_version").getValue() + "\n" +
+                                                getResources().getString(R.string.latest_changes) + "\n" + dataSnapshot.child("latest_changes").getValue() + "\n\n" +
+                                                getResources().getString(R.string.please_download_new_version))
                                 .setPositiveButton(R.string.link, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -582,6 +582,7 @@ public class MainActivity extends AppCompatActivity {
                     userUID = user.getUid();
                     userEmail = user.getEmail();
                     firebaseCommand("z");
+                    Crashlytics.setUserIdentifier(userUID);
                     statOnCloud = true;
                     Log.d(user.getEmail() + ": ", userUID);
                     dbRef = FirebaseDatabase.getInstance().getReference("users").child(userUID);
@@ -1096,68 +1097,81 @@ public class MainActivity extends AppCompatActivity {
     private Button.OnClickListener SkAlarmListener1 = new Button.OnClickListener() {
         @Override
         public void onClick(View v) {
-            final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-            CustomDialog.functionSelect = "Alarm";
-            CustomDialog.socketSelect = 1;
-            CustomDialog.isAlarmOn1 = isAlarmOn1;
-            CustomDialog.alarmSetTime1 = alarmSetTime1;
-            CustomDialog.alarmPurpose = alarmPurpose;
-            CustomDialog.selectedItems = selectedItems1;
-            CustomDialog.alarmSocketSelect = alarmSocketSelect;
-            CustomDialog.checkedItems = checkedItems1;
+            if (statOnCloud) {
+                final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
+                CustomDialog.functionSelect = "Alarm";
+                CustomDialog.socketSelect = 1;
+                CustomDialog.isAlarmOn1 = isAlarmOn1;
+                CustomDialog.alarmSetTime1 = alarmSetTime1;
+                CustomDialog.alarmPurpose = alarmPurpose;
+                CustomDialog.selectedItems = selectedItems1;
+                CustomDialog.alarmSocketSelect = alarmSocketSelect;
+                CustomDialog.checkedItems = checkedItems1;
 
-            CustomDialog.show();
-            CustomDialog.setAlarmDialogResult(new CustomDialogActivity.OnAlarmDialogResult() {
-                public void finish(String result) {
-                }
+                CustomDialog.show();
+                CustomDialog.setAlarmDialogResult(new CustomDialogActivity.OnAlarmDialogResult() {
+                    public void finish(String result) {
+                    }
 
-                @Override
-                public void isAlarmOn1(Boolean b) {
-                    isAlarmOn1 = b;
-                }
+                    @Override
+                    public void isAlarmOn1(Boolean b) {
+                        isAlarmOn1 = b;
+                    }
 
-                @Override
-                public void alarmSetTime1(String hhmm) {
-                    alarmSetTime1 = hhmm;
-                }
+                    @Override
+                    public void alarmSetTime1(String hhmm) {
+                        alarmSetTime1 = hhmm;
+                    }
 
-                @Override
-                public void alarmSetSchedule1(String schedule) {
-                    alarmSetSchedule1 = schedule;
-                }
+                    @Override
+                    public void alarmSetSchedule1(String schedule) {
+                        alarmSetSchedule1 = schedule;
+                    }
 
-                @Override
-                public void alarmIntent1(String function) {
-                    alarmPurpose = function;
-                }
+                    @Override
+                    public void alarmIntent1(String function) {
+                        alarmPurpose = function;
+                    }
 
-                @Override
-                public void alarmSocketSelected(boolean[] alarmSocketSelected) {
-                    alarmSocketSelect = alarmSocketSelected;
-                }
+                    @Override
+                    public void alarmSocketSelected(boolean[] alarmSocketSelected) {
+                        alarmSocketSelect = alarmSocketSelected;
+                    }
 
-                @Override
-                public void selectedItems(ArrayList selectedItems) {
-                    selectedItems1 = selectedItems;
-                }
+                    @Override
+                    public void selectedItems(ArrayList selectedItems) {
+                        selectedItems1 = selectedItems;
+                    }
 
-                @Override
-                public void checkedItems(boolean[] checkedItems) {
-                    checkedItems1 = checkedItems;
-                }
+                    @Override
+                    public void checkedItems(boolean[] checkedItems) {
+                        checkedItems1 = checkedItems;
+                    }
 
-                @Override
-                public void callStartAlarm(Calendar cal) {
-                    startAlarm(cal);
-                }
+                    @Override
+                    public void callStartAlarm(Calendar cal) {
+                        startAlarm(cal);
+                    }
 
-                @Override
-                public void callCancelAlarm(Calendar cal) {
-                    Log.d("DialogReturnVal", "Alarm canceled ");
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.alarm_not_set), Toast.LENGTH_SHORT).show();
-                    cancelAlarm(cal);
-                }
-            });
+                    @Override
+                    public void callCancelAlarm(Calendar cal) {
+                        Log.d("DialogReturnVal", "Alarm canceled ");
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.alarm_not_set), Toast.LENGTH_SHORT).show();
+                        cancelAlarm(cal);
+                    }
+                });
+            } else {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(getString(R.string.please_log_in))
+                        .setMessage(getString(R.string.please_log_in_desc))
+                        .setPositiveButton(getString(R.string.login), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                login(menu.findItem(R.id.action_login));
+                            }
+                        })
+                        .show();
+            }
         }
     };
 
@@ -1428,10 +1442,10 @@ public class MainActivity extends AppCompatActivity {
             } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
                 //Device has disconnected
                 Log.d("bt stat onReceive", "Device has disconnected");
-                Toast.makeText(MainActivity.this, "裝置已斷線", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.device_has_disconnected), Toast.LENGTH_SHORT).show();
                 new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("連線狀態")
-                        .setMessage("裝置已斷線")
+                        .setTitle(getString(R.string.connection_status))
+                        .setMessage(getString(R.string.device_has_disconnected))
                         .show();
 
                 btnConnect.setVisibility(View.VISIBLE);
@@ -1499,7 +1513,11 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                     break;
-                } catch (RuntimeException e){
+                } catch (RuntimeException e) {
+                    Log.e(TAG, "20%", e);
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    Log.e(TAG, "20%-2", e);
                     e.printStackTrace();
                 }
             }
@@ -1658,6 +1676,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putBooleanArray("socketFromMain", alarmSocketSelect);
         bundle.putString("purposeFromMain", alarmPurpose);
+        bundle.putString("userUID", userUID);
         intent.putExtras(bundle);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
@@ -1732,13 +1751,13 @@ public class MainActivity extends AppCompatActivity {
     public Button.OnClickListener LogClear = new Button.OnClickListener() {
         @Override
         public void onClick(View v) {
-            txLog.setText("     Log cleared");
+            txLog.setText("     +" + getString(R.string.log_cleared));
         }
     };
 
     public void CustomizedSnackBar(String SnackBarText, int color) {
         snackbar = Snackbar.make(findViewById(android.R.id.content), SnackBarText, Snackbar.LENGTH_SHORT)
-                .setAction("DISMISS", null);
+                .setAction(getString(R.string.dismiss), null);
         snackBarView = snackbar.getView();
         snackBarView.setBackgroundColor(color);
         snackBarTxV = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
@@ -1850,8 +1869,8 @@ public class MainActivity extends AppCompatActivity {
                     // TODO: 2019/1/30 把擷取插座狀態的部分關掉
                 } else {
                     new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Please Login")
-                            .setMessage("You must login to enable this function")
+                            .setTitle(getString(R.string.please_log_in))
+                            .setMessage(getString(R.string.please_log_in_desc))
                             .setPositiveButton(R.string.login, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -1901,32 +1920,32 @@ public class MainActivity extends AppCompatActivity {
                     progressDialog.setCancelable(false);
                     progressDialog.show();
 
-                    final Thread t = new Thread(){
+                    final Thread t = new Thread() {
                         @Override
-                        public void run(){
-                                auth.signInWithEmailAndPassword(email, password)
-                                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<AuthResult> task) {
+                        public void run() {
+                            auth.signInWithEmailAndPassword(email, password)
+                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
 
-                                                progressDialog.dismiss();
+                                            progressDialog.dismiss();
 
-                                                if (!task.isSuccessful()) {
-                                                    FirebaseAuthException e = (FirebaseAuthException) task.getException();
-                                                    Log.d(TAG, e + "");
-                                                    if (!e.toString().equals(getString(R.string.firebase_err_invalid_passwd))) {
-                                                        createNewAccount(email, password, item);
-                                                    } else {
-                                                        CustomizedSnackBar(getString(R.string.login_fail_wrong_password), red);
-                                                    }
-                                                } else if (task.isSuccessful()) {
-                                                    Toast.makeText(MainActivity.this,
-                                                            getResources().getString(R.string.login_successfully), Toast.LENGTH_SHORT).show();
-                                                    firebaseDownloadUserDataAndBSPref(email);
-
+                                            if (!task.isSuccessful()) {
+                                                FirebaseAuthException e = (FirebaseAuthException) task.getException();
+                                                Log.d(TAG, e + "");
+                                                if (!e.toString().equals(getString(R.string.firebase_err_invalid_passwd))) {
+                                                    createNewAccount(email, password, item);
+                                                } else {
+                                                    CustomizedSnackBar(getString(R.string.login_fail_wrong_password), red);
                                                 }
+                                            } else if (task.isSuccessful()) {
+                                                Toast.makeText(MainActivity.this,
+                                                        getResources().getString(R.string.login_successfully), Toast.LENGTH_SHORT).show();
+                                                firebaseDownloadUserDataAndBSPref(email);
+
                                             }
-                                        });
+                                        }
+                                    });
                         }
                     };
                     t.start();
@@ -2154,7 +2173,7 @@ public class MainActivity extends AppCompatActivity {
     void extraSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.extra_settings);
-        final String[] extraSet = {"更改App標題", "調整限制電流", "更改語言", "叫歐東新增其他功能"};
+        final String[] extraSet = getResources().getStringArray(R.array.extraSet);
         builder.setItems(extraSet, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -2177,7 +2196,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                         CustomDialog.txWarning.setVisibility(View.VISIBLE);
-                        CustomDialog.txWarning.setText(" 完成後App將會重啟");
+                        CustomDialog.txWarning.setText(" " + getString(R.string.app_will_restart));
 
                         drawable.setBounds(0, 0, 64, 64);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
                         CustomDialog.txWarning.setCompoundDrawables(drawable, null, null, null);//只放左边
@@ -2202,7 +2221,8 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                        CustomDialog.txInLayout.setError(getString(R.string.must_enter_a_value));
+                        CustomDialog.edText.setHint(getString(R.string.please_enter_a_value_ma));
+                        CustomDialog.errText = getString(R.string.must_enter_a_value);
                         CustomDialog.txWarning.setVisibility(View.VISIBLE);
                         CustomDialog.txWarning.setText(getResources().getString(R.string.app_will_restart));
                         drawable.setBounds(0, 0, 64, 64);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
@@ -2215,7 +2235,7 @@ public class MainActivity extends AppCompatActivity {
                         //Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.facebook.orca");
                         Intent sendIntent = new Intent();
                         sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, "歐東 做事摟：(請修改此處為期望新增之內容)");
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.send_feedback_desc));
                         sendIntent.setType("text/plain");
                         startActivity(sendIntent);
                         break;
@@ -2299,7 +2319,7 @@ public class MainActivity extends AppCompatActivity {
         CoordinatorLayout layout = findViewById(R.id.coordinatorLayout);
         // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
             // Get our View (TextView or anything) object:
 
             // Get params:
@@ -2308,7 +2328,7 @@ public class MainActivity extends AppCompatActivity {
             loparams.width = layout.getHeight();
             v.setLayoutParams(loparams);*/
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
             /*loparams.height = 500;
             loparams.width = layout.getWidth();
             v.setLayoutParams(loparams);*/
@@ -2368,7 +2388,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             default:
-                Toast.makeText(this, "NOTIFICATION ERROR", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show();
                 break;
         }
 

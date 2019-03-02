@@ -48,12 +48,14 @@ public class AlarmReceiver extends BroadcastReceiver {
         Bundle bundle = intent.getExtras();
         boolean[] socket;
         String purpose;
+        String userUID;
         //assert bundle != null;
         if (bundle.getBooleanArray("socketFromMain") != null && bundle.getString("purposeFromMain") != null) {
             socket = bundle.getBooleanArray("socketFromMain");
             purpose = bundle.getString("purposeFromMain");
+            userUID = bundle.getString("userUID");
 
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("command");
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users").child(userUID).child("Blue Storm III").child("command");
             if (purpose.equals("TURN_ON")) {
 
                 assert socket != null;
@@ -136,15 +138,15 @@ public class AlarmReceiver extends BroadcastReceiver {
                     showNotify = showNotify.substring(0, showNotify.length() - 1);
                     String show;
                     if (socketNotify) {
-                        show = "開啟插座：";
+                        show = context.getString(R.string.open_outlet);
                     } else {
-                        show = "關閉插座：";
+                        show = context.getString(R.string.close_outlet);
                     }
 
                     if (!isNetworkAvailable(context)) {
-                        Notification(context, "無法傳送插座訊號", "網路未連線");
+                        Notification(context, context.getString(R.string.unable_to_send_outlet_signal), context.getString(R.string.internet_not_connected));
                     } else {
-                        Notification(context, "已成功傳送插座訊號", show + showNotify);
+                        Notification(context, context.getString(R.string.outlet_signal_send_successfully), show + showNotify);
                     }
 
                 }
@@ -159,7 +161,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             Log.d("onReceive: ", e + "");
         }*/
         }else if (bundle.getString("smoke") != null) {
-            Notification(context, "安全警示", "偵測到有害氣體");
+            Notification(context, context.getString(R.string.warning), context.getString(R.string.bad_gas_detected));
         }
 
     }
@@ -174,10 +176,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
             String CHANNEL_ID = "alarm";
-            CharSequence name = "鬧鐘通知";
+            CharSequence name = context.getString(R.string.alarm_notification);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-            mChannel.setDescription("定時插座執行時提醒");
+            mChannel.setDescription(context.getString(R.string.notify_when_timing_outlets_activated));
             mChannel.enableLights(true);
             mChannel.setLightColor(Color.GREEN);
             mChannel.enableVibration(true);

@@ -136,6 +136,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
     EditText edText;
     TextView txWarning;
     TextInputLayout txInLayout;
+    String errText;
 
 
     CustomDialogActivity(Activity a) {
@@ -472,6 +473,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                 btnConfirm = findViewById(R.id.btnConfirm);
                 txWarning = findViewById(R.id.txWarning);
                 txWarning.setVisibility(View.INVISIBLE);
+                errText = getContext().getResources().getString(R.string.please_enter_the_name);
                 btnConfirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -481,7 +483,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                                 onStop();
                                 dismiss();
                             } else {
-                                txInLayout.setError(getContext().getResources().getString(R.string.please_enter_the_name));
+                                txInLayout.setError(errText);
                                 edText.addTextChangedListener(new TextWatcher() {
                                     @Override
                                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -491,7 +493,7 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                                     @Override
                                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                                         if (edText.getText().toString().equals("")){
-                                            txInLayout.setError(getContext().getResources().getString(R.string.please_enter_the_name));
+                                            txInLayout.setError(errText);
                                         }else {
                                             txInLayout.setError(null);
                                         }

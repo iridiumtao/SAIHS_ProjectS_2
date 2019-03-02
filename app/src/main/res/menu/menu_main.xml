@@ -24,11 +24,11 @@
     <item
         android:id="@+id/action_log"
         android:checkable="true"
-        android:title="LOG" />
+        android:title="@string/log" />
     <item
         android:id="@+id/action_devData"
         android:checkable="true"
-        android:title="Dev Mode Data" />
+        android:title="@string/dev_mode_data" />
     <item
         android:id="@+id/action_dev"
         android:checkable="true"
@@ -41,11 +41,11 @@
     <item
         android:id="@+id/action_statOnCloud"
         android:checkable="true"
-        android:title="Status on Cloud" />
+        android:title="@string/status_on_cloud" />
     <item
         android:id="@+id/action_extra"
         android:title="@string/extra_settings" />
     <item
         android:id="@+id/action_destroy"
-        android:title="Restart App" />
+        android:title="@string/restart_app" />
 </menu>

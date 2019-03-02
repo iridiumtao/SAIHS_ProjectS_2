@@ -168,7 +168,7 @@
     <string name="please_enter_the_name">Please enter a name</string>
     <string name="log_in_or_sign_up">Log In or Sign Up</string>
     <string name="device">Device</string>
-    <string name="Are_you_sure_you_want_to_logout">你確定要登出嗎？</string>
+    <string name="Are_you_sure_you_want_to_logout">Are you sure you want to log out?</string>
     <string name="turn_on_outlet">Turn on outlet:</string>
     <string name="log_in_successfully_by">Login successfully by</string>
     <string name="log_out">Log out</string>
@@ -211,11 +211,11 @@
     <string name="no_repeat">No repeat</string>
     <string name="please_select_days_of_week">Please select days of week.</string>
     <string name="date_format">E dd MM</string>
-    <string name="alarm_had_been_on">Alarm had been set.</string>
+    <string name="alarm_had_been_on">Timing outlet had been set.</string>
     <string name="password_must_be_at_least_6_characters">Password must be at least 6 characters.</string>
     <string name="please_enter_a_valid_email">Please enter a valid Email.</string>
     <string name="link">Update Link</string>
-    <string name="alarm_have_been_set_to">Alarm have been set to</string>
+    <string name="alarm_have_been_set_to">Timing outlet have been set to</string>
     <string name="extra_settings">Extra settings</string>
     <string name="clear_warning">Clear abnormal current warning</string>
     <string name="clear">Clear</string>
@@ -242,12 +242,42 @@
     <string name="pref_user_name_missing_desc">Username missing. Automatically set to</string>
     <string name="system_lang">Follow system setting</string>
     <string name="language">Language</string>
-    <string name="app_will_restart">App will restart</string>
+    <string name="app_will_restart">App will restart when done</string>
     <string name="must_enter_a_value">Must enter a value</string>
     <string name="latest_changes">Latest changes:</string>
     <string name="must_update">YOU MUST UPDATE TO USE THIS APP.</string>
     <string name="minimum_version">Minimum support version:</string>
     <string name="important_version">！！IMPORTANT UPDATE！！</string>
     <string name="full_update">Update history</string>
+    <string name="please_log_in">Please Log in</string>
+    <string name="please_log_in_desc">You must login to enable this function.</string>
+    <string name="unable_to_send_outlet_signal">Unable to send timing outlet signal.</string>
+    <string name="internet_not_connected">Internet not connected.</string>
+    <string name="outlet_signal_send_successfully">Timing outlet actions have been successfully sent.</string>
+    <string name="open_outlet">Open outlet:</string>
+    <string name="close_outlet">Close outlet:</string>
+    <string name="warning">Warning</string>
+    <string name="bad_gas_detected">Bad gas detected!</string>
+    <string name="alarm_notification">Timing outlet notification</string>
+    <string name="notify_when_timing_outlets_activated">Notify when timing outlet have been activated.</string>
+    <string name="Failed_to_read_value">Failed to read value.</string>
+    <string name="device_has_disconnected">Device has disconnected.</string>
+    <string name="connection_status">Connection status</string>
+    <string name="log_cleared">Log cleared</string>
+    <string name="dismiss">DISMISS</string>
+    <string name="send_feedback_desc">"Feedback from ProjectS app"</string>
+    <string name="error">ERROR</string>
+    <string name="dev_mode_data">Dev Mode Data</string>
+    <string name="status_on_cloud">Status on Cloud</string>
+    <string name="restart_app">Restart App</string>
+    <string name="log">LOG</string>
+    <string name="please_enter_a_value_ma">Please enter a value (mA)</string>
+
+    <string-array name="extraSet">
+        <item>change App title</item>
+        <item>Set safe current value</item>
+        <item>Language</item>
+        <item>Send feedback</item>
+    </string-array>
 
 </resources>

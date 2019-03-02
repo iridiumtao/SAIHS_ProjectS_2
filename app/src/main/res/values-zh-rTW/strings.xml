@@ -10,6 +10,13 @@
         <item>星期日</item>
     </string-array>
 
+    <string-array name="extraSet">
+        <item>更改App標題</item>
+        <item>設定安全電流值</item>
+        <item>語言Language</item>
+        <item>傳送回饋</item>
+    </string-array>
+
     <string name="app_name">綠能雲端插座</string>
     <string name="action_settings">設定</string>
     <string name="action_help">幫助</string>
@@ -20,7 +27,7 @@
     <string name="status">狀態:</string>
     <string name="Bluetooth_is_already_on">藍芽已經開啟</string>
     <string name="Bluetooth_tuned_on">藍芽開啟</string>
-    <string name="BTCrash">藍芽錯誤。請確定該裝置支援藍芽功能。</string>
+    <string name="BTCrash">藍牙錯誤。請確定該裝置支援藍牙功能。</string>
     <string name="socket_1">插座 1</string>
     <string name="socket_4">插座 4</string>
     <string name="socket_3">插座 3</string>
@@ -28,15 +35,15 @@
     <string name="socket">插座</string>
     <string name="turnOn">已開啟</string>
     <string name="turnOff">已關閉</string>
-    <string name="intent_exit">離開目前畫面將會中斷與插座之連線。</string>
+    <string name="intent_exit">離開目前畫面將會中斷與裝置之連線。</string>
     <string name="cancel">取消</string>
     <string name="confirm">確認</string>
     <string name="btnSkStatDescription">插座狀態。點擊以顯示更多資訊。</string>
-    <string name="btnSkAlarmDescription">定時功能。點擊以顯示更多資訊。</string>
+    <string name="btnSkAlarmDescription">定時插座。點擊以顯示更多資訊。</string>
     <string name="btnSkChartDescription">電流表格。點擊以顯示更多資訊。</string>
     <string name="open">開啟</string>
     <string name="close">關閉</string>
-    <string name="Change_Connection_Method_BT">變更連線方式為藍芽</string>
+    <string name="Change_Connection_Method_BT">變更連線方式為藍牙</string>
     <string name="Change_Connection_Method_WiFI">變更連線方式為Wi-Fi</string>
     <string name="cancelled">動作已取消</string>
     <string name="stop_bt_connect_to_wifi">更改此處將會「關閉藍牙連線」並透過Wi-Fi連線</string>
@@ -59,13 +66,13 @@
     <string name="connection_failed">連線失敗</string>
     <string name="connected_successfully">連線成功</string>
     <string name="failed">連線失敗</string>
-    <string name="current_description_red">警告！超出安全電流範圍，該插座之電力供給已經被切斷。請檢查該連線裝置。</string>
+    <string name="current_description_red">警告！超出安全電流範圍，該插座之電力供給已經被切斷。檢查完成後請點擊下方「解除」按鈕以解除電源切斷之狀態。</string>
     <string name="socket_off">插座未開啟</string>
     <string name="current_description_orange">該插座目前處於高負載狀態，若連接設備為高功率裝置(例如：微波爐、吹風機)，請忽略此警示。</string>
     <string name="connecting_with_dots">連線中...</string>
     <string name="orange">注意</string>
     <string name="red">警告</string>
-    <string name="please_try_again_after_bt_enable">請於藍芽開啟後再次連線。</string>
+    <string name="please_try_again_after_bt_enable">請於藍牙開啟後再次連線。</string>
     <string name="current_chart">電流表格</string>
     <string name="chart_description">此表格可供顯示近期的使用電流。</string>
     <string name="now_power">目前功率：</string>
@@ -98,7 +105,7 @@
     <string name="app_access_deny">App拒絕存取</string>
     <string name="system_info">系統訊息</string>
     <string name="data_load_fail">資料載入失敗</string>
-    <string name="socket_current_warning">插座電流狀況異常！請立即前往查看</string>
+    <string name="socket_current_warning">插座電流狀況異常！請立即前往查看。</string>
     <string name="Security_warning">安全警示</string>
     <string name="days_of_week_not_set">未設定週期</string>
     <string name="average">平均值</string>
@@ -155,4 +162,27 @@
     <string name="minimum_version">最低支援版本:</string>
     <string name="important_version">！！重大版本更新！！</string>
     <string name="full_update">完整更新資訊</string>
+    <string name="please_log_in">請先登入</string>
+    <string name="please_log_in_desc">請先登入以開啟需連接資料庫之功能。</string>
+    <string name="unable_to_send_outlet_signal">無法傳送定時插座動作訊號。</string>
+    <string name="internet_not_connected">網路未連線</string>
+    <string name="outlet_signal_send_successfully">已成功傳送定時插座動作訊號。</string>
+    <string name="open_outlet">開啟插座：</string>
+    <string name="close_outlet">關閉插座：</string>
+    <string name="warning">安全警示</string>
+    <string name="bad_gas_detected">偵測到有害氣體</string>
+    <string name="alarm_notification">定時插座通知</string>
+    <string name="notify_when_timing_outlets_activated">定時插座執行時提醒</string>
+    <string name="Failed_to_read_value">數值讀取失敗</string>
+    <string name="device_has_disconnected">裝置已斷線</string>
+    <string name="connection_status">連線狀態</string>
+    <string name="log_cleared">藍牙紀錄已清除</string>
+    <string name="dismiss">隱藏</string>
+    <string name="send_feedback_desc">"ProjectS App使用回饋"</string>
+    <string name="error">錯誤</string>
+    <string name="dev_mode_data">開發模式數值</string>
+    <string name="status_on_cloud">連線至雲端</string>
+    <string name="restart_app">重新啟動App</string>
+    <string name="log">藍牙紀錄</string>
+    <string name="please_enter_a_value_ma">請輸入數值(mA)</string>
 </resources>
