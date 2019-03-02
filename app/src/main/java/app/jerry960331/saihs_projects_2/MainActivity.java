@@ -26,13 +26,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.NotificationCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -161,8 +161,8 @@ public class MainActivity extends AppCompatActivity {
     public static int orange = 0xffffc107;
 
     //snackBar customize
-    private Snackbar snackbar;
-    private View snackBarView;
+    Snackbar snackbar;
+    View snackBarView;
     private TextView txVStat, snackBarTxV;
 
     TextView TxTest;
@@ -1760,7 +1760,7 @@ public class MainActivity extends AppCompatActivity {
                 .setAction(getString(R.string.dismiss), null);
         snackBarView = snackbar.getView();
         snackBarView.setBackgroundColor(color);
-        snackBarTxV = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
+        snackBarTxV = (TextView) snackBarView.findViewById(R.id.snackbar_text);
         snackbar.show();
     }
 
