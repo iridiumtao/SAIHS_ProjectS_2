@@ -393,6 +393,8 @@ public class BTActivity extends AppCompatActivity {
                     e.printStackTrace();
 
                     break;
+                }catch (RuntimeException e){
+                    e.printStackTrace();
                 }
             }
         }

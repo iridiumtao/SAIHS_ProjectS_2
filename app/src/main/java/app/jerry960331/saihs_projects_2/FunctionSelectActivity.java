@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ public class FunctionSelectActivity extends AppCompatActivity {
             btnInfraredView, btnInfraredSetting, btnEnviView, btnEnviSetting;
     TextView txBS, txSO, txInfrared, txEnvi,
             txCO, txCH4, txTemp, txHumidity;
+    Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +122,13 @@ public class FunctionSelectActivity extends AppCompatActivity {
         }
     };
 
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        this.menu = menu;
+        return true;
+    }
 
 
 

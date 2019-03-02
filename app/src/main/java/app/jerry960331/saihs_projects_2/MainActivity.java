@@ -465,7 +465,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!dataSnapshot.getValue().toString().equals("timestamp sample")) {
                     new AlertDialog.Builder(MainActivity.this)
                             .setTitle(getResources().getString(R.string.system_info))
-                            .setMessage(getResources().getString(R.string.app_not_access_deny))
+                            .setMessage(getResources().getString(R.string.app_access_deny))
                             .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -488,32 +488,58 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        dbRef = FirebaseDatabase.getInstance().getReference("app_version");
+        dbRef = FirebaseDatabase.getInstance().getReference("app_info");
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
-                    Log.d(TAG, "Latest app version: " + dataSnapshot.getValue());
-
-                    if (Integer.parseInt(dataSnapshot.getValue().toString()) > BuildConfig.VERSION_CODE) {
+                    Log.d(TAG, "Latest app version: " + dataSnapshot.child("app_version").getValue());
+                    int min_ver = Integer.parseInt(dataSnapshot.child("minimum_version").getValue().toString());
+                    int latest_ver = Integer.parseInt(dataSnapshot.child("app_version").getValue().toString());
+                    if (min_ver > BuildConfig.VERSION_CODE) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle(getResources().getString(R.string.important_version))
+                                .setMessage(
+                                        getResources().getString(R.string.current_version) + " " + BuildConfig.VERSION_CODE + "\n" +
+                                        getResources().getString(R.string.latest_version) + " " + dataSnapshot.child("app_version").getValue() + "\n" +
+                                        getResources().getString(R.string.minimum_version) + " " + dataSnapshot.child("minimum_version").getValue() + "\n" +
+                                        getResources().getString(R.string.must_update))
+                                .setPositiveButton(R.string.link, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        finish();
+                                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com/open?id=1iMd8BCdluwYdOL16fL9vXptsp5kOTGgX"));
+                                        startActivity(browserIntent);
+                                    }
+                                })
+                                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        finish();
+                                    }
+                                })
+                                .show();
+                    }else if (latest_ver > BuildConfig.VERSION_CODE) {
                         final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                                 .setTitle(getResources().getString(R.string.find_a_new_version))
                                 .setMessage(
                                         getResources().getString(R.string.current_version) + " " + BuildConfig.VERSION_CODE + "\n" +
-                                                getResources().getString(R.string.latest_version) + " " + dataSnapshot.getValue() + "\n" +
-                                                getResources().getString(R.string.please_download_new_version))
-                                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                })
-                                .setNeutralButton(R.string.link, new DialogInterface.OnClickListener() {
+                                        getResources().getString(R.string.latest_version) + " " + dataSnapshot.child("app_version").getValue() + "\n" +
+                                        getResources().getString(R.string.latest_changes) + "\n" + dataSnapshot.child("latest_changes").getValue() + "\n\n" +
+                                        getResources().getString(R.string.please_download_new_version))
+                                .setPositiveButton(R.string.link, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com/open?id=1iMd8BCdluwYdOL16fL9vXptsp5kOTGgX"));
                                         startActivity(browserIntent);
+                                    }
+                                })
+                                .setNeutralButton(R.string.full_update, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
 
+                                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/jerry960331/SAIHS_ProjectS_2/commits/master"));
+                                        startActivity(browserIntent);
                                     }
                                 })
                                 //.setNeutralButtonIcon(getResources().getDrawable(R.drawable.ic_open_in_new_black_24dp))
@@ -1473,6 +1499,8 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                     break;
+                } catch (RuntimeException e){
+                    e.printStackTrace();
                 }
             }
         }

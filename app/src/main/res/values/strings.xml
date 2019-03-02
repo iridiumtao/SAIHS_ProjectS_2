@@ -195,7 +195,7 @@
     <string name="current_version">Current version:</string>
     <string name="find_a_new_version">New version found</string>
     <string name="because">Because</string>
-    <string name="app_not_access_deny">Access deny.</string>
+    <string name="app_access_deny">Access deny.</string>
     <string name="system_info">System Message</string>
     <string name="data_load_fail">Fail to load data.</string>
     <string name="socket_current_warning">The outlet current is abnormal! Please check it now.</string>
@@ -214,7 +214,7 @@
     <string name="alarm_had_been_on">Alarm had been set.</string>
     <string name="password_must_be_at_least_6_characters">Password must be at least 6 characters.</string>
     <string name="please_enter_a_valid_email">Please enter a valid Email.</string>
-    <string name="link">Link</string>
+    <string name="link">Update Link</string>
     <string name="alarm_have_been_set_to">Alarm have been set to</string>
     <string name="extra_settings">Extra settings</string>
     <string name="clear_warning">Clear abnormal current warning</string>
@@ -244,5 +244,10 @@
     <string name="language">Language</string>
     <string name="app_will_restart">App will restart</string>
     <string name="must_enter_a_value">Must enter a value</string>
+    <string name="latest_changes">Latest changes:</string>
+    <string name="must_update">YOU MUST UPDATE TO USE THIS APP.</string>
+    <string name="minimum_version">Minimum support version:</string>
+    <string name="important_version">！！IMPORTANT UPDATE！！</string>
+    <string name="full_update">Update history</string>
 
 </resources>

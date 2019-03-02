@@ -95,7 +95,7 @@
     <string name="current_version">目前版本:</string>
     <string name="find_a_new_version">發現新版本</string>
     <string name="because">原因：</string>
-    <string name="app_not_access_deny">App暫不開放</string>
+    <string name="app_access_deny">App拒絕存取</string>
     <string name="system_info">系統訊息</string>
     <string name="data_load_fail">資料載入失敗</string>
     <string name="socket_current_warning">插座電流狀況異常！請立即前往查看</string>
@@ -121,7 +121,7 @@
     <string name="password">密碼</string>
     <string name="description_login">不論登入或註冊，請由此輸入你的帳號密碼。如有任何帳號問題，點擊「回報」按鈕。</string>
     <string name="logged_description">你的偏好設定會被自動地上傳至雲端資料庫。如有任何帳號問題，點擊「回報」按鈕。</string>
-    <string name="link">連結</string>
+    <string name="link">更新連結</string>
     <string name="alarm_have_been_set_to">鬧鐘已被設定於：</string>
     <string name="clear_warning">解除警報狀態</string>
     <string name="clear">解除</string>
@@ -142,10 +142,17 @@
     <string name="username">使用者名稱</string>
     <string name="set_default">設為預設</string>
     <string name="pref_user_name_missing_desc">使用者名稱遺失，已自動設為</string>
+    <string name="system_lang">與系統設定一致</string>
+    <string name="language">語言</string>
     <string name="pref_sync">偏好設定同步</string>
     <string name="app_will_restart">完成後App將會重啟</string>
     <string name="must_enter_a_value">必須輸入數值</string>
     <string name="Sign_up">登入</string>
     <string name="account_not_found_description">未發現該帳號。請問是否要以此Email及密碼註冊新帳號？</string>
     <string name="extra_settings">額外設定</string>
+    <string name="latest_changes">更新內容:</string>
+    <string name="must_update">由於部分更新內容為重大變更，「必須更新」App方能使用。</string>
+    <string name="minimum_version">最低支援版本:</string>
+    <string name="important_version">！！重大版本更新！！</string>
+    <string name="full_update">完整更新資訊</string>
 </resources>
