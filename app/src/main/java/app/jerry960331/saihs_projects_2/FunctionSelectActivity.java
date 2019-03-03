@@ -1,9 +1,13 @@
 package app.jerry960331.saihs_projects_2;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.os.Handler;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +34,12 @@ public class FunctionSelectActivity extends AppCompatActivity {
         txBS.setText(getSharedPreferences("user", MODE_PRIVATE).getString("user_device_BS", "Blue Storm III"));
         txSO.setText(getSharedPreferences("user", MODE_PRIVATE).getString("user_device_SO", "Salvation October"));
 
-
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            BluetoothFragment fragment = new BluetoothFragment();
+            transaction.replace(R.id.bluetoothFragmentLayout, fragment);
+            transaction.commit();
+        }
     }
 
     private void findViews() {

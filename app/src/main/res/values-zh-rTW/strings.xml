@@ -185,4 +185,10 @@
     <string name="restart_app">重新啟動App</string>
     <string name="log">藍牙紀錄</string>
     <string name="please_enter_a_value_ma">請輸入數值(mA)</string>
+    <string name="paired_devices">paried_devices</string>
+    <string name="other_devices">other_devices</string>
+    <string name="scan">scam</string>
+    <string name="none_paired">No devices have been paired</string>
+    <string name="scanning">canning for devices...</string>
+    <string name="select_device_to_connect">select a device to connect</string>
 </resources>
