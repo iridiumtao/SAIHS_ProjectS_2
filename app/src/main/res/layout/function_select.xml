@@ -14,7 +14,7 @@
     <FrameLayout
         android:id="@+id/bluetoothFragmentLayout"
         android:layout_width="match_parent"
-        android:layout_height="128dp"
+        android:layout_height="110dp"
         android:layout_weight="1"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -210,7 +210,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="32dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="16dp"
                     app:layout_constraintBottom_toTopOf="@+id/txBS"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHeight_percent="0.4"
@@ -226,11 +226,15 @@
                     android:layout_below="@+id/imgBS"
                     android:layout_alignParentBottom="true"
                     android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:text="Blue Storm III"
                     android:textColor="@color/black"
-                    app:layout_constraintBottom_toTopOf="@+id/linearLayout1"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/imgBS"
-                    app:layout_constraintStart_toStartOf="@+id/imgBS" />
+                    app:layout_constraintStart_toStartOf="@+id/imgBS"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.7" />
 
                 <LinearLayout
                     android:id="@+id/linearLayout1"
@@ -307,11 +311,15 @@
                     android:layout_below="@+id/imgSO"
                     android:layout_alignParentBottom="true"
                     android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:text="Salvation October"
                     android:textColor="@color/black"
-                    app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/imgSO"
-                    app:layout_constraintStart_toStartOf="@+id/imgSO" />
+                    app:layout_constraintStart_toStartOf="@+id/imgSO"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.7" />
 
                 <LinearLayout
                     android:id="@+id/linearLayout2"
@@ -387,11 +395,15 @@
                     android:layout_below="@+id/imgInfrared"
                     android:layout_alignParentBottom="true"
                     android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:text="紅外線控制"
                     android:textColor="@color/black"
-                    app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/imgInfrared"
-                    app:layout_constraintStart_toStartOf="@+id/imgInfrared" />
+                    app:layout_constraintStart_toStartOf="@+id/imgInfrared"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.7" />
 
                 <LinearLayout
                     android:id="@+id/linearLayout3"
@@ -467,11 +479,15 @@
                     android:layout_below="@+id/imgEnvi"
                     android:layout_alignParentBottom="true"
                     android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:text="環境狀況"
                     android:textColor="@color/black"
-                    app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/imgEnvi"
-                    app:layout_constraintStart_toStartOf="@+id/imgEnvi" />
+                    app:layout_constraintStart_toStartOf="@+id/imgEnvi"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.7" />
 
                 <LinearLayout
                     android:id="@+id/linearLayout4"

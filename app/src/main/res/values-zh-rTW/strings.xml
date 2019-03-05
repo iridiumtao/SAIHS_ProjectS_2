@@ -191,4 +191,11 @@
     <string name="none_paired">No devices have been paired</string>
     <string name="scanning">canning for devices...</string>
     <string name="select_device_to_connect">select a device to connect</string>
+    <string name="socket_SO">outlet</string>
+    <string name="has_been_turn_off">已經關閉</string>
+    <string name="has_been_turn_on">已經開啟</string>
+    <string name="has_been_set_to_auto_mode">已經被設為自動模式</string>
+    <string name="abnormal_current">偵測到異常電流!!</string>
+
+
 </resources>

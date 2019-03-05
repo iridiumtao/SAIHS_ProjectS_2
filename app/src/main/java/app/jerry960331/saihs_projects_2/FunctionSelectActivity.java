@@ -90,7 +90,8 @@ public class FunctionSelectActivity extends AppCompatActivity {
     private Button.OnClickListener btnSOView_onClick = new Button.OnClickListener(){
         @Override
         public void onClick(View v) {
-
+            Intent intent = new Intent(FunctionSelectActivity.this, SOActivity.class);
+            startActivity(intent);
         }
     };
     private Button.OnClickListener btnInfraredView_onClick = new Button.OnClickListener(){
