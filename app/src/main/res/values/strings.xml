@@ -120,16 +120,17 @@
     <string name="Change_Connection_Method_BT">Change Connection Method to Bluetooth.</string>
     <string name="Change_Connection_Method_WiFI">Change Connection Method to Wi-Fi.</string>
     <string name="socket_picture">Socket Picture</string>
-    <string name="stop_bt_connect_to_wifi">Change this will stop connecting by Bluetooth and try to connect by Wi-Fi.</string>
-    <string name="stop_wifi_connect_to_bt">Change this will stop connecting by Wi-Fi and try to connect by Bluetooth.</string>
+    <string name="stop_bt_connect_to_wifi">Changing this will close the current bluetooth connection and establish a Wi-Fi connection instead.</string>
+    <string name="stop_wifi_connect_to_bt">Changing this will close the current Wi-Fi connection and establish a bluetooth connection instead.</string>
     <string name="cancelled">Cancelled</string>
     <string name="connect">Connect</string>
     <string name="not_connected">Bluetooth not\nconnected</string>
     <string name="bluetooth">Bluetooth</string>
-    <string name="current_description_good">The current now is very good. This means the connecting device does not take too much power. If the current of this device increase strangely, please check it to prevent accident happen.</string>
-    <string name="current_description_off">This socket is currently OFF. Open it to see the current status.</string>
-    <string name="current_description_orange">The current now is in a high value, if the connecting device is high power device (eg. microwave, hair dryer), please ignore this.</string>
-    <string name="current_description_red">The power supply of the connecting device has been cut off due to extremely high current usage. Please check</string>
+    <string name="current_description_good">The current is stable. This means the connecting device does not take too much power. If the current of this device increases strangely, please check it to prevent accidents happen.</string>
+    <string name="current_description_off">This outlet is currently OFF. Open it to see the current status.</string>
+    <string name="current_description_orange">The current now is in a high value, if the connecting device is a high power device (eg. microwave, hair dryer), please ignore this.</string>
+    <string name="current_description_red">The power supply of the connecting device has been cut off because of extremely high current usage. You can clear the warning by press the "CLEAR" button.</string>
+    <string name="current_description_auto">Auto mode have been turned on. If the Pyro-electric Infrared Detector(PIR) module is connected, outlet wil be turned on or turned off automatically.</string>
     <string name="title">Project: Socket</string>
     <string name="failed">Failed</string>
     <string name="connected_successfully">Connected successfully</string>
@@ -142,7 +143,9 @@
     <string name="now_current">Now Current:</string>
     <string name="current_status">Current Status</string>
     <string name="good">Good</string>
+    <string name="auto">Auto</string>
     <string name="socket_off">Socket not ON</string>
+    <string name="socket_not_connected">Outlet not connected</string>
     <string name="hint_minute">Minute</string>
     <string name="message_minutes">Please Enter Minutes...</string>
     <string name="connecting_with_dots">Connecting...</string>
@@ -163,8 +166,8 @@
     <string name="open_off">OPEN / OFF</string>
     <string name="safe_current_value">safe current value</string>
     <string name="login">Login</string>
-    <string name="logged_description">Your preferences will be automatically save to the database on cloud. If you have any problem about your account, please contract us by the following Email address.\njerry960331@gmail.com</string>
-    <string name="description_login">Please enter your Email and password to either Log In or Sign Up. If you have any problem about your account, please contract us by the following Email address.\njerry960331@gmail.com</string>
+    <string name="logged_description">Your preferences will be automatically save to the database on cloud. If you have any problem about your account, please contact us by the "Contact" button.</string>
+    <string name="description_login">Please enter your Email and password to either Log In or Sign Up. If you have any problem about your account, please contact us by the "Contact" button.</string>
     <string name="password">Password</string>
     <string name="please_enter_the_name">Please enter a name</string>
     <string name="log_in_or_sign_up">Log In or Sign Up</string>
@@ -212,7 +215,7 @@
     <string name="no_repeat">No repeat</string>
     <string name="please_select_days_of_week">Please select days of week.</string>
     <string name="date_format">E dd MM</string>
-    <string name="alarm_had_been_on">Timing outlet had been set.</string>
+    <string name="alarm_had_been_on">Timing outlet has been set.</string>
     <string name="password_must_be_at_least_6_characters">Password must be at least 6 characters.</string>
     <string name="please_enter_a_valid_email">Please enter a valid Email.</string>
     <string name="link">Update Link</string>
@@ -233,7 +236,7 @@
     <string name="username">username</string>
     <string name="device_name">Device name</string>
     <string name="firebase_data_missing_desc">Online data missing. All online data have be overwritten.</string>
-    <string name="not_login">not log in</string>
+    <string name="not_login">not logged in</string>
     <string name="delete_local_user_data">Data clean up?</string>
     <string name="delete_local_user_data_desc">Do you want to clean up your local preference? This will not delete online data. (App will be restarted)</string>
     <string name="yes">Yes</string>
@@ -258,7 +261,7 @@
     <string name="open_outlet">Open outlet:</string>
     <string name="close_outlet">Close outlet:</string>
     <string name="warning">Warning</string>
-    <string name="bad_gas_detected">Bad gas detected!</string>
+    <string name="bad_gas_detected">Harmful gas detected!</string>
     <string name="alarm_notification">Timing outlet notification</string>
     <string name="notify_when_timing_outlets_activated">Notify when timing outlet have been activated.</string>
     <string name="Failed_to_read_value">Failed to read value.</string>
@@ -273,11 +276,11 @@
     <string name="restart_app">Restart App</string>
     <string name="log">LOG</string>
     <string name="please_enter_a_value_ma">Please enter a value (mA)</string>
-    <string name="paired_devices">paried_devices</string>
+    <string name="paired_devices">paired_devices</string>
     <string name="other_devices">other_devices</string>
     <string name="scan">scan</string>
     <string name="none_paired">No devices have been paired</string>
-    <string name="scanning">canning for devices...</string>
+    <string name="scanning">scanning for devices…</string>
     <string name="select_device_to_connect">select a device to connect</string>
     <string name="no_device_fouond">No devices found</string>
 

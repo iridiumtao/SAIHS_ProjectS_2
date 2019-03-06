@@ -13,18 +13,6 @@
         tools:context=".SOActivity">
 
 
-        <Button
-            android:id="@+id/btnConnect"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:autoSizeMaxTextSize="12sp"
-            android:autoSizeMinTextSize="10sp"
-            android:maxLines="1"
-            android:text="@string/connect"
-            android:textSize="12sp"
-            tools:targetApi="O" />
-
         <androidx.cardview.widget.CardView
             android:id="@+id/cardBlueStorm"
             android:layout_width="match_parent"
@@ -41,6 +29,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <Button
+                    android:id="@+id/btnConnect"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="26dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:autoSizeMaxTextSize="12sp"
+                    android:autoSizeMinTextSize="10sp"
+                    android:background="@drawable/button_auto"
+                    android:maxLines="1"
+                    android:text="@string/connect"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/btnSkStatSO"
+                    app:layout_constraintHorizontal_bias="0.2"
+                    app:layout_constraintStart_toStartOf="@+id/textView15"
+                    app:layout_constraintTop_toBottomOf="@+id/btnSkStatSO"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:targetApi="O" />
+
                 <Switch
                     android:id="@+id/swSkSO"
                     android:layout_width="wrap_content"
@@ -48,15 +60,18 @@
 
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:gravity="center|end"
-                    android:text="開關"
+                    android:layout_marginTop="16dp"
+
+                    android:ellipsize="marquee"
+                    android:maxLength="12"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="@string/socket"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/btnSkStatSO"
-                    app:layout_constraintHorizontal_bias="0.132"
-                    app:layout_constraintStart_toStartOf="@+id/textView15"
+                    app:layout_constraintEnd_toEndOf="@+id/imgBS"
+                    app:layout_constraintStart_toStartOf="@+id/imgBS"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.16000003" />
+                    app:layout_constraintVertical_bias="0.88" />
 
                 <ImageButton
                     android:id="@+id/btnSkStatSO"
@@ -101,9 +116,9 @@
                     android:layout_width="99dp"
                     android:layout_height="81dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="32dp"
+                    android:layout_marginBottom="48dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHeight_percent="0.4"
@@ -125,7 +140,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.39" />
+                    app:layout_constraintVertical_bias="0.26" />
 
                 <TextView
                     android:id="@+id/textView17"
@@ -138,18 +153,6 @@
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="@+id/textView15"
                     app:layout_constraintTop_toBottomOf="@+id/textView15"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <TextView
-                    android:id="@+id/txSocket"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/socket"
-                    android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/imgBS"
-                    app:layout_constraintStart_toStartOf="@+id/imgBS"
-                    app:layout_constraintTop_toBottomOf="@+id/imgBS"
                     app:layout_constraintVertical_bias="0.0" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -192,7 +195,7 @@
                             android:layout_height="60dp"
                             android:layout_marginStart="15dp"
                             android:layout_marginTop="10dp"
-                            app:srcCompat="@drawable/dot_green_48dp" />
+                            app:srcCompat="@drawable/dot_gray_48dp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -213,7 +216,7 @@
                                 android:id="@+id/txCurrentStat"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="@string/good"
+                                android:text="@string/socket_off"
                                 android:textColor="@color/black"
                                 android:textSize="18sp" />
                         </LinearLayout>
@@ -237,7 +240,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:layout_weight="1"
-                                android:text="150mA" />
+                                android:text="N/A" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -259,7 +262,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:layout_weight="1"
-                                android:text="150mA" />
+                                android:text="N/A" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -281,21 +284,21 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:layout_weight="1"
-                                android:text="150mA" />
+                                android:text="N/A" />
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/txCurrentDescription2"
                             android:layout_width="match_parent"
-                            android:layout_height="153dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="15dp"
                             android:layout_marginTop="5dp"
                             android:layout_marginEnd="15dp"
                             android:layout_marginBottom="5dp"
-                            android:text="@string/current_description_good" />
+                            android:text="@string/current_description_off" />
 
                         <Button
-                            android:id="@+id/btnWarningClear2"
+                            android:id="@+id/btnWarningClear"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
@@ -307,7 +310,7 @@
                             android:maxLines="1"
                             android:text="@string/clear"
                             android:textColor="#F44336"
-                            android:visibility="visible" />
+                            android:visibility="gone" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -354,7 +357,8 @@
                             android:layout_height="160dp"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginStart="15dp"
-                            android:layout_marginEnd="15dp" />
+                            android:layout_marginEnd="15dp"
+                            android:visibility="visible" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -364,12 +368,6 @@
                             android:layout_marginEnd="15dp"
                             android:layout_marginBottom="20dp"
                             android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/txChartAvCurrent"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="平均電流：initializing" />
 
                             <TextView
                                 android:id="@+id/textView14"

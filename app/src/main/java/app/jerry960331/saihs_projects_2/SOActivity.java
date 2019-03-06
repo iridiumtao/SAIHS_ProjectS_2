@@ -18,42 +18,41 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-
-import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.core.app.NotificationCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -63,15 +62,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tingyik90.snackprogressbar.SnackProgressBar;
+import com.tingyik90.snackprogressbar.SnackProgressBarManager;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -79,10 +79,11 @@ import java.util.Objects;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
 import io.fabric.sdk.android.Fabric;
 
 
@@ -102,7 +103,7 @@ public class SOActivity extends AppCompatActivity {
             swSkSO;
     private Button
             btnConnect,
-            btnSkAutoSO,btnSkInfo,
+            btnSkAutoSO, btnSkInfo,
             btnLogStart, btnLogStop, btnLogClear;
     private TextView txConnectStat, txLog;
 
@@ -135,6 +136,7 @@ public class SOActivity extends AppCompatActivity {
     boolean isBTConnected = false;
     boolean isWiFiConnected = false;
     boolean AutoOnSO = false;
+    boolean AutoHWSO = false;
     boolean unsafeCurrentSO = false;
     boolean devMode = false;
     boolean devModeValue = false;
@@ -142,7 +144,7 @@ public class SOActivity extends AppCompatActivity {
     boolean AutoTimerRepeatNOPE = false;
     String PIR;
     int safeCurrentValue;
-    String currentSO = "0";
+    int currentSO = 0;
     Double currentAvSO = 0.0;
     int socketStatSO = 0;
     Handler getCurrentHandler;
@@ -169,6 +171,7 @@ public class SOActivity extends AppCompatActivity {
 
     //snackBar customize
     Snackbar snackbar;
+    Snackbar bar;
     View snackBarView;
     private TextView txVStat, snackBarTxV;
 
@@ -186,48 +189,343 @@ public class SOActivity extends AppCompatActivity {
     private String userDevice;
     private String appTitle;
 
+    //functions
+    //狀態
+    int currentNow;
+    int powerNow;
+    Double currentAve;
+    boolean isSWOn;
+    private TextView txCurrentStat, txCurrentNow, txPowerNow, txCurrentAve, txCurrentDescription;
+    private ImageView imageCurrentStat;
+    Handler statHandler;
+    private ArrayList currentSumArrayList = new ArrayList<Double>();
+    private Button btnWarningClear;
+
+    //鬧鐘
+    private Button btnGotoTimer;
+    private TextView txNowTime;
+    private TextView txNowDate;
+    private ImageButton btnAlarmIsOn1;
+    private TextView txAlarmSetSchedule1;
+    private TextView txAlarmSetTime1;
+    private TextView txAlarmIntent1;
+    boolean isAlarmOn1;
+    String alarmSetTime1 = "";
+    private Calendar alarmCal;
+    private LinearLayout alarmSet1;
+    ArrayList selectedItems = new ArrayList();
+    boolean[] checkedItems;
+    Handler clockHandler;
+    private Calendar cal = Calendar.getInstance();
+    String current;
+    private Button btnAlarmSocket1, btnAlarmSocket2, btnAlarmSocket3, btnAlarmSocket4;
+    private boolean alarmS1 = false, alarmS2 = false, alarmS3 = false, alarmS4 = false;
+    private Switch swAlarm;
+    //表格
+    private LineChart chart;
+    private Boolean currentNotSafe = false;
+    private TextView txChartAvCurrent;
+
+
+    int[] tick = {0};
+    ProgressDialog progressDialog;
 
 //alt+enter 字串抽離
 
-
-    @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_so);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         findViews();
         setOnClickListeners();
-
+        chart.setVisibility(View.GONE);
+        btnSkAutoSO.setVisibility(View.INVISIBLE);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         //devLayout.setVisibility(View.GONE);
-
         //FunctionSetEnable(false);
-
-        //Log.d("RND", Math.random()*180+"");
-
-
-
-
         notificationTitle = getResources().getString(R.string.Security_warning);
         notificationText = getResources().getString(R.string.socket_current_warning);
-
-
-        //"z" means "Hello, World!" talk to Arduino
         onCreateFirebaseCheck();
+        onCreateGetSharedPref();
+        btHandler();
 
 
+    }
+
+    @SuppressLint("HandlerLeak")
+    private void btHandler() {
+        btHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+
+                if (msg.what == MESSAGE_READ) {
+                    String readMessage = new String((byte[]) msg.obj, StandardCharsets.UTF_8);
+                    btDataString.append(readMessage);
+
+                    int endOfLineIndex = btDataString.indexOf("~");
+                    if (endOfLineIndex > 0) {
+                        //000000000011111111112222222222333333
+                        //012345678901234567890123456789012345
+                        //#0+00000+00000+00000+00000+0+0+0+0~
+                        //#0+00000+00000+00000+00000+0+0+0+0+0+0+0+0~
+                        //tvSB.setText(String.value)
+                        if (btDataString.charAt(0) == '#') {
+                            try {
+                                btDataString.setLength(35);
+
+                                PIR = btDataString.substring(1, 2);//偵測到人會收到0
+
+                                //僅於安全電流範圍收值
+                                //todo 暫時以轉換為Integer的方式讓錯誤的封包自動被截掉，未來需讓current改為Int
+                                if (!unsafeCurrentSO) {
+                                    currentSO = Integer.parseInt(btDataString.substring(3, 8));
+                                }
+
+                                boolean statChangedSO = false;
+                                if (socketStatSO != Integer.parseInt(btDataString.substring(27, 28)) && !AutoHWSO) {
+                                    statChangedSO = true;
+                                }
+
+                                //自動模式是否為開啟
+                                socketStatSO = Integer.parseInt(btDataString.substring(27, 28));
+                                tick[0]++;
+
+
+                                txCurrentNow.setText(currentSO + " mA");
+
+                                currentSumArrayList.add(currentSO);
+                                double sum = 0;
+                                for (int i = 1; i < currentSumArrayList.size(); i++) {
+                                    sum += Double.parseDouble(currentSumArrayList.get(i).toString());
+                                }
+
+
+                                if (currentSO <= safeCurrentValue) {
+                                    txCurrentAve.setText(Math.round((sum / tick[0]) * 100) / 100 + " mA");
+                                } else {
+                                    txCurrentAve.setText(currentSO + " mA");
+                                }
+                                //算出平均後乘100、四捨五入至整數為，再除100
+                                txPowerNow.setText(Math.round(currentSO) * 11 / 100 + " W");
+                                switch (socketStatSO) {
+                                    case 1:
+                                        btnSkStatSO.setImageResource(R.drawable.dot_black_48dp);
+                                        swSkSO.setChecked(false);
+                                        SkAutoSO(false);
+                                        txCurrentStat.setText(R.string.socket_off);
+                                        txCurrentDescription.setText(R.string.current_description_off);
+                                        imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
+                                        if (statChangedSO)
+                                            CustomizedSnackBar(getString(R.string.socket) + "："
+                                                    + swSkSO.getText() + getString(R.string.has_been_turn_off), blue);
+                                        break;
+                                    case 2:
+                                        btnSkStatSO.setImageResource(R.drawable.dot_green_48dp);
+                                        swSkSO.setChecked(true);
+                                        SkAutoSO(false);
+                                        txCurrentStat.setText(R.string.good);
+                                        txCurrentDescription.setText(R.string.current_description_good);
+                                        imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
+                                        if (statChangedSO)
+                                            CustomizedSnackBar(getString(R.string.socket) + "："
+                                                    + swSkSO.getText() + getString(R.string.has_been_turn_on), blue);
+                                        break;
+                                    case 3:
+                                        btnSkStatSO.setImageResource(R.drawable.dot_blue_48dp);
+                                        swSkSO.setChecked(false);
+                                        SkAutoSO(true);
+                                        txCurrentStat.setText(R.string.auto);
+                                        txCurrentDescription.setText(R.string.current_description_auto);
+                                        imageCurrentStat.setImageResource(R.drawable.dot_blue_48dp);
+                                        if (statChangedSO)
+                                            CustomizedSnackBar(getString(R.string.socket) + "："
+                                                    + swSkSO.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
+                                        break;
+                                    case 4:
+                                        btnSkStatSO.setImageResource(R.drawable.dot_blue_48dp);
+                                        swSkSO.setChecked(true);
+                                        SkAutoSO(true);
+                                        txCurrentStat.setText(R.string.auto);
+                                        txCurrentDescription.setText(R.string.current_description_auto);
+                                        imageCurrentStat.setImageResource(R.drawable.dot_blue_48dp);
+                                        if (statChangedSO)
+                                            CustomizedSnackBar(getString(R.string.socket) + "："
+                                                    + swSkSO.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
+                                        break;
+                                    case 5:
+                                        btnSkStatSO.setImageResource(R.drawable.dot_red_48dp);
+                                        swSkSO.setChecked(false);
+                                        swSkSO.setEnabled(false);
+                                        txCurrentStat.setText(R.string.red);
+                                        txCurrentDescription.setTextColor(0xfff44336);
+                                        txCurrentDescription.setText(R.string.current_description_red);
+                                        imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
+                                        btnWarningClear.setVisibility(View.VISIBLE);
+                                        if (statChangedSO) {
+                                            CustomizedSnackBar(getString(R.string.socket) + "："
+                                                    + swSkSO.getText() + getString(R.string.abnormal_current), red);
+                                            makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                                            unsafeCurrentSO = true;
+                                        }
+                                        break;
+                                }
+
+                                LineData data;
+                                data = chart.getData();
+                                if (data != null) {
+                                    ILineDataSet set, avSet;
+                                    set = data.getDataSetByIndex(0);
+                                    // set.addEntry(...); // can be called as well
+                                    if (set == null) {
+                                        set = createSet();
+                                        data.addDataSet(set);
+                                        //avSet = createAvSet();
+                                        //avData.addDataSet(avSet);
+                                    }
+                                    if (current == null) {
+                                        current = "0";
+                                    }
+
+                                    currentSumArrayList.add(Integer.parseInt(current));
+                                    float convertNum = (float) Math.rint((sum / tick[0]) * 100) / 100;
+
+                                    if (!currentNotSafe) {
+                                        if (devModeValue) {
+                                            data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100)), 0);
+                                        } else {
+                                            data.addEntry(new Entry(set.getEntryCount(), Integer.parseInt(current)), 0);
+                                            //avData.addEntry(new Entry(set.getEntryCount(), sum / convertNum), 0);
+                                        }
+                                        txChartAvCurrent.setText(getString(R.string.average_current) + convertNum + "mA");
+
+                                        data.notifyDataChanged();
+                                        chart.notifyDataSetChanged();
+                                        chart.setVisibleXRangeMaximum(30);
+                                        chart.setVisibleXRangeMinimum(10);
+                                        chart.moveViewToX(data.getEntryCount());
+                                        chart.invalidate();
+                                    }
+
+                                    if (Integer.parseInt(current) >= safeCurrentValue) { //停止繪製表格
+                                        currentNotSafe = true;
+                                    }
+                                }
+                            } catch (Exception e) {
+                                Log.d("e", e + "");
+                            }
+                        }
+                        btDataString.delete(0, btDataString.length());
+                    }
+                }
+                if (msg.what == CONNECTING_STATUS) {
+                    progressDialog.dismiss();
+                    try {
+                        if (msg.arg1 == 1) {
+                            Toast.makeText(getApplicationContext(), R.string.connected_successfully, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
+                            txConnectStat.setText(R.string.failed);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+
+            }
+        };
+    }
+
+    private Button.OnClickListener btnWarningClearListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new android.app.AlertDialog.Builder(SOActivity.this)
+                    .setTitle(R.string.confirm)
+                    .setMessage(c.getString(R.string.the_abnormal_current_will_be_clear))
+                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            unsafeCurrentSO = false;
+                            btConnectedThread.write("b");
+                            swSkSO.setEnabled(true);
+                        }
+                    })
+                    .show();
+        }
+    };
+
+    private void setChart() {
+        chart.setVisibility(View.VISIBLE);
+        chart.setTouchEnabled(true);
+        chart.setDragEnabled(true);
+        chart.setScaleEnabled(true);
+        chart.setDrawGridBackground(false);
+        chart.setPinchZoom(true);
+        chart.getDescription().setEnabled(false);
+        LineData data = new LineData();
+        chart.setData(data);
+
+        //圖例
+        Legend l = chart.getLegend();
+        l.setForm(Legend.LegendForm.LINE);
+        XAxis xl = chart.getXAxis();
+        xl.setDrawGridLines(false);
+        xl.setAvoidFirstLastClipping(true);
+        xl.setEnabled(true);
+        //todo xl.setValueFormatter();
+
+        LimitLine upperLimit = new LimitLine(safeCurrentValue, getString(R.string.safe_current_value));
+        upperLimit.setLineWidth(4f);
+        upperLimit.enableDashedLine(10f, 10f, 10f);
+        upperLimit.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        upperLimit.setTextSize(15f);
+
+        YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setAxisMinimum(0f);
+        leftAxis.setDrawLimitLinesBehindData(true);
+        leftAxis.addLimitLine(upperLimit);
+        leftAxis.setDrawGridLines(true);
+
+        YAxis rightAxis = chart.getAxisRight();
+        rightAxis.setEnabled(false);
+
+        if (current == null || current == "") {
+            current = "0";
+        }
+    }
+
+    private LineDataSet createSet() {
+        Log.d("call", "createSet()");
+        LineDataSet set;
+        if (devModeValue) {
+            set = new LineDataSet(null, getString(R.string.current_dev_mode));
+
+        } else {
+            set = new LineDataSet(null, getString(R.string.current));
+        }
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(Color.rgb(0, 185, 169)); //Color.rgb(0, 185, 169) == colorPrimary
+        set.setCircleColor(Color.rgb(0, 185, 169));
+        set.setCircleHoleColor(Color.WHITE);
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setFillAlpha(65);
+        set.setFillColor(Color.rgb(0, 185, 169));
+        set.setHighLightColor(Color.rgb(244, 117, 117));
+        //set.setValueTextColor(Color.WHITE);
+        set.setValueTextSize(9f);
+        set.setDrawValues(true);
+        return set;
+    }
+
+    private void onCreateGetSharedPref() {
         isAlarmOnSO = getSharedPreferences("alarmSO", MODE_PRIVATE).getBoolean("isAlarmOnSO", false);
         String scheduleSO = getSharedPreferences("alarmSO", MODE_PRIVATE).getString("alarmSetScheduleSO", "");
         Log.d("onCreate scheduleSO", scheduleSO);
         if (scheduleSO != "" && scheduleSO != null) {
             try {
                 for (int i = 0; i < scheduleSO.length(); i++) {
-                    Log.d("looping", scheduleSO.charAt(i) + "");
-
                     checkedItemsSO[Integer.parseInt(scheduleSO.substring(i, i + 1))] = true;
                     selectedItemsSO.add(scheduleSO.substring(i, i + 1));
                 }
@@ -245,123 +543,23 @@ public class SOActivity extends AppCompatActivity {
         Log.d(TAG, appTitle + "apple  " + R.string.title);
         setTitle(appTitle);
         safeCurrentValue = getSharedPreferences("user", MODE_PRIVATE).getInt("safeCurrentValue", 5000);
+    }
 
-
-        btHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-
-                if (msg.what == MESSAGE_READ) {
-                    try {
-                        String readMessage = new String((byte[]) msg.obj, "UTF-8");
-                        btDataString.append(readMessage);
-                    } catch (UnsupportedEncodingException uee) {
-                        uee.printStackTrace();
-                    }
-
-                    int endOfLineIndex = btDataString.indexOf("~");
-                    if (endOfLineIndex > 0) {
-                        //000000000011111111112222222222333333
-                        //012345678901234567890123456789012345
-                        //#0+00000+00000+00000+00000+0+0+0+0~
-                        //#0+00000+00000+00000+00000+0+0+0+0+0+0+0+0~
-                        //tvSB.setText(String.value)
-                        if (btDataString.charAt(0) == '#') {
-                            try {
-                                btDataString.setLength(35);
-
-                                if (logIsOn) {
-                                    txLog.setText(btDataString + "\n" + txLog.getText().toString());
-                                }
-                                PIR = btDataString.substring(1, 2);//偵測到人會收到0
-
-                                //僅於安全電流範圍收值
-                                if (!unsafeCurrentSO) {
-                                    currentSO = btDataString.substring(3, 8);
-                                }
-
-
-                                //若值超過設定電流上限
-                                if (Integer.parseInt(btDataString.substring(3, 8)) > safeCurrentValue) {
-                                    if (unsafeCurrentSO) {
-                                        makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
-                                    }
-                                    unsafeCurrentSO = true;
-                                }
-
-                                //自動模式是否為開啟
-                                socketStatSO = Integer.parseInt(btDataString.substring(27, 28));
-
-                                // 1 黑燈 OFF
-                                // 2 綠燈 ON
-                                // 3 藍燈 OFF
-                                // 4 藍燈 ON
-                                // 5 紅燈 OFF 35
-                                // 00000000011111111112222222222333333
-                                //012345678901234567890123456789012345
-                                //#0+00000+00000+00000+00000+0+0+0+0~
-                                switch (socketStatSO) {
-                                    case 1:
-                                        btnSkStatSO.setImageResource(R.drawable.dot_black_48dp);
-                                        swSkSO.setChecked(false);
-                                        break;
-                                    case 2:
-                                        btnSkStatSO.setImageResource(R.drawable.dot_green_48dp);
-                                        swSkSO.setChecked(true);
-                                        break;
-                                    case 3:
-                                        btnSkStatSO.setImageResource(R.drawable.dot_blue_48dp);
-                                        swSkSO.setChecked(false);
-                                        break;
-                                    case 4:
-                                        btnSkStatSO.setImageResource(R.drawable.dot_blue_48dp);
-                                        swSkSO.setChecked(true);
-                                        break;
-                                    case 5:
-                                        btnSkStatSO.setImageResource(R.drawable.dot_red_48dp);
-                                        swSkSO.setChecked(false);
-                                        swSkSO.setEnabled(false);
-                                        break;
-                                }
-                            } catch (Exception e) {
-                                Log.d("e", e + "");
-                            }
-                        }
-                        btDataString.delete(0, btDataString.length());
-                    }
-                }
-                if (msg.what == CONNECTING_STATUS) {
-                    try {
-                        if (msg.arg1 == 1) {
-                            Toast.makeText(getApplicationContext(), R.string.connected_successfully, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
-                            txConnectStat.setText(R.string.failed);
-                        }
-                    } catch (Exception ignored) {
-                    }
-                }
-
-            }
-        };
+    private void SkAutoSO(boolean b) {
+        if (b) {
+            btnSkAutoSO.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
+            btnSkAutoSO.setTextColor(getResources().getColor(R.color.white));
+            AutoOnSO = true; //for button style
+            AutoHWSO = true; //for snackbar
+        } else {
+            btnSkAutoSO.setBackground(getResources().getDrawable(R.drawable.button_auto));
+            btnSkAutoSO.setTextColor(getResources().getColor(R.color.colorPrimary));
+            AutoOnSO = false;
+            AutoHWSO = false;
+        }
     }
 
     private void onCreateFirebaseCheck() {
-        /*DatabaseReference reason = FirebaseDatabase.getInstance().getReference("test_user1").child("command");
-        reason.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                StrR = dataSnapshot.getValue().toString();
-                if (StrR.equals("a")) {
-                    StrR = "管理員未說明。";
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });*/
-
         dbRef = FirebaseDatabase.getInstance().getReference("2019-02-27 19:27:52");
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -475,8 +673,10 @@ public class SOActivity extends AppCompatActivity {
                 Toast.makeText(SOActivity.this, getResources().getString(R.string.unable_to_check_app_version), Toast.LENGTH_SHORT).show();
             }
         });
+        authListener();
+    }
 
-        //user account
+    private void authListener() {
         auth = FirebaseAuth.getInstance();
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -497,12 +697,10 @@ public class SOActivity extends AppCompatActivity {
                             firebaseUpdateUserData(userName, user.getEmail());
                             firebaseUpdateBSPref();
                             firebaseUpdateAppTitle();
-
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-
                         }
                     });
                     CustomizedSnackBar(getString(R.string.log_in_successfully_by) + userEmail, green);
@@ -515,7 +713,6 @@ public class SOActivity extends AppCompatActivity {
                     statOnCloud = false;
                     CustomizedSnackBar(getString(R.string.not_login), green);
                 }
-
             }
         };
     }
@@ -533,34 +730,57 @@ public class SOActivity extends AppCompatActivity {
         swSkSO.setOnClickListener(SwListener);
         swSkSO.setOnLongClickListener(skTxChangeListener);
         btnConnect.setOnClickListener(btnConnectListener);
-
-        /*btnLogStart.setOnClickListener(LogStart);
-        btnLogStop.setOnClickListener(LogStop);
-        btnLogClear.setOnClickListener(LogClear);*/
+        btnWarningClear.setOnClickListener(btnWarningClearListener);
     }
 
     //ctrl+alt+M
     private void findViews() {
         swSkSO = findViewById(R.id.swSkSO);
-
         btnConnect = findViewById(R.id.btnConnect);
         txConnectStat = findViewById(R.id.txConnectStat);
-
         btnSkStatSO = findViewById(R.id.btnSkStatSO);
-
-        //btnSkInfo = findViewById(R.id.btnSkInfo);
-
         btnSkAutoSO = findViewById(R.id.btnSkAutoSO);
-
         txVStat = findViewById(R.id.txVStat);
         txLog = findViewById(R.id.txLog);
 
+        //status
+        txCurrentStat = findViewById(R.id.txCurrentStat);
+        txCurrentNow = findViewById(R.id.txCurrentNow);
+        txCurrentAve = findViewById(R.id.txCurrentAve);
+        txCurrentDescription = findViewById(R.id.txCurrentDescription);
+        imageCurrentStat = findViewById(R.id.imageCurrentStat);
+        txPowerNow = findViewById(R.id.txPowerNow);
+        btnWarningClear = findViewById(R.id.btnWarningClear);
 
-        /*devLayout = findViewById(R.id.devLayout);
-        btnLogStart = findViewById(R.id.btnLogStart);
-        btnLogStop = findViewById(R.id.btnLogStop);
-        btnLogClear = findViewById(R.id.btnLogClear);*/
+        //timing
+        btnGotoTimer = findViewById(R.id.btnGotoTimer);
+        txNowTime = findViewById(R.id.txNowTime);
+        txNowDate = findViewById(R.id.txNowDate);
+        btnAlarmIsOn1 = findViewById(R.id.btnAlarmIsOn1);
+        txAlarmSetSchedule1 = findViewById(R.id.txAlarmSetSchedule1);
+        txAlarmSetTime1 = findViewById(R.id.txAlarmSetTime1);
+        txAlarmIntent1 = findViewById(R.id.txAlarmIntent1);
+        alarmSet1 = findViewById(R.id.alarmSet1);
+        btnAlarmSocket1 = findViewById(R.id.btnAlarmSocket1);
+        btnAlarmSocket2 = findViewById(R.id.btnAlarmSocket2);
+        btnAlarmSocket3 = findViewById(R.id.btnAlarmSocket3);
+        btnAlarmSocket4 = findViewById(R.id.btnAlarmSocket4);
+        swAlarm = findViewById(R.id.swAlarm);
+        txAlarmSetSchedule1.setSelected(true);
 
+        //chart
+
+        txChartAvCurrent = findViewById(R.id.txChartAvCurrent);
+        chart = findViewById(R.id.currentChartRT);
+        chart.setVisibility(View.VISIBLE);
+        chart.setTouchEnabled(true);
+        chart.setDragEnabled(true);
+        chart.setScaleEnabled(true);
+        chart.setDrawGridBackground(false);
+        chart.setPinchZoom(true);
+        chart.getDescription().setEnabled(false);
+        LineData data = new LineData();
+        chart.setData(data);
     }
 
     private Switch.OnLongClickListener skTxChangeListener = new Switch.OnLongClickListener() {
@@ -589,7 +809,6 @@ public class SOActivity extends AppCompatActivity {
         public void onClick(View v) {
             final Switch s = (Switch) v;
             String switchText = s.getText().toString();
-            final int switchId = s.getId();
             final String switchOnOff;
             if (s.isChecked()) {
                 switchOnOff = getResources().getString(R.string.open);
@@ -603,34 +822,20 @@ public class SOActivity extends AppCompatActivity {
                     .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            int i = 0;
-                            String IO = "";
-
-                                    AutoOnSO = false;
-                                    btnSkAutoSO.setBackground(getResources().getDrawable(R.drawable.button_auto));
-                                    btnSkAutoSO.setTextColor(getResources().getColor(R.color.colorPrimary));
-                                    unsafeCurrentSO = false;
-                                    if (switchOnOff.equals(getString(R.string.open))) {
-                                        //btnSkStatSO.setImageResource(R.drawable.dot_green_48dp);
-                                        i = 1;
-                                        IO = getResources().getString(R.string.turnOn);
-                                        BT_comm = "a";
-                                        firebaseCommand("a");
-                                    } else {
-                                        //btnSkStatSO.setImageResource(R.drawable.dot_black_48dp);
-                                        i = 1;
-                                        IO = getResources().getString(R.string.turnOff);
-                                        BT_comm = "b";
-                                        firebaseCommand("b");
-                                    }
-
-
+                            SkAutoSO(false);
+                            unsafeCurrentSO = false;
+                            if (switchOnOff.equals(getString(R.string.open))) {
+                                BT_comm = "a";
+                                firebaseCommand("a");
+                            } else {
+                                BT_comm = "b";
+                                firebaseCommand("b");
+                            }
                             if (btConnectedThread != null) {
                                 String sendData = BT_comm;
                                 btConnectedThread.write(sendData);
                                 Log.d("Bluetooth Send Data: ", sendData);
                             }
-                            CustomizedSnackBar(getResources().getString(R.string.socket) + " " + i + " " + IO, blue);
                         }
                     })
                     .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -691,7 +896,7 @@ public class SOActivity extends AppCompatActivity {
                 getCurrentHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        CustomDialog.currentNow = Integer.parseInt(currentSO);
+                        CustomDialog.currentNow = currentSO;
                         getCurrentHandler.postDelayed(this, 1000);
                     }
                 }, 10);
@@ -719,8 +924,6 @@ public class SOActivity extends AppCompatActivity {
                 });
                 CustomDialog.show();
             }
-
-
         }
     };
 
@@ -819,7 +1022,7 @@ public class SOActivity extends AppCompatActivity {
             getCurrentHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    CustomDialog.current = currentSO;
+                    CustomDialog.current = currentSO + "";
                     getCurrentHandler.postDelayed(this, 1000);
                 }
             }, 10);
@@ -836,6 +1039,7 @@ public class SOActivity extends AppCompatActivity {
             CustomDialog.show();
         }
     };
+
     //幫你打開藍牙
     public void setBluetoothEnable(Boolean enable) {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -897,13 +1101,17 @@ public class SOActivity extends AppCompatActivity {
         }
 
         if (isBTConnected) {
-
             return;
         }
 
         //todo progressDialog
         Toast.makeText(getApplicationContext(), R.string.connecting_with_dots, Toast.LENGTH_SHORT).show();
-        txConnectStat.setText(R.string.connecting_with_dots);
+
+        progressDialog = new ProgressDialog(SOActivity.this);
+        progressDialog.setMessage(getResources().getString(R.string.connecting_with_dots));
+                            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                            progressDialog.setCancelable(false);
+                            progressDialog.show();
 
         // Spawn a new thread to avoid blocking the GUI one
         new Thread() {
@@ -946,10 +1154,13 @@ public class SOActivity extends AppCompatActivity {
 
                     //藍牙連接成功
                     btnConnect.setVisibility(View.INVISIBLE);
+                    btnSkAutoSO.setVisibility(View.VISIBLE);
                     btConnectedThread.write("z"); //成功後傳值
 
                     isBTConnected = true;
                     txConnectStat.setVisibility(View.INVISIBLE);
+                    chart.setVisibility(View.VISIBLE);
+                    setChart();
 
                     IntentFilter filter = new IntentFilter();
                     filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
@@ -997,6 +1208,7 @@ public class SOActivity extends AppCompatActivity {
                 txConnectStat.setVisibility(View.VISIBLE);
                 btnSkStatSO.setImageResource(R.drawable.dot_gray_48dp);
                 swSkSO.setChecked(false);
+                SkAutoSO(false);
             }
         }
     };
@@ -1051,9 +1263,11 @@ public class SOActivity extends AppCompatActivity {
                     e.printStackTrace();
                     break;
                 } catch (RuntimeException e) {
+                    Toast.makeText(SOActivity.this, "20%\n" + e, Toast.LENGTH_LONG).show();
                     Log.e(TAG, "20%", e);
                     e.printStackTrace();
                 } catch (Exception e) {
+                    Toast.makeText(SOActivity.this, "20% -2 \n" + e, Toast.LENGTH_LONG).show();
                     Log.e(TAG, "20%-2", e);
                     e.printStackTrace();
                 }
@@ -1096,20 +1310,14 @@ public class SOActivity extends AppCompatActivity {
             CustomizedSnackBar(getString(R.string.please_clear_abnormal_current_first), red);
         } else {
             if (!AutoOnSO) {
-                AutoOnSO = true;
-                btnSkAutoSO.setBackground(getResources().getDrawable(R.drawable.button_auto_on));
-                btnSkAutoSO.setTextColor(getResources().getColor(R.color.white));
-                //swSkSO.setEnabled(false);
+                SkAutoSO(true);
                 AutoTimerRepeatNOPE = false;
                 if (btConnectedThread != null) {
                     btConnectedThread.write("i");
                 }
                 firebaseCommand("i");
             } else {
-                AutoOnSO = false;
-                btnSkAutoSO.setBackground(getResources().getDrawable(R.drawable.button_auto));
-                btnSkAutoSO.setTextColor(getResources().getColor(R.color.colorPrimary));
-                //swSkSO.setEnabled(true);
+                SkAutoSO(false);
                 if (btConnectedThread != null) {
                     btConnectedThread.write("m");
                 }
@@ -1122,12 +1330,9 @@ public class SOActivity extends AppCompatActivity {
     private void startAlarm(Calendar calendar) {
         Calendar nowCal = Calendar.getInstance(TimeZone.getDefault());
 
-
         if (calendar.before(Calendar.getInstance())) {
             calendar.add(Calendar.DATE, 1);
         }
-
-
         //just for test
         /*calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.SECOND, 5);*/
@@ -1163,35 +1368,12 @@ public class SOActivity extends AppCompatActivity {
         alarmManager.cancel(pendingIntent);
     }
 
-    public Button.OnClickListener LogStart = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            logIsOn = true;
-
-            Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), alarmUri);
-            ringtone.play();
-        }
-    };
-    public Button.OnClickListener LogStop = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            logIsOn = false;
-        }
-    };
-    public Button.OnClickListener LogClear = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            txLog.setText("     +" + getString(R.string.log_cleared));
-        }
-    };
-
     public void CustomizedSnackBar(String SnackBarText, int color) {
         snackbar = Snackbar.make(findViewById(android.R.id.content), SnackBarText, Snackbar.LENGTH_SHORT)
                 .setAction(getString(R.string.dismiss), null);
         snackBarView = snackbar.getView();
         snackBarView.setBackgroundColor(color);
-        snackBarTxV = (TextView) snackBarView.findViewById(R.id.snackbar_text);
+        snackBarTxV = snackBarView.findViewById(R.id.snackbar_text);
         snackbar.show();
     }
 
@@ -1535,7 +1717,6 @@ public class SOActivity extends AppCompatActivity {
             Map<String, Object> data = new HashMap<>();
             data.put("OutletSO", swSkSO.getText().toString());
             data.put("safeCurrentValue", safeCurrentValue);
-            data.put("device_name", userDevice);
             myRef.updateChildren(data);
         }
     }
@@ -1733,8 +1914,6 @@ public class SOActivity extends AppCompatActivity {
         dialog.show();
     }
 
-
-
     void makeOreoNotification(String channelId, String channelName) {
         final int NOTIFICATION_ID = 8;
 
@@ -1810,21 +1989,6 @@ public class SOActivity extends AppCompatActivity {
             manager.createNotificationChannel(channel);
         }
         return manager;
-    }
-
-    private void makeNotification() {
-        //取得通知管理器
-        NotificationManager manager =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        //產生通知
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.icon_notification_home2)
-                        .setContentTitle(notificationTitle)
-                        .setContentText(notificationTitle)
-                        .setWhen(System.currentTimeMillis());
-        //送出通知
-        manager.notify(1, builder.build());
     }
 
     @Override

@@ -14,7 +14,8 @@
         android:roundIcon="@drawable/icon_ver5"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:label">
         <activity
             android:name=".SOActivity"
             android:label="@string/title_activity_so"

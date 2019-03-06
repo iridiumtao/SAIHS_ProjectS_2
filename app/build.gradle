@@ -16,8 +16,8 @@ android {
         applicationId "app.jerry960331.saihs_projects_2"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 111
-        versionName "1.8.2-alpha(111)"
+        versionCode 112
+        versionName "1.8.3-alpha(112)"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

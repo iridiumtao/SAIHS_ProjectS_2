@@ -300,36 +300,7 @@ public class MainActivity extends AppCompatActivity {
                                     current4 = Integer.parseInt(btDataString.substring(21, 26)) + "";
                                 }
 
-                                //若值超過設定電流上限
-                                if (Integer.parseInt(btDataString.substring(3, 8)) > safeCurrentValue) {
-                                    if (unsafeCurrent1) {
-                                        makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
-                                    }
-                                    unsafeCurrent1 = true;
-                                }
-                                if (Integer.parseInt(btDataString.substring(9, 14)) > safeCurrentValue) {
-                                    if (unsafeCurrent2) {
-                                        makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
-                                    }
-                                    unsafeCurrent2 = true;
-                                }
-                                if (Integer.parseInt(btDataString.substring(15, 20)) > safeCurrentValue) {
-                                    if (unsafeCurrent3) {
-                                        makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
-                                    }
-                                    unsafeCurrent3 = true;
-                                }
-                                if (Integer.parseInt(btDataString.substring(21, 26)) > safeCurrentValue) {
-                                    if (unsafeCurrent4) {
-                                        makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
-                                    }
-                                    unsafeCurrent4 = true;
-                                }
-
-                                boolean statChanged1 = false;
-                                boolean statChanged2 = false;
-                                boolean statChanged3 = false;
-                                boolean statChanged4 = false;
+                                boolean statChanged1 = false, statChanged2 = false, statChanged3 = false, statChanged4 = false;
                                 if (socketStat1 != Integer.parseInt(btDataString.substring(27, 28)) && !AutoHW1) {
                                     statChanged1 = true;
                                 }
@@ -342,7 +313,6 @@ public class MainActivity extends AppCompatActivity {
                                 if (socketStat4 != Integer.parseInt(btDataString.substring(33, 34)) && !AutoHW4) {
                                     statChanged4 = true;
                                 }
-
 
                                 //自動模式是否為開啟
                                 socketStat1 = Integer.parseInt(btDataString.substring(27, 28));
@@ -395,9 +365,13 @@ public class MainActivity extends AppCompatActivity {
                                         btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
                                         swSk1.setChecked(false);
                                         swSk1.setEnabled(false);
-                                        if (statChanged1)
+                                        if (statChanged1) {
                                             CustomizedSnackBar(getString(R.string.socket) + "："
                                                     + swSk1.getText() + getString(R.string.abnormal_current), red);
+                                            makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                                            unsafeCurrent1 = true;
+                                        }
+
                                         break;
                                 }
 
@@ -439,9 +413,12 @@ public class MainActivity extends AppCompatActivity {
                                         swSk2.setChecked(false);
                                         swSk2.setEnabled(false);
                                         SkAuto2(false);
-                                        if (statChanged2)
+                                        if (statChanged2) {
                                             CustomizedSnackBar(getString(R.string.socket) + "："
                                                     + swSk2.getText() + getString(R.string.abnormal_current), red);
+                                            makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                                            unsafeCurrent2 = true;
+                                        }
                                         break;
                                 }
 
@@ -483,9 +460,12 @@ public class MainActivity extends AppCompatActivity {
                                         swSk3.setChecked(false);
                                         swSk3.setEnabled(false);
                                         SkAuto3(false);
-                                        if (statChanged3)
+                                        if (statChanged3) {
                                             CustomizedSnackBar(getString(R.string.socket) + "："
                                                     + swSk3.getText() + getString(R.string.abnormal_current), red);
+                                            makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                                            unsafeCurrent3 = true;
+                                        }
                                         break;
                                 }
 
@@ -527,22 +507,14 @@ public class MainActivity extends AppCompatActivity {
                                         swSk4.setChecked(false);
                                         swSk4.setEnabled(false);
                                         SkAuto4(false);
-                                        if (statChanged4)
+                                        if (statChanged4) {
                                             CustomizedSnackBar(getString(R.string.socket) + "："
                                                     + swSk4.getText() + getString(R.string.abnormal_current), red);
+                                            makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                                            unsafeCurrent4 = true;
+                                        }
                                         break;
                                 }
-                                /*假的資料(透過手機上傳)
-                                firebase = FirebaseDatabase.getInstance();
-                                DatabaseReference myRef = firebase.getReference("test_user1").child("data_");
-                                Map<String, Object> data = new HashMap<>();
-                                Date currentTime = Calendar.getInstance().getTime();
-                                if (!btDataString.toString().equals("#0+00000+00000+00000+00000+0+0+0+0+0+0+0+0~")
-                                        && !btDataString.toString().equals("#1+00000+00000+00000+00000+0+0+0+0+0+0+0+0~")) {
-                                    data.put(currentTime.toString(), btDataString.toString());
-                                }
-                                myRef.updateChildren(data);
-                                */
                             } catch (Exception e) {
                                 Log.d("e", e + "");
                             }
