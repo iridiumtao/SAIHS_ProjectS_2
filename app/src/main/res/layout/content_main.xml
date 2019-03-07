@@ -14,6 +14,56 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:id="@+id/imgBTStat"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="@+id/textView17"
+            app:layout_constraintEnd_toEndOf="@+id/imgNetworkStat"
+            app:layout_constraintHorizontal_bias="0.82"
+            app:layout_constraintStart_toStartOf="@+id/imgNetworkStat"
+            app:layout_constraintTop_toTopOf="@+id/textView17"
+            app:srcCompat="@drawable/dot_gray" />
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="藍牙"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toTopOf="@+id/btnConnect"
+            app:layout_constraintEnd_toEndOf="@+id/textView26"
+            app:layout_constraintStart_toStartOf="@+id/textView26" />
+
+        <ImageView
+            android:id="@+id/imgNetworkStat"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="4dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="@+id/textView26"
+            app:layout_constraintEnd_toEndOf="@+id/btnConnect"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/btnConnect"
+            app:layout_constraintTop_toTopOf="@+id/textView26"
+            app:srcCompat="@drawable/dot_green" />
+
+        <TextView
+            android:id="@+id/textView26"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="網路"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toTopOf="@+id/textView17"
+            app:layout_constraintEnd_toStartOf="@+id/imgNetworkStat"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.96" />
+
+        <ImageView
             android:id="@+id/imageView"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -33,14 +83,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="4dp"
             android:gravity="end"
             android:text="@string/not_connected"
-            app:layout_constraintBottom_toTopOf="@+id/btnConnect"
-            app:layout_constraintEnd_toEndOf="@+id/btnConnect"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            android:visibility="invisible"
+            tools:layout_editor_absoluteX="39dp"
+            tools:layout_editor_absoluteY="239dp" />
 
         <Switch
             android:id="@+id/swSk2"
@@ -136,7 +183,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btnSkChart1"
             app:layout_constraintTop_toTopOf="@+id/swSk1"
             app:layout_constraintVertical_bias="0.6"
-            app:srcCompat="@drawable/dot_gray_48dp" />
+            app:srcCompat="@drawable/dot_gray" />
 
         <ImageButton
             android:id="@+id/btnSkStat2"
@@ -150,7 +197,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btnSkChart2"
             app:layout_constraintTop_toTopOf="@+id/swSk2"
             app:layout_constraintVertical_bias="0.4"
-            app:srcCompat="@drawable/dot_gray_48dp" />
+            app:srcCompat="@drawable/dot_gray" />
 
         <ImageButton
             android:id="@+id/btnSkStat3"
@@ -164,7 +211,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btnSkChart3"
             app:layout_constraintTop_toTopOf="@+id/swSk3"
             app:layout_constraintVertical_bias="0.4"
-            app:srcCompat="@drawable/dot_gray_48dp" />
+            app:srcCompat="@drawable/dot_gray" />
 
         <ImageButton
             android:id="@+id/btnSkStat4"
@@ -178,7 +225,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btnSkChart4"
             app:layout_constraintTop_toTopOf="@+id/swSk4"
             app:layout_constraintVertical_bias="0.4"
-            app:srcCompat="@drawable/dot_gray_48dp" />
+            app:srcCompat="@drawable/dot_gray" />
 
         <ImageButton
             android:id="@+id/btnSkAlarm"

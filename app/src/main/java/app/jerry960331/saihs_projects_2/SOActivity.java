@@ -62,8 +62,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tingyik90.snackprogressbar.SnackProgressBar;
-import com.tingyik90.snackprogressbar.SnackProgressBarManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -312,57 +310,57 @@ public class SOActivity extends AppCompatActivity {
                                 txPowerNow.setText(Math.round(currentSO) * 11 / 100 + " W");
                                 switch (socketStatSO) {
                                     case 1:
-                                        btnSkStatSO.setImageResource(R.drawable.dot_black_48dp);
+                                        btnSkStatSO.setImageResource(R.drawable.dot_black);
                                         swSkSO.setChecked(false);
                                         SkAutoSO(false);
                                         txCurrentStat.setText(R.string.socket_off);
                                         txCurrentDescription.setText(R.string.current_description_off);
-                                        imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
+                                        imageCurrentStat.setImageResource(R.drawable.dot_black);
                                         if (statChangedSO)
                                             CustomizedSnackBar(getString(R.string.socket) + "："
                                                     + swSkSO.getText() + getString(R.string.has_been_turn_off), blue);
                                         break;
                                     case 2:
-                                        btnSkStatSO.setImageResource(R.drawable.dot_green_48dp);
+                                        btnSkStatSO.setImageResource(R.drawable.dot_green);
                                         swSkSO.setChecked(true);
                                         SkAutoSO(false);
                                         txCurrentStat.setText(R.string.good);
                                         txCurrentDescription.setText(R.string.current_description_good);
-                                        imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
+                                        imageCurrentStat.setImageResource(R.drawable.dot_green);
                                         if (statChangedSO)
                                             CustomizedSnackBar(getString(R.string.socket) + "："
                                                     + swSkSO.getText() + getString(R.string.has_been_turn_on), blue);
                                         break;
                                     case 3:
-                                        btnSkStatSO.setImageResource(R.drawable.dot_blue_48dp);
+                                        btnSkStatSO.setImageResource(R.drawable.dot_blue);
                                         swSkSO.setChecked(false);
                                         SkAutoSO(true);
                                         txCurrentStat.setText(R.string.auto);
                                         txCurrentDescription.setText(R.string.current_description_auto);
-                                        imageCurrentStat.setImageResource(R.drawable.dot_blue_48dp);
+                                        imageCurrentStat.setImageResource(R.drawable.dot_blue);
                                         if (statChangedSO)
                                             CustomizedSnackBar(getString(R.string.socket) + "："
                                                     + swSkSO.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
                                         break;
                                     case 4:
-                                        btnSkStatSO.setImageResource(R.drawable.dot_blue_48dp);
+                                        btnSkStatSO.setImageResource(R.drawable.dot_blue);
                                         swSkSO.setChecked(true);
                                         SkAutoSO(true);
                                         txCurrentStat.setText(R.string.auto);
                                         txCurrentDescription.setText(R.string.current_description_auto);
-                                        imageCurrentStat.setImageResource(R.drawable.dot_blue_48dp);
+                                        imageCurrentStat.setImageResource(R.drawable.dot_blue);
                                         if (statChangedSO)
                                             CustomizedSnackBar(getString(R.string.socket) + "："
                                                     + swSkSO.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
                                         break;
                                     case 5:
-                                        btnSkStatSO.setImageResource(R.drawable.dot_red_48dp);
+                                        btnSkStatSO.setImageResource(R.drawable.dot_red);
                                         swSkSO.setChecked(false);
                                         swSkSO.setEnabled(false);
                                         txCurrentStat.setText(R.string.red);
                                         txCurrentDescription.setTextColor(0xfff44336);
                                         txCurrentDescription.setText(R.string.current_description_red);
-                                        imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
+                                        imageCurrentStat.setImageResource(R.drawable.dot_red);
                                         btnWarningClear.setVisibility(View.VISIBLE);
                                         if (statChangedSO) {
                                             CustomizedSnackBar(getString(R.string.socket) + "："
@@ -424,6 +422,11 @@ public class SOActivity extends AppCompatActivity {
                     progressDialog.dismiss();
                     try {
                         if (msg.arg1 == 1) {
+                            txConnectStat.setText(getString(R.string.connected));
+                            chart.setVisibility(View.VISIBLE);
+                            btnConnect.setVisibility(View.INVISIBLE);
+                            btnSkAutoSO.setVisibility(View.VISIBLE);
+                            setChart();
                             Toast.makeText(getApplicationContext(), R.string.connected_successfully, Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getApplicationContext(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
@@ -1082,7 +1085,6 @@ public class SOActivity extends AppCompatActivity {
 
     public void Connect() {
         //btnConnect.setVisibility(View.INVISIBLE);
-        //txConnectStat.setVisibility(View.INVISIBLE);
 
         setBluetoothEnable(true);
         //todo 藍牙裝置選擇界面或自動搜尋
@@ -1153,14 +1155,13 @@ public class SOActivity extends AppCompatActivity {
                             .sendToTarget();
 
                     //藍牙連接成功
-                    btnConnect.setVisibility(View.INVISIBLE);
-                    btnSkAutoSO.setVisibility(View.VISIBLE);
+
+
                     btConnectedThread.write("z"); //成功後傳值
 
                     isBTConnected = true;
-                    txConnectStat.setVisibility(View.INVISIBLE);
-                    chart.setVisibility(View.VISIBLE);
-                    setChart();
+
+
 
                     IntentFilter filter = new IntentFilter();
                     filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
@@ -1205,8 +1206,7 @@ public class SOActivity extends AppCompatActivity {
                 btnConnect.setVisibility(View.VISIBLE);
                 isBTConnected = false;
                 txConnectStat.setText(R.string.not_connected);
-                txConnectStat.setVisibility(View.VISIBLE);
-                btnSkStatSO.setImageResource(R.drawable.dot_gray_48dp);
+                btnSkStatSO.setImageResource(R.drawable.dot_gray);
                 swSkSO.setChecked(false);
                 SkAutoSO(false);
             }

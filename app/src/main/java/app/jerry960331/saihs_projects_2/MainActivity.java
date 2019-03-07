@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -33,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -96,9 +98,10 @@ public class MainActivity extends AppCompatActivity {
             btnLogStart, btnLogStop, btnLogClear;
     private TextView txConnectStat, txLog;
 
-    private ProgressDialog progress;
     private LinearLayout devLayout;
     private boolean logIsOn = false;
+    private ImageView imgNetworkStat, imgBTStat;
+    ProgressDialog progressDialog;
 
     String notificationTitle,
             notificationText;
@@ -330,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
                                 //#0+00000+00000+00000+00000+0+0+0+0~
                                 switch (socketStat1) {
                                     case 1:
-                                        btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
+                                        btnSkStat1.setImageResource(R.drawable.dot_black);
                                         swSk1.setChecked(false);
                                         SkAuto1(false);
                                         if (statChanged1)
@@ -338,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk1.getText() + getString(R.string.has_been_turn_off), blue);
                                         break;
                                     case 2:
-                                        btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
+                                        btnSkStat1.setImageResource(R.drawable.dot_green);
                                         swSk1.setChecked(true);
                                         SkAuto1(false);
                                         if (statChanged1)
@@ -346,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk1.getText() + getString(R.string.has_been_turn_on), blue);
                                         break;
                                     case 3:
-                                        btnSkStat1.setImageResource(R.drawable.dot_blue_48dp);
+                                        btnSkStat1.setImageResource(R.drawable.dot_blue);
                                         swSk1.setChecked(false);
                                         SkAuto1(true);
                                         if (statChanged1)
@@ -354,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk1.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
                                         break;
                                     case 4:
-                                        btnSkStat1.setImageResource(R.drawable.dot_blue_48dp);
+                                        btnSkStat1.setImageResource(R.drawable.dot_blue);
                                         swSk1.setChecked(true);
                                         SkAuto1(true);
                                         if (statChanged1)
@@ -362,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk1.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
                                         break;
                                     case 5:
-                                        btnSkStat1.setImageResource(R.drawable.dot_red_48dp);
+                                        btnSkStat1.setImageResource(R.drawable.dot_red);
                                         swSk1.setChecked(false);
                                         swSk1.setEnabled(false);
                                         if (statChanged1) {
@@ -377,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 switch (socketStat2) {
                                     case 1:
-                                        btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
+                                        btnSkStat2.setImageResource(R.drawable.dot_black);
                                         swSk2.setChecked(false);
                                         SkAuto2(false);
                                         if (statChanged2)
@@ -385,7 +388,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk2.getText() + getString(R.string.has_been_turn_off), blue);
                                         break;
                                     case 2:
-                                        btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
+                                        btnSkStat2.setImageResource(R.drawable.dot_green);
                                         swSk2.setChecked(true);
                                         SkAuto2(false);
                                         if (statChanged2)
@@ -393,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk2.getText() + getString(R.string.has_been_turn_on), blue);
                                         break;
                                     case 3:
-                                        btnSkStat2.setImageResource(R.drawable.dot_blue_48dp);
+                                        btnSkStat2.setImageResource(R.drawable.dot_blue);
                                         swSk2.setChecked(false);
                                         SkAuto2(true);
                                         if (statChanged2)
@@ -401,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk2.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
                                         break;
                                     case 4:
-                                        btnSkStat2.setImageResource(R.drawable.dot_blue_48dp);
+                                        btnSkStat2.setImageResource(R.drawable.dot_blue);
                                         swSk2.setChecked(true);
                                         SkAuto2(true);
                                         if (statChanged2)
@@ -409,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk2.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
                                         break;
                                     case 5:
-                                        btnSkStat2.setImageResource(R.drawable.dot_red_48dp);
+                                        btnSkStat2.setImageResource(R.drawable.dot_red);
                                         swSk2.setChecked(false);
                                         swSk2.setEnabled(false);
                                         SkAuto2(false);
@@ -424,7 +427,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 switch (socketStat3) {
                                     case 1:
-                                        btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
+                                        btnSkStat3.setImageResource(R.drawable.dot_black);
                                         swSk3.setChecked(false);
                                         SkAuto3(false);
                                         if (statChanged3)
@@ -432,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk3.getText() + getString(R.string.has_been_turn_off), blue);
                                         break;
                                     case 2:
-                                        btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
+                                        btnSkStat3.setImageResource(R.drawable.dot_green);
                                         swSk3.setChecked(true);
                                         SkAuto3(false);
                                         if (statChanged3)
@@ -440,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk3.getText() + getString(R.string.has_been_turn_on), blue);
                                         break;
                                     case 3:
-                                        btnSkStat3.setImageResource(R.drawable.dot_blue_48dp);
+                                        btnSkStat3.setImageResource(R.drawable.dot_blue);
                                         swSk3.setChecked(false);
                                         SkAuto3(true);
                                         if (statChanged3)
@@ -448,7 +451,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk3.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
                                         break;
                                     case 4:
-                                        btnSkStat3.setImageResource(R.drawable.dot_blue_48dp);
+                                        btnSkStat3.setImageResource(R.drawable.dot_blue);
                                         swSk3.setChecked(true);
                                         SkAuto3(true);
                                         if (statChanged3)
@@ -456,7 +459,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk3.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
                                         break;
                                     case 5:
-                                        btnSkStat3.setImageResource(R.drawable.dot_red_48dp);
+                                        btnSkStat3.setImageResource(R.drawable.dot_red);
                                         swSk3.setChecked(false);
                                         swSk3.setEnabled(false);
                                         SkAuto3(false);
@@ -471,7 +474,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 switch (socketStat4) {
                                     case 1:
-                                        btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
+                                        btnSkStat4.setImageResource(R.drawable.dot_black);
                                         swSk4.setChecked(false);
                                         SkAuto4(false);
                                         if (statChanged4)
@@ -479,7 +482,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk4.getText() + getString(R.string.has_been_turn_off), blue);
                                         break;
                                     case 2:
-                                        btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
+                                        btnSkStat4.setImageResource(R.drawable.dot_green);
                                         swSk4.setChecked(true);
                                         SkAuto4(false);
                                         if (statChanged4)
@@ -487,7 +490,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk4.getText() + getString(R.string.has_been_turn_on), blue);
                                         break;
                                     case 3:
-                                        btnSkStat4.setImageResource(R.drawable.dot_blue_48dp);
+                                        btnSkStat4.setImageResource(R.drawable.dot_blue);
                                         swSk4.setChecked(false);
                                         SkAuto4(true);
                                         if (statChanged4)
@@ -495,7 +498,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk4.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
                                         break;
                                     case 4:
-                                        btnSkStat4.setImageResource(R.drawable.dot_blue_48dp);
+                                        btnSkStat4.setImageResource(R.drawable.dot_blue);
                                         swSk4.setChecked(true);
                                         SkAuto4(true);
                                         if (statChanged4)
@@ -503,7 +506,7 @@ public class MainActivity extends AppCompatActivity {
                                                     + swSk4.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
                                         break;
                                     case 5:
-                                        btnSkStat4.setImageResource(R.drawable.dot_red_48dp);
+                                        btnSkStat4.setImageResource(R.drawable.dot_red);
                                         swSk4.setChecked(false);
                                         swSk4.setEnabled(false);
                                         SkAuto4(false);
@@ -523,12 +526,16 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 if (msg.what == CONNECTING_STATUS) {
+                    progressDialog.dismiss();
                     try {
                         if (msg.arg1 == 1) {
                             Toast.makeText(getApplicationContext(), R.string.connected_successfully, Toast.LENGTH_SHORT).show();
+                            imgBTStat.setImageResource(R.drawable.dot_green);
+                            btnConnect.setVisibility(View.INVISIBLE);
                         } else {
                             Toast.makeText(getApplicationContext(), R.string.connection_failed, Toast.LENGTH_SHORT).show();
-                            txConnectStat.setText(R.string.failed);
+                            imgBTStat.setImageResource(R.drawable.dot_gray);
+
                         }
                     } catch (Exception ignored) {
                     }
@@ -725,6 +732,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                boolean connected = snapshot.getValue(Boolean.class);
+                if (connected) {
+                    imgNetworkStat.setImageResource(R.drawable.dot_green);
+                } else {
+                    imgNetworkStat.setImageResource(R.drawable.dot_gray);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.err.println("Listener was cancelled");
+            }
+        });
+
         //user account
         auth = FirebaseAuth.getInstance();
         authListener = new FirebaseAuth.AuthStateListener() {
@@ -774,8 +800,10 @@ public class MainActivity extends AppCompatActivity {
     private void firebaseCommand(Object command) {
         if (statOnCloud) {
             firebase = FirebaseDatabase.getInstance();
-
             dbRef = firebase.getReference("users").child(userUID).child("Blue Storm III").child("command");
+            dbRef.setValue(command);
+
+            dbRef = firebase.getReference("command");
             dbRef.setValue(command);
         }
     }
@@ -818,7 +846,9 @@ public class MainActivity extends AppCompatActivity {
         swSk4 = findViewById(R.id.swSk4);
 
         btnConnect = findViewById(R.id.btnConnect);
-        txConnectStat = findViewById(R.id.txConnectStat);
+
+        imgBTStat = findViewById(R.id.imgBTStat);
+        imgNetworkStat = findViewById(R.id.imgNetworkStat);
 
         btnSkStat1 = findViewById(R.id.btnSkStat1);
         btnSkStat2 = findViewById(R.id.btnSkStat2);
@@ -897,13 +927,13 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
                                     unsafeCurrent1 = false;
                                     if (switchOnOff.equals(getString(R.string.open))) {
-                                        //btnSkStat1.setImageResource(R.drawable.dot_green_48dp);
+                                        //btnSkStat1.setImageResource(R.drawable.dot_green);
                                         i = 1;
                                         IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "a";
                                         firebaseCommand("a");
                                     } else {
-                                        //btnSkStat1.setImageResource(R.drawable.dot_black_48dp);
+                                        //btnSkStat1.setImageResource(R.drawable.dot_black);
                                         i = 1;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "b";
@@ -916,13 +946,13 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto2.setTextColor(getResources().getColor(R.color.colorPrimary));
                                     unsafeCurrent2 = false;
                                     if (switchOnOff.equals(getString(R.string.open))) {
-                                        //btnSkStat2.setImageResource(R.drawable.dot_green_48dp);
+                                        //btnSkStat2.setImageResource(R.drawable.dot_green);
                                         i = 2;
                                         IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "c";
                                         firebaseCommand("c");
                                     } else {
-                                        //btnSkStat2.setImageResource(R.drawable.dot_black_48dp);
+                                        //btnSkStat2.setImageResource(R.drawable.dot_black);
                                         i = 2;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "d";
@@ -935,13 +965,13 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto3.setTextColor(getResources().getColor(R.color.colorPrimary));
                                     unsafeCurrent3 = false;
                                     if (switchOnOff.equals(getString(R.string.open))) {
-                                        //btnSkStat3.setImageResource(R.drawable.dot_green_48dp);
+                                        //btnSkStat3.setImageResource(R.drawable.dot_green);
                                         IO = getResources().getString(R.string.turnOn);
                                         i = 3;
                                         BT_comm = "e";
                                         firebaseCommand("e");
                                     } else {
-                                        //btnSkStat3.setImageResource(R.drawable.dot_black_48dp);
+                                        //btnSkStat3.setImageResource(R.drawable.dot_black);
                                         i = 3;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "f";
@@ -954,13 +984,13 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto4.setTextColor(getResources().getColor(R.color.colorPrimary));
                                     unsafeCurrent4 = false;
                                     if (switchOnOff.equals(getString(R.string.open))) {
-                                        //btnSkStat4.setImageResource(R.drawable.dot_green_48dp);
+                                        //btnSkStat4.setImageResource(R.drawable.dot_green);
                                         i = 4;
                                         IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "g";
                                         firebaseCommand("g");
                                     } else {
-                                        //btnSkStat4.setImageResource(R.drawable.dot_black_48dp);
+                                        //btnSkStat4.setImageResource(R.drawable.dot_black);
                                         i = 4;
                                         IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "h";
@@ -1017,6 +1047,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void warningClear(boolean warningClear) {
                         if (warningClear) {
+                            Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
+                            Log.d("warningCleared ", "1");
                             unsafeCurrent1 = false;
                             btConnectedThread.write("b");
                             swSk1.setEnabled(true);
@@ -1052,6 +1084,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void warningClear(boolean warningClear) {
                         if (warningClear) {
+                            Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
+                            Log.d("warningCleared ", "1");
                             unsafeCurrent1 = false;
                             btConnectedThread.write("b");
                             swSk1.setEnabled(true);
@@ -1087,6 +1121,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void warningClear(boolean warningClear) {
                         if (warningClear) {
+                            Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
+                            Log.d("warningCleared ", "2");
                             unsafeCurrent2 = false;
                             btConnectedThread.write("d");
                             swSk2.setEnabled(true);
@@ -1122,6 +1158,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void warningClear(boolean warningClear) {
                         if (warningClear) {
+                            Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
+                            Log.d("warningCleared ", "2");
                             unsafeCurrent2 = false;
                             btConnectedThread.write("d");
                             swSk2.setEnabled(true);
@@ -1157,6 +1195,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void warningClear(boolean warningClear) {
                         if (warningClear) {
+                            Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
+                            Log.d("warningCleared ", "3");
                             unsafeCurrent3 = false;
                             btConnectedThread.write("f");
                             swSk3.setEnabled(true);
@@ -1192,6 +1232,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void warningClear(boolean warningClear) {
                         if (warningClear) {
+                            Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
+                            Log.d("warningCleared ", "3");
                             unsafeCurrent3 = false;
                             btConnectedThread.write("f");
                             swSk3.setEnabled(true);
@@ -1227,6 +1269,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void warningClear(boolean warningClear) {
                         if (warningClear) {
+                            Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
+                            Log.d("warningCleared ", "4");
                             unsafeCurrent4 = false;
                             btConnectedThread.write("h");
                             swSk4.setEnabled(true);
@@ -1262,6 +1306,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void warningClear(boolean warningClear) {
                         if (warningClear) {
+                            Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
+                            Log.d("warningCleared ", "4");
                             unsafeCurrent4 = false;
                             btConnectedThread.write("h");
                             swSk4.setEnabled(true);
@@ -1272,7 +1318,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     }
-
                     @Override
                     public void finish(String result) {
 
@@ -1280,7 +1325,6 @@ public class MainActivity extends AppCompatActivity {
                 });
                 CustomDialog.show();
             }
-
         }
     };
 
@@ -1550,8 +1594,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //todo progressDialog
-        Toast.makeText(getApplicationContext(), R.string.connecting_with_dots, Toast.LENGTH_SHORT).show();
-        txConnectStat.setText(R.string.connecting_with_dots);
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage(getResources().getString(R.string.connecting_with_dots));
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
         // Spawn a new thread to avoid blocking the GUI one
         new Thread() {
@@ -1593,13 +1640,14 @@ public class MainActivity extends AppCompatActivity {
                             .sendToTarget();
 
                     //藍牙連接成功
-                    btnConnect.setVisibility(View.INVISIBLE);
+
                     btConnectedThread.write("z"); //成功後傳值
 
                     isBTConnected = true;
-                    txConnectStat.setVisibility(View.INVISIBLE);
 
                     IntentFilter filter = new IntentFilter();
+
+                    filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
                     filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
                     filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
                     filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
@@ -1639,25 +1687,47 @@ public class MainActivity extends AppCompatActivity {
                         .setMessage(getString(R.string.device_has_disconnected))
                         .show();
 
-                btnConnect.setVisibility(View.VISIBLE);
-                isBTConnected = false;
-                txConnectStat.setText(R.string.not_connected);
-                txConnectStat.setVisibility(View.VISIBLE);
-                btnSkStat1.setImageResource(R.drawable.dot_gray_48dp);
-                btnSkStat2.setImageResource(R.drawable.dot_gray_48dp);
-                btnSkStat3.setImageResource(R.drawable.dot_gray_48dp);
-                btnSkStat4.setImageResource(R.drawable.dot_gray_48dp);
-                swSk1.setChecked(false);
-                swSk2.setChecked(false);
-                swSk3.setChecked(false);
-                swSk4.setChecked(false);
-                SkAuto1(false);
-                SkAuto2(false);
-                SkAuto3(false);
-                SkAuto4(false);
+                allTurnToUnconnected();
+            } else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+                switch (state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        CustomizedSnackBar("Bluetooth off",green);
+                        allTurnToUnconnected();
+                        Disconnect();
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_OFF:
+                        Toast.makeText(MainActivity.this, "Turning Bluetooth off...", Toast.LENGTH_SHORT).show();
+                        break;
+                    case BluetoothAdapter.STATE_ON:
+                        CustomizedSnackBar("Bluetooth on",green);
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_ON:
+                        Toast.makeText(MainActivity.this, "Turning Bluetooth on...", Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
         }
     };
+
+    private void allTurnToUnconnected() {
+        btnConnect.setVisibility(View.VISIBLE);
+        isBTConnected = false;
+        imgBTStat.setImageResource(R.drawable.dot_gray);
+        btnSkStat1.setImageResource(R.drawable.dot_gray);
+        btnSkStat2.setImageResource(R.drawable.dot_gray);
+        btnSkStat3.setImageResource(R.drawable.dot_gray);
+        btnSkStat4.setImageResource(R.drawable.dot_gray);
+        swSk1.setChecked(false);
+        swSk2.setChecked(false);
+        swSk3.setChecked(false);
+        swSk4.setChecked(false);
+        SkAuto1(false);
+        SkAuto2(false);
+        SkAuto3(false);
+        SkAuto4(false);
+    }
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws
             IOException {
@@ -1711,9 +1781,13 @@ public class MainActivity extends AppCompatActivity {
                 } catch (RuntimeException e) {
                     Log.e(TAG, "20%", e);
                     e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "20%", Toast.LENGTH_SHORT).show();
+                    Connect();
                 } catch (Exception e) {
                     Log.e(TAG, "20%-2", e);
                     e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "20%-2", Toast.LENGTH_SHORT).show();
+                    Connect();
                 }
             }
         }
@@ -1724,12 +1798,10 @@ public class MainActivity extends AppCompatActivity {
 
             byte[] bytes = input.getBytes();
             try {
-                Log.d("send data", input);
                 mmOutStream.write(bytes);
             } catch (IOException ignored) {
             }
             try {
-                Log.d("send data2", input);
                 mmOutStream.write(bytes);
             } catch (IOException ignored) {
             }

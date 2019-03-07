@@ -124,6 +124,7 @@
     <string name="stop_wifi_connect_to_bt">Changing this will close the current Wi-Fi connection and establish a bluetooth connection instead.</string>
     <string name="cancelled">Cancelled</string>
     <string name="connect">Connect</string>
+    <string name="connected">Connected</string>
     <string name="not_connected">Bluetooth not\nconnected</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="current_description_good">The current is stable. This means the connecting device does not take too much power. If the current of this device increases strangely, please check it to prevent accidents happen.</string>

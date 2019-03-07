@@ -160,7 +160,7 @@
             app:layout_constraintHorizontal_bias="0.03"
             app:layout_constraintStart_toEndOf="@+id/textView"
             app:layout_constraintTop_toTopOf="@+id/textView"
-            app:srcCompat="@drawable/dot_green_48dp" />
+            app:srcCompat="@drawable/dot_green" />
 
         <ImageView
             android:id="@+id/imageView6"
@@ -173,7 +173,7 @@
             app:layout_constraintHorizontal_bias="0.03"
             app:layout_constraintStart_toEndOf="@+id/textView"
             app:layout_constraintTop_toTopOf="@+id/textView2"
-            app:srcCompat="@drawable/dot_green_48dp" />
+            app:srcCompat="@drawable/dot_green" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

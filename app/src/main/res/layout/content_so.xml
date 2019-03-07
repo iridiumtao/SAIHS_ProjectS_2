@@ -83,10 +83,10 @@
                     android:background="?selectableItemBackgroundBorderless"
                     android:contentDescription="@string/btnSkStatDescription"
                     android:scaleType="centerInside"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView17"
-                    app:layout_constraintStart_toEndOf="@+id/textView17"
+                    app:layout_constraintBottom_toBottomOf="@+id/txConnectStat"
+                    app:layout_constraintStart_toEndOf="@+id/txConnectStat"
                     app:layout_constraintTop_toTopOf="@+id/textView15"
-                    app:srcCompat="@drawable/dot_gray_48dp" />
+                    app:srcCompat="@drawable/dot_gray" />
 
                 <Button
                     android:id="@+id/btnSkAutoSO"
@@ -143,7 +143,7 @@
                     app:layout_constraintVertical_bias="0.26" />
 
                 <TextView
-                    android:id="@+id/textView17"
+                    android:id="@+id/txConnectStat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
@@ -195,7 +195,7 @@
                             android:layout_height="60dp"
                             android:layout_marginStart="15dp"
                             android:layout_marginTop="10dp"
-                            app:srcCompat="@drawable/dot_gray_48dp" />
+                            app:srcCompat="@drawable/dot_gray" />
 
                         <LinearLayout
                             android:layout_width="match_parent"

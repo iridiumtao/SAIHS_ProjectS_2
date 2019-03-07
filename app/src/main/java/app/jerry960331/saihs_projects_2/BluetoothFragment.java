@@ -107,13 +107,15 @@ public class BluetoothFragment extends Fragment {
         super.onStart();
         // If BT is not on, request that it be enabled.
         // setupChat() will then be called during onActivityResult
-        if (!mBluetoothAdapter.isEnabled()) {
+
+        // TODO: 2019/3/7 暫時關閉
+        /*if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
             setupChat();
-        }
+        }*/
     }
 
     @Override
@@ -180,10 +182,12 @@ public class BluetoothFragment extends Fragment {
         });*/
 
         // Initialize the BluetoothService to perform bluetooth connections
-        mChatService = new BluetoothService(getActivity(), mHandler);
+        //todo 暫時關閉
+        // mChatService = new BluetoothService(getActivity(), mHandler);
 
         // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer("");
+        //todo 暫時關閉
+        //mOutStringBuffer = new StringBuffer("");
     }
 
     /**

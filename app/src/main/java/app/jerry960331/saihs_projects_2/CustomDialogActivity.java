@@ -211,25 +211,25 @@ public class CustomDialogActivity extends Dialog implements View.OnClickListener
                         if (currentNow == 0) {
                             txCurrentStat.setText(R.string.socket_off);
                             txCurrentDescription.setText(R.string.current_description_off);
-                            imageCurrentStat.setImageResource(R.drawable.dot_black_48dp);
+                            imageCurrentStat.setImageResource(R.drawable.dot_black);
                         } else if (currentNow > 0 && currentNow < safeCurrentValue) {
                             txCurrentStat.setText(R.string.good);
                             txCurrentDescription.setText(R.string.current_description_good);
-                            imageCurrentStat.setImageResource(R.drawable.dot_green_48dp);
+                            imageCurrentStat.setImageResource(R.drawable.dot_green);
                             //}else if (currentNow > 8000 && currentNow < 12000) {
                             //  txCurrentStat.setText(R.string.orange);
                             //  txCurrentDescription.setText(R.string.current_description_orange);
-                            //  imageCurrentStat.setImageResource(R.drawable.dot_orange_48dp);
+                            //  imageCurrentStat.setImageResource(R.drawable.dot_orange);
                         } else if (currentNow > safeCurrentValue) {
                             txCurrentStat.setText(R.string.red);
                             txCurrentDescription.setTextColor(0xfff44336);
                             txCurrentDescription.setText(R.string.current_description_red);
-                            imageCurrentStat.setImageResource(R.drawable.dot_red_48dp);
+                            imageCurrentStat.setImageResource(R.drawable.dot_red);
                             btnWarningClear.setVisibility(View.VISIBLE);
                         } else {
                             txCurrentStat.setText("Loading");
                             txCurrentDescription.setText("Loading");
-                            imageCurrentStat.setImageResource(R.drawable.dot_gray_48dp);
+                            imageCurrentStat.setImageResource(R.drawable.dot_gray);
                         }
 
                         statHandler.postDelayed(this, 1000);
