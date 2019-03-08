@@ -19,7 +19,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -48,6 +47,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,7 +61,6 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -70,6 +69,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -183,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
 //alt+enter 字串抽離
 
 
-    @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,45 +190,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         findViews();
         setOnClickListeners();
         txVStat.bringToFront();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         devLayout.setVisibility(View.GONE);
-
-        //FunctionSetEnable(false);
-
-        //Log.d("RND", Math.random()*180+"");
-
         notificationTitle = getResources().getString(R.string.Security_warning);
         notificationText = getResources().getString(R.string.socket_current_warning);
-
-
-        //"z" means "Hello, World!" talk to Arduino
         onCreateFirebaseCheck();
 
-        //todo 從資料庫獲取插座狀態
-        final DatabaseReference getStat = FirebaseDatabase.getInstance().getReference("BlueStormIII");
 
-        getStat.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
+        onCreateGetSharedPreference();
+        btHandler();
+    }
 
-                ArrayList<String> db = new ArrayList<>();
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, getString(R.string.Failed_to_read_value), error.toException());
-            }
-        });
-
-
+    private void onCreateGetSharedPreference() {
         isAlarmOn1 = getSharedPreferences("alarm1", MODE_PRIVATE).getBoolean("isAlarmOn1", false);
         String schedule1 = getSharedPreferences("alarm1", MODE_PRIVATE).getString("alarmSetSchedule1", "");
         Log.d("onCreate schedule1", schedule1);
@@ -258,8 +233,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, appTitle + "apple  " + R.string.title);
         setTitle(appTitle);
         safeCurrentValue = getSharedPreferences("user", MODE_PRIVATE).getInt("safeCurrentValue", 5000);
+    }
 
-
+    @SuppressLint("HandlerLeak")
+    private void btHandler() {
         btHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -271,259 +248,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (UnsupportedEncodingException uee) {
                         uee.printStackTrace();
                     }
-
-                    int endOfLineIndex = btDataString.indexOf("~");
-                    if (endOfLineIndex > 0) {
-                        //000000000011111111112222222222333333
-                        //012345678901234567890123456789012345
-                        //#0+00000+00000+00000+00000+0+0+0+0~
-                        //#0+00000+00000+00000+00000+0+0+0+0+0+0+0+0~
-                        //tvSB.setText(String.value)
-                        if (btDataString.charAt(0) == '#') {
-                            try {
-                                btDataString.setLength(35);
-
-                                if (logIsOn) {
-                                    txLog.setText(btDataString + "\n" + txLog.getText().toString());
-                                }
-                                PIR = btDataString.substring(1, 2);//偵測到人會收到0
-
-                                //僅於安全電流範圍收值
-                                //todo 暫時以轉換為Integer的方式讓錯誤的封包自動被截掉，未來需讓current改為Int
-                                if (!unsafeCurrent1) {
-                                    current1 = Integer.parseInt(btDataString.substring(3, 8)) + "";
-                                }
-                                if (!unsafeCurrent2) {
-                                    current2 = Integer.parseInt(btDataString.substring(9, 14)) + "";
-                                }
-                                if (!unsafeCurrent3) {
-                                    current3 = Integer.parseInt(btDataString.substring(15, 20)) + "";
-                                }
-                                if (!unsafeCurrent4) {
-                                    current4 = Integer.parseInt(btDataString.substring(21, 26)) + "";
-                                }
-
-                                boolean statChanged1 = false, statChanged2 = false, statChanged3 = false, statChanged4 = false;
-                                if (socketStat1 != Integer.parseInt(btDataString.substring(27, 28)) && !AutoHW1) {
-                                    statChanged1 = true;
-                                }
-                                if (socketStat2 != Integer.parseInt(btDataString.substring(29, 30)) && !AutoHW2) {
-                                    statChanged2 = true;
-                                }
-                                if (socketStat3 != Integer.parseInt(btDataString.substring(31, 32)) && !AutoHW3) {
-                                    statChanged3 = true;
-                                }
-                                if (socketStat4 != Integer.parseInt(btDataString.substring(33, 34)) && !AutoHW4) {
-                                    statChanged4 = true;
-                                }
-
-                                //自動模式是否為開啟
-                                socketStat1 = Integer.parseInt(btDataString.substring(27, 28));
-                                socketStat2 = Integer.parseInt(btDataString.substring(29, 30));
-                                socketStat3 = Integer.parseInt(btDataString.substring(31, 32));
-                                socketStat4 = Integer.parseInt(btDataString.substring(33, 34));
-
-                                // 1 黑燈 OFF
-                                // 2 綠燈 ON
-                                // 3 藍燈 OFF
-                                // 4 藍燈 ON
-                                // 5 紅燈 OFF 35
-                                // 00000000011111111112222222222333333
-                                //012345678901234567890123456789012345
-                                //#0+00000+00000+00000+00000+0+0+0+0~
-                                switch (socketStat1) {
-                                    case 1:
-                                        btnSkStat1.setImageResource(R.drawable.dot_black);
-                                        swSk1.setChecked(false);
-                                        SkAuto1(false);
-                                        if (statChanged1)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk1.getText() + getString(R.string.has_been_turn_off), blue);
-                                        break;
-                                    case 2:
-                                        btnSkStat1.setImageResource(R.drawable.dot_green);
-                                        swSk1.setChecked(true);
-                                        SkAuto1(false);
-                                        if (statChanged1)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk1.getText() + getString(R.string.has_been_turn_on), blue);
-                                        break;
-                                    case 3:
-                                        btnSkStat1.setImageResource(R.drawable.dot_blue);
-                                        swSk1.setChecked(false);
-                                        SkAuto1(true);
-                                        if (statChanged1)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk1.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
-                                        break;
-                                    case 4:
-                                        btnSkStat1.setImageResource(R.drawable.dot_blue);
-                                        swSk1.setChecked(true);
-                                        SkAuto1(true);
-                                        if (statChanged1)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk1.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
-                                        break;
-                                    case 5:
-                                        btnSkStat1.setImageResource(R.drawable.dot_red);
-                                        swSk1.setChecked(false);
-                                        swSk1.setEnabled(false);
-                                        if (statChanged1) {
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk1.getText() + getString(R.string.abnormal_current), red);
-                                            makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
-                                            unsafeCurrent1 = true;
-                                        }
-
-                                        break;
-                                }
-
-                                switch (socketStat2) {
-                                    case 1:
-                                        btnSkStat2.setImageResource(R.drawable.dot_black);
-                                        swSk2.setChecked(false);
-                                        SkAuto2(false);
-                                        if (statChanged2)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk2.getText() + getString(R.string.has_been_turn_off), blue);
-                                        break;
-                                    case 2:
-                                        btnSkStat2.setImageResource(R.drawable.dot_green);
-                                        swSk2.setChecked(true);
-                                        SkAuto2(false);
-                                        if (statChanged2)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk2.getText() + getString(R.string.has_been_turn_on), blue);
-                                        break;
-                                    case 3:
-                                        btnSkStat2.setImageResource(R.drawable.dot_blue);
-                                        swSk2.setChecked(false);
-                                        SkAuto2(true);
-                                        if (statChanged2)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk2.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
-                                        break;
-                                    case 4:
-                                        btnSkStat2.setImageResource(R.drawable.dot_blue);
-                                        swSk2.setChecked(true);
-                                        SkAuto2(true);
-                                        if (statChanged2)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk2.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
-                                        break;
-                                    case 5:
-                                        btnSkStat2.setImageResource(R.drawable.dot_red);
-                                        swSk2.setChecked(false);
-                                        swSk2.setEnabled(false);
-                                        SkAuto2(false);
-                                        if (statChanged2) {
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk2.getText() + getString(R.string.abnormal_current), red);
-                                            makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
-                                            unsafeCurrent2 = true;
-                                        }
-                                        break;
-                                }
-
-                                switch (socketStat3) {
-                                    case 1:
-                                        btnSkStat3.setImageResource(R.drawable.dot_black);
-                                        swSk3.setChecked(false);
-                                        SkAuto3(false);
-                                        if (statChanged3)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk3.getText() + getString(R.string.has_been_turn_off), blue);
-                                        break;
-                                    case 2:
-                                        btnSkStat3.setImageResource(R.drawable.dot_green);
-                                        swSk3.setChecked(true);
-                                        SkAuto3(false);
-                                        if (statChanged3)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk3.getText() + getString(R.string.has_been_turn_on), blue);
-                                        break;
-                                    case 3:
-                                        btnSkStat3.setImageResource(R.drawable.dot_blue);
-                                        swSk3.setChecked(false);
-                                        SkAuto3(true);
-                                        if (statChanged3)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk3.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
-                                        break;
-                                    case 4:
-                                        btnSkStat3.setImageResource(R.drawable.dot_blue);
-                                        swSk3.setChecked(true);
-                                        SkAuto3(true);
-                                        if (statChanged3)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk3.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
-                                        break;
-                                    case 5:
-                                        btnSkStat3.setImageResource(R.drawable.dot_red);
-                                        swSk3.setChecked(false);
-                                        swSk3.setEnabled(false);
-                                        SkAuto3(false);
-                                        if (statChanged3) {
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk3.getText() + getString(R.string.abnormal_current), red);
-                                            makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
-                                            unsafeCurrent3 = true;
-                                        }
-                                        break;
-                                }
-
-                                switch (socketStat4) {
-                                    case 1:
-                                        btnSkStat4.setImageResource(R.drawable.dot_black);
-                                        swSk4.setChecked(false);
-                                        SkAuto4(false);
-                                        if (statChanged4)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk4.getText() + getString(R.string.has_been_turn_off), blue);
-                                        break;
-                                    case 2:
-                                        btnSkStat4.setImageResource(R.drawable.dot_green);
-                                        swSk4.setChecked(true);
-                                        SkAuto4(false);
-                                        if (statChanged4)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk4.getText() + getString(R.string.has_been_turn_on), blue);
-                                        break;
-                                    case 3:
-                                        btnSkStat4.setImageResource(R.drawable.dot_blue);
-                                        swSk4.setChecked(false);
-                                        SkAuto4(true);
-                                        if (statChanged4)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk4.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
-                                        break;
-                                    case 4:
-                                        btnSkStat4.setImageResource(R.drawable.dot_blue);
-                                        swSk4.setChecked(true);
-                                        SkAuto4(true);
-                                        if (statChanged4)
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk4.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
-                                        break;
-                                    case 5:
-                                        btnSkStat4.setImageResource(R.drawable.dot_red);
-                                        swSk4.setChecked(false);
-                                        swSk4.setEnabled(false);
-                                        SkAuto4(false);
-                                        if (statChanged4) {
-                                            CustomizedSnackBar(getString(R.string.socket) + "："
-                                                    + swSk4.getText() + getString(R.string.abnormal_current), red);
-                                            makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
-                                            unsafeCurrent4 = true;
-                                        }
-                                        break;
-                                }
-                            } catch (Exception e) {
-                                Log.d("e", e + "");
-                            }
-                        }
-                        btDataString.delete(0, btDataString.length());
-                    }
+                    mainCtrlLoop(btDataString);
                 }
                 if (msg.what == CONNECTING_STATUS) {
                     progressDialog.dismiss();
@@ -543,6 +268,273 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
+    }
+
+    private void mainCtrlLoop(StringBuilder btDataString) {
+        int endOfLineIndex = btDataString.indexOf("~");
+        if (endOfLineIndex > 0) {
+            //000000000011111111112222222222333333
+            //012345678901234567890123456789012345
+            //#0+00000+00000+00000+00000+0+0+0+0~
+            //#0+00000+00000+00000+00000+0+0+0+0+0+0+0+0~
+            //tvSB.setText(String.value)
+            if (btDataString.charAt(0) == '#') {
+                try {
+                    btDataString.setLength(35);
+
+                    if (logIsOn) {
+                        txLog.setText(btDataString + "\n" + txLog.getText().toString());
+                    }
+                    PIR = btDataString.substring(1, 2);//偵測到人會收到0
+
+                    //僅於安全電流範圍收值
+                    //todo 暫時以轉換為Integer的方式讓錯誤的封包自動被截掉，未來需讓current改為Int
+                    if (!unsafeCurrent1) {
+                        current1 = Integer.parseInt(btDataString.substring(3, 8)) + "";
+                    }
+                    if (!unsafeCurrent2) {
+                        current2 = Integer.parseInt(btDataString.substring(9, 14)) + "";
+                    }
+                    if (!unsafeCurrent3) {
+                        current3 = Integer.parseInt(btDataString.substring(15, 20)) + "";
+                    }
+                    if (!unsafeCurrent4) {
+                        current4 = Integer.parseInt(btDataString.substring(21, 26)) + "";
+                    }
+
+                    boolean statChanged1 = false, statChanged2 = false, statChanged3 = false, statChanged4 = false;
+                    if (socketStat1 != Integer.parseInt(btDataString.substring(27, 28)) && !AutoHW1) {
+                        statChanged1 = true;
+                        if (socketStat1 == 5 && Integer.parseInt(btDataString.substring(27, 28)) != 5) {
+                            swSk1.setEnabled(true);
+                        }
+                    }
+                    if (socketStat2 != Integer.parseInt(btDataString.substring(29, 30)) && !AutoHW2) {
+                        statChanged2 = true;
+                        if (socketStat2 == 5 && Integer.parseInt(btDataString.substring(29, 30)) != 5) {
+                            swSk2.setEnabled(true);
+                        }
+                    }
+                    if (socketStat3 != Integer.parseInt(btDataString.substring(31, 32)) && !AutoHW3) {
+                        statChanged3 = true;
+                        if (socketStat3 == 5 && Integer.parseInt(btDataString.substring(31, 32)) != 5) {
+                            swSk3.setEnabled(true);
+                        }
+                    }
+                    if (socketStat4 != Integer.parseInt(btDataString.substring(33, 34)) && !AutoHW4) {
+                        statChanged4 = true;
+                        if (socketStat4 == 5 && Integer.parseInt(btDataString.substring(33, 234)) != 5) {
+                            swSk4.setEnabled(true);
+                        }
+                    }
+
+                    //插座狀態
+                    socketStat1 = Integer.parseInt(btDataString.substring(27, 28));
+                    socketStat2 = Integer.parseInt(btDataString.substring(29, 30));
+                    socketStat3 = Integer.parseInt(btDataString.substring(31, 32));
+                    socketStat4 = Integer.parseInt(btDataString.substring(33, 34));
+
+                    // 1 黑燈 OFF
+                    // 2 綠燈 ON
+                    // 3 藍燈 OFF
+                    // 4 藍燈 ON
+                    // 5 紅燈 OFF 35
+                    // 00000000011111111112222222222333333
+                    //012345678901234567890123456789012345
+                    //#0+00000+00000+00000+00000+0+0+0+0~
+                    switch (socketStat1) {
+                        case 1:
+                            btnSkStat1.setImageResource(R.drawable.dot_black);
+                            swSk1.setChecked(false);
+                            SkAuto1(false);
+                            if (statChanged1)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk1.getText() + getString(R.string.has_been_turn_off), blue);
+                            break;
+                        case 2:
+                            btnSkStat1.setImageResource(R.drawable.dot_green);
+                            swSk1.setChecked(true);
+                            SkAuto1(false);
+                            if (statChanged1)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk1.getText() + getString(R.string.has_been_turn_on), blue);
+                            break;
+                        case 3:
+                            btnSkStat1.setImageResource(R.drawable.dot_blue);
+                            swSk1.setChecked(false);
+                            SkAuto1(true);
+                            if (statChanged1)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk1.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
+                            break;
+                        case 4:
+                            btnSkStat1.setImageResource(R.drawable.dot_blue);
+                            swSk1.setChecked(true);
+                            SkAuto1(true);
+                            if (statChanged1)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk1.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
+                            break;
+                        case 5:
+                            btnSkStat1.setImageResource(R.drawable.dot_red);
+                            swSk1.setChecked(false);
+                            swSk1.setEnabled(false);
+                            if (statChanged1) {
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk1.getText() + getString(R.string.abnormal_current), red);
+                                makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                                unsafeCurrent1 = true;
+                            }
+
+                            break;
+                    }
+
+                    switch (socketStat2) {
+                        case 1:
+                            btnSkStat2.setImageResource(R.drawable.dot_black);
+                            swSk2.setChecked(false);
+                            SkAuto2(false);
+                            if (statChanged2)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk2.getText() + getString(R.string.has_been_turn_off), blue);
+                            break;
+                        case 2:
+                            btnSkStat2.setImageResource(R.drawable.dot_green);
+                            swSk2.setChecked(true);
+                            SkAuto2(false);
+                            if (statChanged2)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk2.getText() + getString(R.string.has_been_turn_on), blue);
+                            break;
+                        case 3:
+                            btnSkStat2.setImageResource(R.drawable.dot_blue);
+                            swSk2.setChecked(false);
+                            SkAuto2(true);
+                            if (statChanged2)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk2.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
+                            break;
+                        case 4:
+                            btnSkStat2.setImageResource(R.drawable.dot_blue);
+                            swSk2.setChecked(true);
+                            SkAuto2(true);
+                            if (statChanged2)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk2.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
+                            break;
+                        case 5:
+                            btnSkStat2.setImageResource(R.drawable.dot_red);
+                            swSk2.setChecked(false);
+                            swSk2.setEnabled(false);
+                            SkAuto2(false);
+                            if (statChanged2) {
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk2.getText() + getString(R.string.abnormal_current), red);
+                                makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                                unsafeCurrent2 = true;
+                            }
+                            break;
+                    }
+
+                    switch (socketStat3) {
+                        case 1:
+                            btnSkStat3.setImageResource(R.drawable.dot_black);
+                            swSk3.setChecked(false);
+                            SkAuto3(false);
+                            if (statChanged3)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk3.getText() + getString(R.string.has_been_turn_off), blue);
+                            break;
+                        case 2:
+                            btnSkStat3.setImageResource(R.drawable.dot_green);
+                            swSk3.setChecked(true);
+                            SkAuto3(false);
+                            if (statChanged3)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk3.getText() + getString(R.string.has_been_turn_on), blue);
+                            break;
+                        case 3:
+                            btnSkStat3.setImageResource(R.drawable.dot_blue);
+                            swSk3.setChecked(false);
+                            SkAuto3(true);
+                            if (statChanged3)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk3.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
+                            break;
+                        case 4:
+                            btnSkStat3.setImageResource(R.drawable.dot_blue);
+                            swSk3.setChecked(true);
+                            SkAuto3(true);
+                            if (statChanged3)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk3.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
+                            break;
+                        case 5:
+                            btnSkStat3.setImageResource(R.drawable.dot_red);
+                            swSk3.setChecked(false);
+                            swSk3.setEnabled(false);
+                            SkAuto3(false);
+                            if (statChanged3) {
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk3.getText() + getString(R.string.abnormal_current), red);
+                                makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                                unsafeCurrent3 = true;
+                            }
+                            break;
+                    }
+
+                    switch (socketStat4) {
+                        case 1:
+                            btnSkStat4.setImageResource(R.drawable.dot_black);
+                            swSk4.setChecked(false);
+                            SkAuto4(false);
+                            if (statChanged4)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk4.getText() + getString(R.string.has_been_turn_off), blue);
+                            break;
+                        case 2:
+                            btnSkStat4.setImageResource(R.drawable.dot_green);
+                            swSk4.setChecked(true);
+                            SkAuto4(false);
+                            if (statChanged4)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk4.getText() + getString(R.string.has_been_turn_on), blue);
+                            break;
+                        case 3:
+                            btnSkStat4.setImageResource(R.drawable.dot_blue);
+                            swSk4.setChecked(false);
+                            SkAuto4(true);
+                            if (statChanged4)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk4.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
+                            break;
+                        case 4:
+                            btnSkStat4.setImageResource(R.drawable.dot_blue);
+                            swSk4.setChecked(true);
+                            SkAuto4(true);
+                            if (statChanged4)
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk4.getText() + getString(R.string.has_been_set_to_auto_mode), blue);
+                            break;
+                        case 5:
+                            btnSkStat4.setImageResource(R.drawable.dot_red);
+                            swSk4.setChecked(false);
+                            swSk4.setEnabled(false);
+                            SkAuto4(false);
+                            if (statChanged4) {
+                                CustomizedSnackBar(getString(R.string.socket) + "："
+                                        + swSk4.getText() + getString(R.string.abnormal_current), red);
+                                makeOreoNotification("Warning", getResources().getString(R.string.Security_warning));
+                                unsafeCurrent4 = true;
+                            }
+                            break;
+                    }
+                } catch (Exception e) {
+                    Log.d("e", e + "");
+                }
+            }
+            btDataString.delete(0, btDataString.length());
+        }
     }
 
     private void SkAuto1(boolean b) {
@@ -600,7 +592,6 @@ public class MainActivity extends AppCompatActivity {
             AutoHW4 = false;
         }
     }
-
 
     private void onCreateFirebaseCheck() {
         /*DatabaseReference reason = FirebaseDatabase.getInstance().getReference("test_user1").child("command");
@@ -737,11 +728,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 boolean connected = snapshot.getValue(Boolean.class);
-                if (connected) {
+                if (connected && statOnCloud) {
                     imgNetworkStat.setImageResource(R.drawable.dot_green);
                 } else {
                     imgNetworkStat.setImageResource(R.drawable.dot_gray);
-
                 }
             }
 
@@ -777,6 +767,7 @@ public class MainActivity extends AppCompatActivity {
                             firebaseUpdateUserData(userName, user.getEmail());
                             firebaseUpdateBSPref();
                             firebaseUpdateAppTitle();
+                            imgNetworkStat.setImageResource(R.drawable.dot_green);
                         }
 
                         @Override
@@ -795,6 +786,44 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+
+
+        //從資料庫獲取插座狀態
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("BlueStormIII").orderByKey().limitToLast(1).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (!isBTConnected && statOnCloud) {
+                    Log.d(TAG, "Data from Firebase" + dataSnapshot.getValue());
+                    btDataString.append(dataSnapshot.getValue());
+                    mainCtrlLoop(btDataString);
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (!isBTConnected && statOnCloud) {
+                    Log.d(TAG, "Data from Firebase" + dataSnapshot.getValue());
+                    btDataString.append(dataSnapshot.getValue());
+                    mainCtrlLoop(btDataString);
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void firebaseCommand(Object command) {
@@ -918,8 +947,6 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            int i = 0;
-                            String IO = "";
                             switch (switchId) {
                                 case R.id.swSk1:
                                     SkAuto1(false);
@@ -927,15 +954,9 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto1.setTextColor(getResources().getColor(R.color.colorPrimary));
                                     unsafeCurrent1 = false;
                                     if (switchOnOff.equals(getString(R.string.open))) {
-                                        //btnSkStat1.setImageResource(R.drawable.dot_green);
-                                        i = 1;
-                                        IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "a";
                                         firebaseCommand("a");
                                     } else {
-                                        //btnSkStat1.setImageResource(R.drawable.dot_black);
-                                        i = 1;
-                                        IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "b";
                                         firebaseCommand("b");
                                     }
@@ -946,15 +967,9 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto2.setTextColor(getResources().getColor(R.color.colorPrimary));
                                     unsafeCurrent2 = false;
                                     if (switchOnOff.equals(getString(R.string.open))) {
-                                        //btnSkStat2.setImageResource(R.drawable.dot_green);
-                                        i = 2;
-                                        IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "c";
                                         firebaseCommand("c");
                                     } else {
-                                        //btnSkStat2.setImageResource(R.drawable.dot_black);
-                                        i = 2;
-                                        IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "d";
                                         firebaseCommand("d");
                                     }
@@ -965,15 +980,9 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto3.setTextColor(getResources().getColor(R.color.colorPrimary));
                                     unsafeCurrent3 = false;
                                     if (switchOnOff.equals(getString(R.string.open))) {
-                                        //btnSkStat3.setImageResource(R.drawable.dot_green);
-                                        IO = getResources().getString(R.string.turnOn);
-                                        i = 3;
                                         BT_comm = "e";
                                         firebaseCommand("e");
                                     } else {
-                                        //btnSkStat3.setImageResource(R.drawable.dot_black);
-                                        i = 3;
-                                        IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "f";
                                         firebaseCommand("f");
                                     }
@@ -984,15 +993,9 @@ public class MainActivity extends AppCompatActivity {
                                     btnSkAuto4.setTextColor(getResources().getColor(R.color.colorPrimary));
                                     unsafeCurrent4 = false;
                                     if (switchOnOff.equals(getString(R.string.open))) {
-                                        //btnSkStat4.setImageResource(R.drawable.dot_green);
-                                        i = 4;
-                                        IO = getResources().getString(R.string.turnOn);
                                         BT_comm = "g";
                                         firebaseCommand("g");
                                     } else {
-                                        //btnSkStat4.setImageResource(R.drawable.dot_black);
-                                        i = 4;
-                                        IO = getResources().getString(R.string.turnOff);
                                         BT_comm = "h";
                                         firebaseCommand("h");
                                     }
@@ -1003,7 +1006,6 @@ public class MainActivity extends AppCompatActivity {
                                 btConnectedThread.write(sendData);
                                 Log.d("Bluetooth Send Data: ", sendData);
                             }
-                            //CustomizedSnackBar(getResources().getString(R.string.socket) + " " + i + " " + IO, blue);
                         }
                     })
                     .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -1035,7 +1037,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final CustomDialogActivity CustomDialog = new CustomDialogActivity(MainActivity.this);
-
             if (swSk1.isChecked() || unsafeCurrent1) { //開啟或是過載
                 CustomDialog.functionSelect = "Stat";
                 CustomDialog.socketSelect = 1;
@@ -1318,6 +1319,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     }
+
                     @Override
                     public void finish(String result) {
 
@@ -1569,8 +1571,6 @@ public class MainActivity extends AppCompatActivity {
     };
 
     public void Connect() {
-        //btnConnect.setVisibility(View.INVISIBLE);
-        //txConnectStat.setVisibility(View.INVISIBLE);
 
         setBluetoothEnable(true);
         //todo 藍牙裝置選擇界面或自動搜尋
@@ -1579,7 +1579,6 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             if (!btAdapter.isEnabled()) {
-                //Toast.makeText(getBaseContext(), R.string.please_try_again_after_bt_enable, Toast.LENGTH_LONG).show();
                 return;
             }
         } catch (Exception e) {
@@ -1589,11 +1588,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (isBTConnected) {
-
             return;
         }
 
-        //todo progressDialog
         progressDialog = new ProgressDialog(MainActivity.this);
         progressDialog.setMessage(getResources().getString(R.string.connecting_with_dots));
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -1693,7 +1690,7 @@ public class MainActivity extends AppCompatActivity {
                         BluetoothAdapter.ERROR);
                 switch (state) {
                     case BluetoothAdapter.STATE_OFF:
-                        CustomizedSnackBar("Bluetooth off",green);
+                        CustomizedSnackBar("Bluetooth off", green);
                         allTurnToUnconnected();
                         Disconnect();
                         break;
@@ -1701,7 +1698,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Turning Bluetooth off...", Toast.LENGTH_SHORT).show();
                         break;
                     case BluetoothAdapter.STATE_ON:
-                        CustomizedSnackBar("Bluetooth on",green);
+                        CustomizedSnackBar("Bluetooth on", green);
                         break;
                     case BluetoothAdapter.STATE_TURNING_ON:
                         Toast.makeText(MainActivity.this, "Turning Bluetooth on...", Toast.LENGTH_SHORT).show();
@@ -1809,7 +1806,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Disconnect() {
-
         if (btSocket != null) {
             try {
                 btSocket.close();
@@ -1817,7 +1813,6 @@ public class MainActivity extends AppCompatActivity {
             }
             btSocket = null;
         }
-
     }
 
     //auto按鈕的onClickListener
@@ -1909,21 +1904,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void startAlarm(Calendar calendar) {
         Calendar nowCal = Calendar.getInstance(TimeZone.getDefault());
-
-
         if (calendar.before(Calendar.getInstance())) {
             calendar.add(Calendar.DATE, 1);
         }
-
-
         //just for test
         /*calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.SECOND, 5);*/
 
-
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
-
         Bundle bundle = new Bundle();
         bundle.putBooleanArray("socketFromMain", alarmSocketSelect);
         bundle.putString("purposeFromMain", alarmPurpose);
@@ -1941,7 +1930,6 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("date:" + calendar.get(Calendar.DATE));
         System.out.println("hour:" + calendar.get(Calendar.HOUR));
         System.out.println("minute:" + calendar.get(Calendar.MINUTE));
-
     }
 
     private void cancelAlarm(Calendar cal) {
@@ -1956,15 +1944,6 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             logIsOn = true;
 
-            firebase = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = firebase.getReference("test_user1").child("data_");
-            Map<String, Object> data = new HashMap<>();
-            Date currentTime = Calendar.getInstance().getTime();
-            if (!btDataString.toString().equals("#0+00000+00000+00000+00000+0+0+0+0+0+0+0+0~")
-                    && !btDataString.toString().equals("#1+00000+00000+00000+00000+0+0+0+0+0+0+0+0~")) {
-                data.put(currentTime.toString(), "#1+00000+00000+00000+00000+0+0+0+0+0+0+0+0~");
-            }
-            myRef.updateChildren(data);
 
             /*myRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -1978,7 +1957,6 @@ public class MainActivity extends AppCompatActivity {
                         String value = entry.getValue().toString();
                         Log.d(TAG, key+"; Value is: " + value);
                     }
-
                 }
 
                 @Override
@@ -2180,20 +2158,24 @@ public class MainActivity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<AuthResult> task) {
 
                                             progressDialog.dismiss();
+                                            try {
+                                                if (!task.isSuccessful()) {
+                                                    FirebaseAuthException e = (FirebaseAuthException) task.getException();
+                                                    Log.d(TAG, e + "");
+                                                    if (!e.toString().equals(getString(R.string.firebase_err_invalid_passwd))) {
+                                                        createNewAccount(email, password, item);
+                                                    } else {
+                                                        CustomizedSnackBar(getString(R.string.login_fail_wrong_password), red);
+                                                    }
+                                                } else if (task.isSuccessful()) {
+                                                    Toast.makeText(MainActivity.this,
+                                                            getResources().getString(R.string.login_successfully), Toast.LENGTH_SHORT).show();
+                                                    firebaseDownloadUserDataAndBSPref(email);
 
-                                            if (!task.isSuccessful()) {
-                                                FirebaseAuthException e = (FirebaseAuthException) task.getException();
-                                                Log.d(TAG, e + "");
-                                                if (!e.toString().equals(getString(R.string.firebase_err_invalid_passwd))) {
-                                                    createNewAccount(email, password, item);
-                                                } else {
-                                                    CustomizedSnackBar(getString(R.string.login_fail_wrong_password), red);
                                                 }
-                                            } else if (task.isSuccessful()) {
+                                            }catch (Exception e){
                                                 Toast.makeText(MainActivity.this,
-                                                        getResources().getString(R.string.login_successfully), Toast.LENGTH_SHORT).show();
-                                                firebaseDownloadUserDataAndBSPref(email);
-
+                                                        getResources().getString(R.string.log_in_fail), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
@@ -2260,7 +2242,16 @@ public class MainActivity extends AppCompatActivity {
                                         startActivity(i);
                                     }
                                 })
-                                .setNegativeButton(getString(R.string.no), null)
+                                .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        onStop();
+                                        finish();
+                                        Intent i = getIntent();
+                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(i);
+                                    }
+                                })
                                 .show();
                     }
                 }

@@ -1,4 +1,4 @@
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" xmlns:ns1="http://schemas.android.com/apk/res-auto">
     <string name="app_name">ProjectS</string>
     <string name="action_settings">Settings</string>
     <string name="action_help">Help</string>
@@ -150,7 +150,6 @@
     <string name="hint_minute">Minute</string>
     <string name="message_minutes">Please Enter Minutes...</string>
     <string name="connecting_with_dots">Connecting...</string>
-    <string name="connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
     <string name="orange">Warning</string>
     <string name="red">Caution</string>
     <string name="please_try_again_after_bt_enable">Please try again after bluetooth enabled.</string>
@@ -277,8 +276,8 @@
     <string name="restart_app">Restart App</string>
     <string name="log">LOG</string>
     <string name="please_enter_a_value_ma">Please enter a value (mA)</string>
-    <string name="paired_devices">paired_devices</string>
-    <string name="other_devices">other_devices</string>
+    <string name="paired_devices">paired devices</string>
+    <string name="other_devices">other devices</string>
     <string name="scan">scan</string>
     <string name="none_paired">No devices have been paired</string>
     <string name="scanning">scanning for devices…</string>
@@ -297,5 +296,6 @@
     <string name="has_been_turn_on">has been turned on.</string>
     <string name="has_been_set_to_auto_mode">has been set to auto mode.</string>
     <string name="abnormal_current">abnormal current detected!!</string>
+    <string name="connected_to">connected to <ns1:g id="device_name">%1$s</ns1:g></string>
 
 </resources>
