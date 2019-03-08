@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
     boolean statOnCloud = false;
 
     private String userEmail;
-    private String userName;
+    private String userName = "";
     private String userDevice;
     private String appTitle;
 
@@ -1051,7 +1051,10 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
                             Log.d("warningCleared ", "1");
                             unsafeCurrent1 = false;
-                            btConnectedThread.write("b");
+                            if (btConnectedThread != null) {
+                                btConnectedThread.write("b");
+                            }
+                            firebaseCommand("b");
                             swSk1.setEnabled(true);
                             if (AutoOn1) {
                                 SkAuto1(false);
@@ -1088,7 +1091,10 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
                             Log.d("warningCleared ", "1");
                             unsafeCurrent1 = false;
-                            btConnectedThread.write("b");
+                            if (btConnectedThread != null) {
+                                btConnectedThread.write("b");
+                            }
+                            firebaseCommand("b");
                             swSk1.setEnabled(true);
                             if (AutoOn1) {
                                 SkAuto1(false);
@@ -1125,7 +1131,10 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
                             Log.d("warningCleared ", "2");
                             unsafeCurrent2 = false;
-                            btConnectedThread.write("d");
+                            if (btConnectedThread != null) {
+                                btConnectedThread.write("d");
+                            }
+                            firebaseCommand("d");
                             swSk2.setEnabled(true);
                             if (AutoOn2) {
                                 btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto));
@@ -1162,7 +1171,10 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
                             Log.d("warningCleared ", "2");
                             unsafeCurrent2 = false;
-                            btConnectedThread.write("d");
+                            if (btConnectedThread != null) {
+                                btConnectedThread.write("d");
+                            }
+                            firebaseCommand("d");
                             swSk2.setEnabled(true);
                             if (AutoOn2) {
                                 btnSkAuto2.setBackground(getResources().getDrawable(R.drawable.button_auto));
@@ -1199,7 +1211,10 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
                             Log.d("warningCleared ", "3");
                             unsafeCurrent3 = false;
-                            btConnectedThread.write("f");
+                            if (btConnectedThread != null) {
+                                btConnectedThread.write("f");
+                            }
+                            firebaseCommand("f");
                             swSk3.setEnabled(true);
                             if (AutoOn3) {
                                 btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto));
@@ -1236,7 +1251,10 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
                             Log.d("warningCleared ", "3");
                             unsafeCurrent3 = false;
-                            btConnectedThread.write("f");
+                            if (btConnectedThread != null) {
+                                btConnectedThread.write("f");
+                            }
+                            firebaseCommand("f");
                             swSk3.setEnabled(true);
                             if (AutoOn3) {
                                 btnSkAuto3.setBackground(getResources().getDrawable(R.drawable.button_auto));
@@ -1273,7 +1291,10 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
                             Log.d("warningCleared ", "4");
                             unsafeCurrent4 = false;
-                            btConnectedThread.write("h");
+                            if (btConnectedThread != null) {
+                                btConnectedThread.write("h");
+                            }
+                            firebaseCommand("h");
                             swSk4.setEnabled(true);
                             if (AutoOn4) {
                                 btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto));
@@ -1310,7 +1331,10 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "插座已解鎖", Toast.LENGTH_SHORT).show();
                             Log.d("warningCleared ", "4");
                             unsafeCurrent4 = false;
-                            btConnectedThread.write("h");
+                            if (btConnectedThread != null) {
+                                btConnectedThread.write("h");
+                            }
+                            firebaseCommand("h");
                             swSk4.setEnabled(true);
                             if (AutoOn4) {
                                 btnSkAuto4.setBackground(getResources().getDrawable(R.drawable.button_auto));
@@ -1791,16 +1815,17 @@ public class MainActivity extends AppCompatActivity {
 
         /* Call this from the main activity to send data to the remote device */
         void write(String input) {
+            if (btConnectedThread != null) {
 
-
-            byte[] bytes = input.getBytes();
-            try {
-                mmOutStream.write(bytes);
-            } catch (IOException ignored) {
-            }
-            try {
-                mmOutStream.write(bytes);
-            } catch (IOException ignored) {
+                byte[] bytes = input.getBytes();
+                try {
+                    mmOutStream.write(bytes);
+                } catch (IOException ignored) {
+                }
+                try {
+                    mmOutStream.write(bytes);
+                } catch (IOException ignored) {
+                }
             }
         }
     }
@@ -2004,7 +2029,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(final Menu menu) {
 
         if (!devMode) {
             menu.findItem(R.id.action_bt).setVisible(false);
@@ -2020,14 +2045,32 @@ public class MainActivity extends AppCompatActivity {
             menu.findItem(R.id.action_devData).setVisible(true);
         }
 
-        if (userName.equals("")) {
-            menu.findItem(R.id.action_login).setTitle(R.string.login);
-        } else {
-            menu.findItem(R.id.action_login).setTitle(userName);
+        if (userName == null){
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    if (userName.equals("")) {
+                        menu.findItem(R.id.action_login).setTitle(R.string.login);
+                    } else {
+                        menu.findItem(R.id.action_login).setTitle(userName);
+                    }
+                    Log.d("onPrepareMenu-lag", userName);
+                }
+            }, 500);
+        }else {
+            if (userName.equals("")) {
+                menu.findItem(R.id.action_login).setTitle(R.string.login);
+            } else {
+                menu.findItem(R.id.action_login).setTitle(userName);
+            }
+            Log.d("onPrepareOptionsMenu", userName);
         }
 
+
+
         menu.findItem(R.id.action_statOnCloud).setChecked(statOnCloud);
-        Log.d("onPrepareOptionsMenu: ", userName);
 
         return true;
     }
