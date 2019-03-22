@@ -1802,12 +1802,16 @@ public class MainActivity extends AppCompatActivity {
                 } catch (RuntimeException e) {
                     Log.e(TAG, "20%", e);
                     e.printStackTrace();
-                    Toast.makeText(MainActivity.this, "20%", Toast.LENGTH_SHORT).show();
+                    //todo 20%
+                    Crashlytics.setString(TAG, "BT 20% RTe");
+                    Crashlytics.logException(e);
                     Connect();
                 } catch (Exception e) {
                     Log.e(TAG, "20%-2", e);
                     e.printStackTrace();
-                    Toast.makeText(MainActivity.this, "20%-2", Toast.LENGTH_SHORT).show();
+                    //todo 其他20%
+                    Crashlytics.setString(TAG, "BT 20% e");
+                    Crashlytics.logException(e);
                     Connect();
                 }
             }
