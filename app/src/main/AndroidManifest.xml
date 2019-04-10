@@ -16,13 +16,15 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:label">
+
         <activity
             android:name=".SOActivity"
             android:label="@string/title_activity_so"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".FunctionSelectActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="locale|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

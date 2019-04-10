@@ -15,6 +15,7 @@
         <item>設定安全電流值</item>
         <item>語言Language</item>
         <item>傳送回饋</item>
+        <item>裝置選擇頁面</item>
     </string-array>
 
     <string name="app_name">綠能雲端插座</string>
@@ -201,6 +202,10 @@
     <string name="overwrite_online">覆寫網路資料</string>
     <string name="connected_to">連線至 <ns1:g id="device_name">%1$s</ns1:g></string>
     <string name="current_description_auto">自動模式已經被開啟了。若人體紅外線感應(PIR)模組已連線，插座將會被自動開啟或是關閉。</string>
+    <string name="to_hide_FSA">確定要隱藏裝置選擇頁面嗎？</string>
+    <string name="to_show_FSA">確定要顯示裝置選擇頁面嗎？</string>
+    <string name="set_up_will_be_apply_on_the_next_run">設定完成\n該設定將會在下次啟動App時套用</string>
+
 
 
 </resources>

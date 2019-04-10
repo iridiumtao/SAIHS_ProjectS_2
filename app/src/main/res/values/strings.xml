@@ -289,13 +289,17 @@
         <item>Set safe current value</item>
         <item>Language</item>
         <item>Send feedback</item>
+        <item>Devices select page</item>
     </string-array>
     <string name="title_activity_so">SOActivity</string>
     <string name="socket_SO">outlet</string>
-    <string name="has_been_turn_off">has been turned off.</string>
-    <string name="has_been_turn_on">has been turned on.</string>
+    <string name="has_been_turn_off"> has been turned off.</string>
+    <string name="has_been_turn_on"> has been turned on.</string>
     <string name="has_been_set_to_auto_mode">has been set to auto mode.</string>
     <string name="abnormal_current">abnormal current detected!!</string>
     <string name="connected_to">connected to <ns1:g id="device_name">%1$s</ns1:g></string>
+    <string name="to_hide_FSA">Do you want to hide the Function Select page?</string>
+    <string name="to_show_FSA">Do you want to show the Function Select page?</string>
+    <string name="set_up_will_be_apply_on_the_next_run">Successful.\nThis set up will be applied on the next time you open the app.</string>
 
 </resources>

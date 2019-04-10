@@ -179,6 +179,9 @@ public class MainActivity extends AppCompatActivity {
     private String userName = "";
     private String userDevice;
     private String appTitle;
+    boolean showFSA;
+    private String language;
+    private String country;
 
 //alt+enter 字串抽離
 
@@ -187,6 +190,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
+
+        language = getSharedPreferences("user", MODE_PRIVATE).getString("language", Locale.getDefault().getLanguage());
+        country = getSharedPreferences("user", MODE_PRIVATE).getString("country", Locale.getDefault().getCountry());
+        Locale locale = new Locale(language,country);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.setLocale(locale);
+        getBaseContext().getResources().updateConfiguration(config,
+                getBaseContext().getResources().getDisplayMetrics());
+        Log.d(TAG, "onCreate: "+language+" "+country);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -225,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
         userEmail = getSharedPreferences("user", MODE_PRIVATE).getString("user_email", null);
         userName = getSharedPreferences("user", MODE_PRIVATE).getString("user_name", null);
         userDevice = getSharedPreferences("user", MODE_PRIVATE).getString("user_device_BS", "Blue Storm III");
+        showFSA = getSharedPreferences("user", MODE_PRIVATE).getBoolean("showFSA", true);
         swSk1.setText(getSharedPreferences("user", MODE_PRIVATE).getString("socket1", getResources().getString(R.string.socket_1)));
         swSk2.setText(getSharedPreferences("user", MODE_PRIVATE).getString("socket2", getResources().getString(R.string.socket_2)));
         swSk3.setText(getSharedPreferences("user", MODE_PRIVATE).getString("socket3", getResources().getString(R.string.socket_3)));
@@ -774,7 +789,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onCancelled(@NonNull DatabaseError databaseError) {
                         }
                     });
-                    CustomizedSnackBar(getString(R.string.log_in_successfully_by) + userEmail, green);
+                    CustomizedSnackBar(getString(R.string.log_in_successfully_by) +" "+ userEmail, green);
 
                 } else {
                     //Toast.makeText(MainActivity.this, getResources().getString(R.string.log_out), Toast.LENGTH_SHORT).show();
@@ -2528,6 +2543,37 @@ public class MainActivity extends AppCompatActivity {
                         sendIntent.setType("text/plain");
                         startActivity(sendIntent);
                         break;
+                    case 4:
+                        if (showFSA){
+                            //hide
+                            new AlertDialog.Builder(MainActivity.this)
+                                    .setMessage(getString(R.string.to_hide_FSA))
+                                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            showFSA = false;
+                                            Toast.makeText(MainActivity.this, getString(R.string.set_up_will_be_apply_on_the_next_run), Toast.LENGTH_LONG).show();
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.cancel, null)
+                                    .show();
+                        }else {
+                            //show
+                            new AlertDialog.Builder(MainActivity.this)
+                                    .setMessage(getString(R.string.to_show_FSA))
+                                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            showFSA = true;
+                                            Toast.makeText(MainActivity.this, getString(R.string.set_up_will_be_apply_on_the_next_run), Toast.LENGTH_LONG).show();
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.cancel, null)
+                                    .show();
+                        }
+
+
+
                 }
             }
         });
@@ -2556,10 +2602,10 @@ public class MainActivity extends AppCompatActivity {
                         myLocale = new Locale("zh", "TW");
                         break;
                     case 2:
-                        myLocale = new Locale("en");
+                        myLocale = new Locale("en", "US");
                         break;
                     case 3:
-                        myLocale = new Locale("jp");
+                        myLocale = new Locale("jp", "JP");
                         break;
                 }
 
@@ -2573,8 +2619,10 @@ public class MainActivity extends AppCompatActivity {
                                 Resources res = getResources();
                                 DisplayMetrics dm = res.getDisplayMetrics();
                                 Configuration conf = res.getConfiguration();
-                                conf.locale = finalMyLocale;
+                                conf.setLocale(finalMyLocale);
                                 res.updateConfiguration(conf, dm);
+                                language = finalMyLocale.getLanguage();
+                                country = finalMyLocale.getCountry();
                                 onStop();
                                 Intent i = getBaseContext().getPackageManager()
                                         .getLaunchIntentForPackage(getBaseContext().getPackageName());
@@ -2764,8 +2812,11 @@ public class MainActivity extends AppCompatActivity {
                 .putString("socket4", swSk4.getText().toString())
                 .putString("appTitle", appTitle)
                 .putInt("safeCurrentValue", safeCurrentValue)
+                .putBoolean("showFSA", showFSA)
+                .putString("language", language)
+                .putString("country", country)
                 .apply();
-        Log.d("onStop", userName + userEmail);
+        Log.d("onStop", language + country);
 
         Toast.makeText(getApplicationContext(), getResources().getString(R.string.save_data_to_phone), Toast.LENGTH_SHORT).show();
 

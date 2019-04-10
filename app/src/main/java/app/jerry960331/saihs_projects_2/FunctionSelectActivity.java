@@ -21,10 +21,20 @@ public class FunctionSelectActivity extends AppCompatActivity {
     TextView txBS, txSO, txInfrared, txEnvi,
             txCO, txCH4, txTemp, txHumidity;
     Menu menu;
+    boolean showFSA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        showFSA = getSharedPreferences("user", MODE_PRIVATE).getBoolean("showFSA", true);
+        if (!showFSA){
+            Intent intent = new Intent(FunctionSelectActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
+
         setContentView(R.layout.activity_func);
         findViews();
         onClickListeners();
@@ -33,6 +43,7 @@ public class FunctionSelectActivity extends AppCompatActivity {
         setTitle("歐東的家");
         txBS.setText(getSharedPreferences("user", MODE_PRIVATE).getString("user_device_BS", "Blue Storm III"));
         txSO.setText(getSharedPreferences("user", MODE_PRIVATE).getString("user_device_SO", "Salvation October"));
+
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
