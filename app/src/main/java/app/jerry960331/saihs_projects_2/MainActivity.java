@@ -76,6 +76,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.NotificationCompat;
 import io.fabric.sdk.android.Fabric;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -216,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
         onCreateGetSharedPreference();
         btHandler();
+        showCase();
     }
 
     private void onCreateGetSharedPreference() {
@@ -248,6 +252,75 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, appTitle + "apple  " + R.string.title);
         setTitle(appTitle);
         safeCurrentValue = getSharedPreferences("user", MODE_PRIVATE).getInt("safeCurrentValue", 5000);
+    }
+
+    private void showCase(){
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(200); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, "function");
+
+        sequence.setConfig(config);
+
+        int color = 0xd200b9a9;
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(btnConnect)
+                        .setContentText(R.string.btConnect_desc)
+                        .setDismissText(R.string.got_it)
+                        .setMaskColour(color)
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(swSk1)
+                        .setSkipText(R.string.skip)
+                        .setContentText(R.string.sw_desc)
+                        .setDismissText(R.string.got_it)
+                        .setMaskColour(color)
+                        .withOvalShape()
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(btnSkStat1)
+                        .setSkipText(R.string.skip)
+                        .setDismissText(R.string.got_it)
+                        .setContentText(R.string.stat_desc)
+                        .setMaskColour(color)
+                        .build()
+        );
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(btnSkChart1)
+                        .setDismissText(R.string.got_it)
+                        .setContentText(R.string.chart_desc)
+                        .setMaskColour(color)
+                        .build()
+        );
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(btnSkAuto1)
+                        .setDismissText(R.string.got_it)
+                        .setContentText(R.string.auto_desc)
+                        .setMaskColour(color)
+                        .build()
+        );
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(btnSkAlarm)
+                        .setDismissText(R.string.got_it)
+                        .setContentText(R.string.alarm_desc)
+                        .setMaskColour(color)
+                        .build()
+        );
+
+        sequence.start();
+
     }
 
     @SuppressLint("HandlerLeak")
@@ -1987,7 +2060,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             logIsOn = true;
+            MaterialShowcaseView.resetSingleUse(MainActivity.this, "function");
+            MaterialShowcaseView.resetSingleUse(MainActivity.this, "menu");
 
+            //MaterialShowcaseView.resetSingleUse(MainActivity.this, "alarm");
 
             /*myRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -2086,10 +2162,28 @@ public class MainActivity extends AppCompatActivity {
             }
             Log.d("onPrepareOptionsMenu", userName);
         }
-
-
-
         menu.findItem(R.id.action_statOnCloud).setChecked(statOnCloud);
+
+        /*MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, "menu");
+        View action_login = findViewById(R.id.action_login);
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(action_login)
+                        .setDismissText("了解")
+                        .setContentText("登入後即可使用網路控制及雲端儲存設定")
+                        .withRectangleShape()
+                        .build()
+        );
+        View action_extra = findViewById(R.id.action_extra);
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(action_extra)
+                        .setDismissText("了解")
+                        .setContentText("更多設定可於此調整")
+                        .withRectangleShape()
+                        .build()
+        );
+        sequence.start();*/
 
         return true;
     }

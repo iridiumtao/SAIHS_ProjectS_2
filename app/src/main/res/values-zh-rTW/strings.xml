@@ -205,7 +205,14 @@
     <string name="to_hide_FSA">確定要隱藏裝置選擇頁面嗎？</string>
     <string name="to_show_FSA">確定要顯示裝置選擇頁面嗎？</string>
     <string name="set_up_will_be_apply_on_the_next_run">設定完成\n該設定將會在下次啟動App時套用</string>
-
+    <string name="btConnect_desc">「藍牙連線」\n點擊以透過藍牙連線到裝置。\n(網路為自動連線，無需透過手動開啟)</string>
+    <string name="got_it">了解</string>
+    <string name="skip">跳過</string>
+    <string name="sw_desc">「插座開關」\n點擊：開啟或關閉插座\n長按：重新命名</string>
+    <string name="stat_desc">「電流狀態」\n由此可以檢視目前的電流狀態。</string>
+    <string name="chart_desc">「電流表格」\n由此可以檢視目前的電流表格。</string>
+    <string name="auto_desc">「自動模式」\n開啟自動模式後，系統會自動依據人體感測器來開關電源，以節省待機能源的浪費。</string>
+    <string name="alarm_desc">「定時功能」\n由此可以設定定時開關的功能。</string>
 
 
 </resources>

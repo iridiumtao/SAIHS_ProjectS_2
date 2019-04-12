@@ -301,5 +301,13 @@
     <string name="to_hide_FSA">Do you want to hide the Function Select page?</string>
     <string name="to_show_FSA">Do you want to show the Function Select page?</string>
     <string name="set_up_will_be_apply_on_the_next_run">Successful.\nThis set up will be applied on the next time you open the app.</string>
+    <string name="btConnect_desc">\"Bluetooth Connect\"\nClick to connect to the device via Bluetooth.\n(Network will be connect automatically)</string>
+    <string name="got_it">GOT IT</string>
+    <string name="skip">SKIP</string>
+    <string name="sw_desc">\"Outlet Switch\"\nClick: Turn outlet On/Off.\nLong Click: Rename.</string>
+    <string name="stat_desc">\"Current Status\"\nClick here to view current status.</string>
+    <string name="chart_desc">\"Current Chart\"\nClick here to view current chart.</string>
+    <string name="auto_desc">\"Auto Mode\"\nWhen auto mode is turned on, system will automatically switches the power supply according to the Pyro-electric Infrared Detector(PIR) to save waste of standby energy.</string>
+    <string name="alarm_desc">\"Timing\"\nClick here to set the timing.\n</string>
 
 </resources>
