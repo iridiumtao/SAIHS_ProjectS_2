@@ -45,12 +45,12 @@ public class FunctionSelectActivity extends AppCompatActivity {
         txSO.setText(getSharedPreferences("user", MODE_PRIVATE).getString("user_device_SO", "Salvation October"));
 
 
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             BluetoothFragment fragment = new BluetoothFragment();
             transaction.replace(R.id.bluetoothFragmentLayout, fragment);
             transaction.commit();
-        }
+        }*/
     }
 
     private void findViews() {

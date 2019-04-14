@@ -1,3 +1,4 @@
+/*
 package app.jerry960331.saihs_projects_2;
 
 import android.bluetooth.BluetoothAdapter;
@@ -16,12 +17,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+*/
 /**
  * This class does all the work for setting up and managing Bluetooth
  * connections with other devices. It has a thread that listens for
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
- */
+ *//*
+
 public class BluetoothService {
     // Debugging
     private static final String TAG = "BluetoothChatService";
@@ -63,12 +66,14 @@ public class BluetoothService {
     public static final String DEVICE_NAME = "device_name";
     public static final String TOAST = "toast";
 
-    /**
+    */
+/**
      * Constructor. Prepares a new BluetoothChat session.
      *
      * @param context The UI Activity Context
      * @param handler A Handler to send messages back to the UI Activity
-     */
+     *//*
+
     public BluetoothService(Context context, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
@@ -76,9 +81,11 @@ public class BluetoothService {
         mHandler = handler;
     }
 
-    /**
+    */
+/**
      * Update UI title according to the current state of the chat connection
-     */
+     *//*
+
     private synchronized void updateUserInterfaceTitle() {
         mState = getState();
         Log.d(TAG, "updateUserInterfaceTitle() " + mNewState + " -> " + mState);
@@ -88,17 +95,21 @@ public class BluetoothService {
         mHandler.obtainMessage(MESSAGE_STATE_CHANGE, mNewState, -1).sendToTarget();
     }
 
-    /**
+    */
+/**
      * Return the current connection state.
-     */
+     *//*
+
     public synchronized int getState() {
         return mState;
     }
 
-    /**
+    */
+/**
      * Start the chat service. Specifically start AcceptThread to begin a
      * session in listening (server) mode. Called by the Activity onResume()
-     */
+     *//*
+
     public synchronized void start() {
         Log.d(TAG, "start");
 
@@ -127,12 +138,14 @@ public class BluetoothService {
         updateUserInterfaceTitle();
     }
 
-    /**
+    */
+/**
      * Start the ConnectThread to initiate a connection to a remote device.
      *
      * @param device The BluetoothDevice to connect
      * @param secure Socket Security type - Secure (true) , Insecure (false)
-     */
+     *//*
+
     public synchronized void connect(BluetoothDevice device, boolean secure) {
         Log.d(TAG, "connect to: " + device);
 
@@ -157,12 +170,14 @@ public class BluetoothService {
         updateUserInterfaceTitle();
     }
 
-    /**
+    */
+/**
      * Start the ConnectedThread to begin managing a Bluetooth connection
      *
      * @param socket The BluetoothSocket on which the connection was made
      * @param device The BluetoothDevice that has been connected
-     */
+     *//*
+
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice
             device, final String socketType) {
         Log.d(TAG, "connected, Socket Type:" + socketType);
@@ -203,9 +218,11 @@ public class BluetoothService {
         updateUserInterfaceTitle();
     }
 
-    /**
+    */
+/**
      * Stop all threads
-     */
+     *//*
+
     public synchronized void stop() {
         Log.d(TAG, "stop");
 
@@ -233,12 +250,14 @@ public class BluetoothService {
         updateUserInterfaceTitle();
     }
 
-    /**
+    */
+/**
      * Write to the ConnectedThread in an unsynchronized manner
      *
      * @param out The bytes to write
      * @see ConnectedThread#write(byte[])
-     */
+     *//*
+
     public void write(byte[] out) {
         // Create temporary object
         ConnectedThread r;
@@ -251,9 +270,11 @@ public class BluetoothService {
         r.write(out);
     }
 
-    /**
+    */
+/**
      * Indicate that the connection attempt failed and notify the UI Activity.
-     */
+     *//*
+
     private void connectionFailed() {
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(MESSAGE_TOAST);
@@ -270,9 +291,11 @@ public class BluetoothService {
         BluetoothService.this.start();
     }
 
-    /**
+    */
+/**
      * Indicate that the connection was lost and notify the UI Activity.
-     */
+     *//*
+
     private void connectionLost() {
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(MESSAGE_TOAST);
@@ -289,11 +312,13 @@ public class BluetoothService {
         BluetoothService.this.start();
     }
 
-    /**
+    */
+/**
      * This thread runs while listening for incoming connections. It behaves
      * like a server-side client. It runs until a connection is accepted
      * (or until cancelled).
-     */
+     *//*
+
     private class AcceptThread extends Thread {
         // The local server socket
         private final BluetoothServerSocket mmServerSocket;
@@ -375,11 +400,13 @@ public class BluetoothService {
     }
 
 
-    /**
+    */
+/**
      * This thread runs while attempting to make an outgoing connection
      * with a device. It runs straight through; the connection either
      * succeeds or fails.
-     */
+     *//*
+
     private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
@@ -449,10 +476,12 @@ public class BluetoothService {
         }
     }
 
-    /**
+    */
+/**
      * This thread runs during a connection with a remote device.
      * It handles all incoming and outgoing transmissions.
-     */
+     *//*
+
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
@@ -499,11 +528,13 @@ public class BluetoothService {
             }
         }
 
-        /**
+        */
+/**
          * Write to the connected OutStream.
          *
          * @param buffer The bytes to write
-         */
+         *//*
+
         public void write(byte[] buffer) {
             try {
                 mmOutStream.write(buffer);
@@ -524,4 +555,4 @@ public class BluetoothService {
             }
         }
     }
-}
+}*/

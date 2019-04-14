@@ -76,6 +76,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.NotificationCompat;
 import io.fabric.sdk.android.Fabric;
+import me.jfenn.attribouter.Attribouter;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
@@ -2282,6 +2283,12 @@ public class MainActivity extends AppCompatActivity {
                 item.setChecked(!item.isChecked());
                 devModeValue = item.isChecked();
                 break;
+            case R.id.action_about:
+                Attribouter.from(this)
+                        .withFile(R.xml.about)
+                        .show();
+                break;
+
 
         }
         return super.onOptionsItemSelected(item);

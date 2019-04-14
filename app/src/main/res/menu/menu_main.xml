@@ -48,4 +48,8 @@
     <item
         android:id="@+id/action_destroy"
         android:title="@string/restart_app" />
+    <item
+        android:id="@+id/action_about"
+        android:checkable="false"
+        android:title="About" />
 </menu>

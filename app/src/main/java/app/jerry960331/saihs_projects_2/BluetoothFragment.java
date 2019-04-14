@@ -1,3 +1,4 @@
+/*
 package app.jerry960331.saihs_projects_2;
 
 
@@ -33,9 +34,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+*/
 /**
  * This fragment controls Bluetooth to communicate with other devices.
- */
+ *//*
+
 public class BluetoothFragment extends Fragment {
 
     private static final String TAG = "BluetoothFragment";
@@ -61,29 +64,39 @@ public class BluetoothFragment extends Fragment {
     private EditText mOutEditText;
     private Button mSendButton;
 
-    /**
+    */
+/**
      * Name of the connected device
-     */
+     *//*
+
     private String mConnectedDeviceName = null;
 
-    /**
+    */
+/**
      * Array adapter for the conversation thread
-     */
+     *//*
+
     private ArrayAdapter<String> mConversationArrayAdapter;
 
-    /**
+    */
+/**
      * String buffer for outgoing messages
-     */
+     *//*
+
     private StringBuffer mOutStringBuffer;
 
-    /**
+    */
+/**
      * Local Bluetooth adapter
-     */
+     *//*
+
     private BluetoothAdapter mBluetoothAdapter = null;
 
-    /**
+    */
+/**
      * Member object for the chat services
-     */
+     *//*
+
     private BluetoothService mChatService = null;
 
     @Override
@@ -109,13 +122,15 @@ public class BluetoothFragment extends Fragment {
         // setupChat() will then be called during onActivityResult
 
         // TODO: 2019/3/7 暫時關閉
-        /*if (!mBluetoothAdapter.isEnabled()) {
+        */
+/*if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
             setupChat();
-        }*/
+        }*//*
+
     }
 
     @Override
@@ -153,14 +168,18 @@ public class BluetoothFragment extends Fragment {
 
     }
 
-    /**
+    */
+/**
      * Set up the UI and background operations for chat.
-     */
+     *//*
+
     // TODO: 2019/3/3 變成連線藍牙
     private void setupChat() {
         Log.d(TAG, "setupChat()");
 
-        /*// Initialize the array adapter for the conversation thread
+        */
+/*//*
+/ Initialize the array adapter for the conversation thread
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
 
         mConversationView.setAdapter(mConversationArrayAdapter);
@@ -179,7 +198,8 @@ public class BluetoothFragment extends Fragment {
                     sendMessage(message);
                 }
             }
-        });*/
+        });*//*
+
 
         // Initialize the BluetoothService to perform bluetooth connections
         //todo 暫時關閉
@@ -190,9 +210,11 @@ public class BluetoothFragment extends Fragment {
         //mOutStringBuffer = new StringBuffer("");
     }
 
-    /**
+    */
+/**
      * Makes this device discoverable for 300 seconds (5 minutes).
-     */
+     *//*
+
     private void ensureDiscoverable() {
         if (mBluetoothAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
@@ -202,11 +224,13 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
-    /**
+    */
+/**
      * Sends a message.
      *
      * @param message A string of text to send.
-     */
+     *//*
+
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothService.STATE_CONNECTED) {
@@ -226,9 +250,11 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
-    /**
+    */
+/**
      * The action listener for the EditText widget, to listen for the return key
-     */
+     *//*
+
     private TextView.OnEditorActionListener mWriteListener
             = new TextView.OnEditorActionListener() {
         public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
@@ -241,11 +267,13 @@ public class BluetoothFragment extends Fragment {
         }
     };
 
-    /**
+    */
+/**
      * Updates the status on the action bar.
      *
      * @param resId a string resource ID
-     */
+     *//*
+
     private void setStatus(int resId) {
         FragmentActivity activity = getActivity();
         if (null == activity) {
@@ -258,11 +286,13 @@ public class BluetoothFragment extends Fragment {
         actionBar.setSubtitle(resId);
     }
 
-    /**
+    */
+/**
      * Updates the status on the action bar.
      *
      * @param subTitle status
-     */
+     *//*
+
     private void setStatus(CharSequence subTitle) {
         FragmentActivity activity = getActivity();
         if (null == activity) {
@@ -275,9 +305,11 @@ public class BluetoothFragment extends Fragment {
         actionBar.setSubtitle(subTitle);
     }
 
-    /**
+    */
+/**
      * The Handler that gets information back from the BluetoothChatService
-     */
+     *//*
+
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -358,12 +390,14 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
-    /**
+    */
+/**
      * Establish connection with other device
      *
      * @param data   An {@link Intent} with {@link BluetoothDeviceListActivity#EXTRA_DEVICE_ADDRESS} extra.
      * @param secure Socket Security type - Secure (true) , Insecure (false)
-     */
+     *//*
+
     private void connectDevice(Intent data, boolean secure) {
         // Get the device MAC address
         String address = data.getExtras()
@@ -375,7 +409,8 @@ public class BluetoothFragment extends Fragment {
     }
 
     // TODO: 2019/3/3 應該不會用menu的方式來呈現搜尋藍牙等相關內容。或許會用一個Dialog
-    /*@Override
+    */
+/*@Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.bluetooth_chat, menu);
     }
@@ -402,7 +437,9 @@ public class BluetoothFragment extends Fragment {
             }
         }
         return false;
-    }*/
+    }*//*
+
 
 }
 
+*/
